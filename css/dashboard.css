@@ -118,14 +118,17 @@
 
 .stat-icon.total {
     background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
 }
 
 .stat-icon.corporate {
     background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
 }
 
 .stat-icon.personal {
     background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: white;
 }
 
 .stat-info h3 {
@@ -220,6 +223,7 @@
 .error-icon {
     font-size: 64px;
     margin-bottom: 20px;
+    color: #dc2626;
 }
 
 .error-container h3 {
@@ -257,7 +261,6 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
     gap: 24px;
-    display: none;
 }
 
 .card-item {
@@ -333,6 +336,22 @@
     flex-shrink: 0;
 }
 
+.status-active {
+    background: #10b981;
+}
+
+.status-warning {
+    background: #f59e0b;
+}
+
+.status-error {
+    background: #ef4444;
+}
+
+.status-default {
+    background: #6b7280;
+}
+
 /* Детали карты */
 .card-details {
     display: flex;
@@ -391,6 +410,10 @@
     font-weight: 500;
 }
 
+.month-status-container {
+    margin-top: 16px;
+}
+
 /* Пустое состояние */
 .empty-state {
     text-align: center;
@@ -418,6 +441,12 @@
     color: #6b7280;
     max-width: 300px;
     margin: 0 auto;
+}
+
+/* Анимации */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 /* Адаптивность */
