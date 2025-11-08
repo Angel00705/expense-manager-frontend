@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Создать задачу - Expense Manager</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/create-task.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1 class="logo">💰 Expense Manager</h1>
+                <nav class="nav">
+                    <a href="dashboard.html" class="nav-link">Дашборд</a>
+                    <a href="expense-items.html" class="nav-link">Статьи расходов</a>
+                    <a href="#" class="nav-link active">Создать задачу</a>
+                    <button id="logoutBtn" class="btn btn-outline">Выйти</button>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="container">
+                <div class="page-header">
+                    <h2>Создать новую задачу</h2>
+                    <p>Заполните информацию о задаче для управляющего</p>
+                </div>
+
+                <form id="createTaskForm" class="task-form">
+                    <!-- Цепочка выборов -->
+                    <div class="form-section">
+                        <h3>Выбор получателя</h3>
+                        
+                        <!-- Регион -->
+                        <div class="form-group">
+                            <label for="region">Регион *</label>
+                            <select id="region" name="region" required class="form-select">
+                                <option value="">Выберите регион</option>
+                            </select>
+                        </div>
+
+                        <!-- ИП (загружается после выбора региона) -->
+                        <div class="form-group">
+                            <label for="ip">Индивидуальный предприниматель *</label>
+                            <select id="ip" name="ip" required class="form-select" disabled>
+                                <option value="">Сначала выберите регион</option>
+                            </select>
+                        </div>
+
+                        <!-- Карта (загружается после выбора ИП) -->
+                        <div class="form-group">
+                            <label for="card">Карта *</label>
+                            <select id="card" name="card" required class="form-select" disabled>
+                                <option value="">Сначала выберите ИП</option>
+                            </select>
+                        </div>
+
+                        <!-- Управляющий (автоматически после выбора региона) -->
+                        <div class="form-group">
+                            <label for="manager">Управляющий *</label>
+                            <select id="manager" name="manager" required class="form-select" disabled>
+                                <option value="">Сначала выберите регион</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Детали задачи -->
+                    <div class="form-section">
+                        <h3>Детали задачи</h3>
+                        
+                        <!-- Статья расхода -->
+                        <div class="form-group">
+                            <label for="expenseItem">Статья расхода *</label>
+                            <select id="expenseItem" name="expenseItem" required class="form-select">
+                                <option value="">Выберите статью расхода</option>
+                            </select>
+                        </div>
+
+                        <!-- Плановая сумма -->
+                        <div class="form-group">
+                            <label for="plannedAmount">Плановая сумма *</label>
+                            <div class="input-with-currency">
+                                <input type="number" id="plannedAmount" name="plannedAmount" 
+                                       required min="1" step="0.01" class="form-input">
+                                <span class="currency">₽</span>
+                            </div>
+                        </div>
+
+                        <!-- Плановая дата выполнения -->
+                        <div class="form-group">
+                            <label for="plannedDate">Плановая дата выполнения *</label>
+                            <input type="date" id="plannedDate" name="plannedDate" required class="form-input">
+                        </div>
+
+                        <!-- Комментарий -->
+                        <div class="form-group">
+                            <label for="comment">Комментарий к задаче</label>
+                            <textarea id="comment" name="comment" rows="4" 
+                                      placeholder="Опишите детали задачи..." class="form-textarea"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Кнопки -->
+                    <div class="form-actions">
+                        <button type="button" id="cancelBtn" class="btn btn-secondary">Отмена</button>
+                        <button type="submit" class="btn btn-primary">Создать задачу</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/create-task.js"></script>
+</body>
+</html>
