@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Панель управления - Expense Manager</title>
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/dashboard.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💳</text></svg>">
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Шапка дашборда -->
+        <header class="dashboard-header">
+            <div class="header-content">
+                <div class="header-info">
+                    <h1>💳 Expense Manager</h1>
+                    <div class="user-info">
+                        <div id="userName">Загрузка...</div>
+                        <div>
+                            <span id="userRole">Роль</span>
+                            <span id="userRegion">Регион</span>
+                        </div>
+                    </div>
+                </div>
+                <button id="logoutBtn" class="logout-button">🚪 Выйти</button>
+            </div>
+        </header>
+
+        <!-- Статистика -->
+        <section class="stats-section">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon total">
+                        💳
+                    </div>
+                    <div class="stat-info">
+                        <h3>Всего карт</h3>
+                        <p id="totalCards" class="stat-number">0</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon corporate">
+                        🏢
+                    </div>
+                    <div class="stat-info">
+                        <h3>Корпоративные</h3>
+                        <p id="corporateCards" class="stat-number">0</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon personal">
+                        👤
+                    </div>
+                    <div class="stat-info">
+                        <h3>Персональные</h3>
+                        <p id="personalCards" class="stat-number">0</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Секция карт -->
+        <section class="cards-section">
+            <div class="section-header">
+                <h2>💳 Управление картами</h2>
+                <button id="refreshBtn" class="refresh-button">
+                    🔄 Обновить
+                </button>
+            </div>
+
+            <!-- Сообщение загрузки -->
+            <div id="loadingMessage" class="loading-message">
+                <div class="loading-spinner"></div>
+                <p>Загрузка данных...</p>
+            </div>
+
+            <!-- Контейнер ошибки -->
+            <div id="errorContainer" class="error-container">
+                <div class="error-icon">❌</div>
+                <h3>Ошибка загрузки</h3>
+                <p id="errorMessage">Не удалось загрузить данные. Пожалуйста, попробуйте позже.</p>
+                <button id="retryBtn" class="retry-button">Повторить попытку</button>
+            </div>
+
+            <!-- Сетка карт -->
+            <div id="cardsGrid" class="cards-grid">
+                <!-- Карты будут загружены через JavaScript -->
+            </div>
+        </section>
+    </div>
+
+    <script src="./js/utils.js" type="module"></script>
+    <script src="./js/api.js" type="module"></script>
+    <script src="./js/auth.js" type="module"></script>
+    <script src="./js/cards.js" type="module"></script>
+    <script src="./js/dashboard.js" type="module"></script>
+</body>
+</html>

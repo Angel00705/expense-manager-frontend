@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход - Expense Manager</title>
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/login.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💳</text></svg>">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-form">
+            <h2>Вход в систему</h2>
+            <p class="login-subtitle">Expense Manager - Управление корпоративными картами</p>
+
+            <!-- Статус API -->
+            <div id="apiStatus" class="api-status checking">
+                Проверка подключения...
+            </div>
+
+            <!-- Форма входа -->
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        placeholder="Введите ваш email" 
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Пароль</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        placeholder="Введите ваш пароль" 
+                        required
+                        minlength="6"
+                    >
+                </div>
+
+                <button type="submit" id="loginButton" class="login-button" disabled>
+                    <span>Войти в систему</span>
+                    <div class="button-spinner"></div>
+                </button>
+            </form>
+
+            <!-- Сообщение об ошибке -->
+            <div id="errorMessage" class="error-message"></div>
+
+            <!-- Тестовые пользователи -->
+            <div class="test-users">
+                <h4>Тестовые пользователи:</h4>
+                <div id="testUsers" class="user-list">
+                    <!-- Список пользователей заполняется через JavaScript -->
+                </div>
+            </div>
+
+            <!-- Ссылка назад -->
+            <div class="back-link">
+                <a href="./index.html">← Вернуться на главную</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="./js/utils.js" type="module"></script>
+    <script src="./js/api.js" type="module"></script>
+    <script src="./js/auth.js" type="module"></script>
+    <script src="./js/login.js" type="module"></script>
+</body>
+</html>

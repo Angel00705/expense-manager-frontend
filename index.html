@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Manager - Управление расходами</title>
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💳</text></svg>">
+</head>
+<body>
+    <div class="container">
+        <!-- Шапка -->
+        <header style="text-align: center; padding: 60px 20px 40px;">
+            <h1 style="font-size: 48px; margin-bottom: 16px;">💳</h1>
+            <h1 style="font-size: 36px; color: #1e293b; margin-bottom: 16px; font-weight: 700;">
+                Expense Manager
+            </h1>
+            <p style="font-size: 18px; color: #64748b; max-width: 500px; margin: 0 auto 40px;">
+                Современная система управления корпоративными картами и расходами
+            </p>
+        </header>
+
+        <!-- Основной контент -->
+        <main style="max-width: 600px; margin: 0 auto; padding: 0 20px;">
+            <!-- Карточки возможностей -->
+            <div style="display: grid; gap: 24px; margin-bottom: 48px;">
+                <div class="card" style="padding: 32px; text-align: center;">
+                    <div style="font-size: 48px; margin-bottom: 16px;">📊</div>
+                    <h3 style="color: #1e293b; margin-bottom: 12px; font-size: 20px;">
+                        Полная статистика
+                    </h3>
+                    <p style="color: #64748b; line-height: 1.6;">
+                        Отслеживайте расходы по картам, анализируйте статистику и контролируйте лимиты
+                    </p>
+                </div>
+
+                <div class="card" style="padding: 32px; text-align: center;">
+                    <div style="font-size: 48px; margin-bottom: 16px;">👥</div>
+                    <h3 style="color: #1e293b; margin-bottom: 12px; font-size: 20px;">
+                        Мультирегиональность
+                    </h3>
+                    <p style="color: #64748b; line-height: 1.6;">
+                        Работа с картами across different regions: Астрахань, Бурятия, Курган, Калмыкия, Мордовия, Удмуртия
+                    </p>
+                </div>
+
+                <div class="card" style="padding: 32px; text-align: center;">
+                    <div style="font-size: 48px; margin-bottom: 16px;">🔒</div>
+                    <h3 style="color: #1e293b; margin-bottom: 12px; font-size: 20px;">
+                        Безопасность
+                    </h3>
+                    <p style="color: #64748b; line-height: 1.6;">
+                        Ролевая модель доступа: бухгалтеры и управляющие с разными уровнями прав
+                    </p>
+                </div>
+            </div>
+
+            <!-- Кнопка входа -->
+            <div style="text-align: center;">
+                <a href="./login.html" class="btn btn-primary" style="font-size: 16px; padding: 16px 32px;">
+                    📋 Войти в систему
+                </a>
+            </div>
+
+            <!-- Информация о системе -->
+            <div style="text-align: center; margin-top: 60px; padding-top: 40px; border-top: 1px solid #e2e8f0;">
+                <div style="display: inline-flex; gap: 32px; flex-wrap: wrap; justify-content: center;">
+                    <div style="text-align: center;">
+                        <div style="font-size: 24px; font-weight: 700; color: #667eea; margin-bottom: 4px;">42</div>
+                        <div style="font-size: 14px; color: #64748b;">карты</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 24px; font-weight: 700; color: #667eea; margin-bottom: 4px;">27</div>
+                        <div style="font-size: 14px; color: #64748b;">ИП</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 24px; font-weight: 700; color: #667eea; margin-bottom: 4px;">6</div>
+                        <div style="font-size: 14px; color: #64748b;">регионов</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="./js/utils.js" type="module"></script>
+    <script src="./js/api.js" type="module"></script>
+    <script src="./js/auth.js" type="module"></script>
+</body>
+</html>
