@@ -4,199 +4,65 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Создать задачу - Expense Manager</title>
-    <!-- Простой фавикон -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><defs><linearGradient id='borderGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%238b5cf6'/><stop offset='50%' stop-color='%236d28d9'/><stop offset='100%' stop-color='%231e40af'/></linearGradient><linearGradient id='checkGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%23a78bfa'/><stop offset='100%' stop-color='%234f46e5'/></linearGradient><filter id='glow' x='-50%' y='-50%' width='200%' height='200%'><feGaussianBlur in='SourceGraphic' stdDeviation='1' result='blur'/><feMerge><feMergeNode in='blur'/><feMergeNode in='SourceGraphic'/></feMerge></filter></defs><circle cx='10' cy='10' r='9' fill='none' stroke='url(%23borderGrad)' stroke-width='1.5' opacity='0.9'/><path d='M6,10 L8.5,12.5 L14,7' stroke='url(%23checkGrad)' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round' filter='url(%23glow)'/></svg>">
     <style>
-        /* Базовые стили для работы */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f0f2f5; }
         
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f5f5;
-            color: #333;
-        }
-        
-        .app-container {
-            min-height: 100vh;
-        }
-        
-        .header {
-            background: white;
-            border-bottom: 1px solid #ddd;
-            padding: 1rem 0;
-        }
-        
-        .header-content {
-            max-width: 1200px;
-            margin: 0 auto;
+        .header { 
+            background: white; 
+            padding: 1rem; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0 1rem;
         }
         
-        .logo {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #2563eb;
-        }
+        .logo { font-size: 1.5rem; font-weight: bold; color: #1890ff; }
         
-        .nav {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-        }
-        
-        .nav-link {
-            text-decoration: none;
+        .nav a { 
+            margin: 0 10px; 
+            text-decoration: none; 
             color: #666;
-            padding: 0.5rem 1rem;
+            padding: 5px 10px;
             border-radius: 4px;
-            transition: all 0.3s;
         }
         
-        .nav-link:hover, .nav-link.active {
-            background: #2563eb;
-            color: white;
-        }
+        .nav a.active { background: #1890ff; color: white; }
         
-        .btn {
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 4px;
+        .btn { 
+            padding: 8px 16px; 
+            border: none; 
+            border-radius: 4px; 
             cursor: pointer;
-            font-size: 0.9rem;
-            transition: all 0.3s;
         }
         
-        .btn-outline {
-            background: transparent;
-            border: 1px solid #dc2626;
-            color: #dc2626;
+        .btn-outline { 
+            background: transparent; 
+            border: 1px solid #ff4d4f; 
+            color: #ff4d4f;
         }
         
-        .btn-outline:hover {
-            background: #dc2626;
-            color: white;
-        }
+        .btn-primary { background: #1890ff; color: white; }
+        .btn-secondary { background: #6c757d; color: white; }
         
-        .btn-primary {
-            background: #2563eb;
-            color: white;
-        }
+        .main { max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
         
-        .btn-primary:hover {
-            background: #1d4ed8;
-        }
-        
-        .btn-secondary {
-            background: #6b7280;
-            color: white;
-        }
-        
-        .btn-secondary:hover {
-            background: #4b5563;
-        }
-        
-        .btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-        
-        .main-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem 1rem;
-        }
-        
-        .page-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        
-        .page-header h2 {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-            color: #1f2937;
-        }
-        
-        .task-form {
+        .form-container {
             background: white;
-            border-radius: 8px;
             padding: 2rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            max-width: 800px;
-            margin: 0 auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         
-        .form-section {
-            margin-bottom: 2rem;
-            padding-bottom: 2rem;
-            border-bottom: 1px solid #e5e7eb;
-        }
+        .form-group { margin-bottom: 1rem; }
+        label { display: block; margin-bottom: 0.5rem; font-weight: bold; }
         
-        .form-section:last-child {
-            border-bottom: none;
-        }
-        
-        .form-section h3 {
-            margin-bottom: 1rem;
-            color: #374151;
-        }
-        
-        .form-group {
-            margin-bottom: 1rem;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: #374151;
-        }
-        
-        .form-select, .form-input, .form-textarea {
+        select, input, textarea {
             width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #d1d5db;
+            padding: 8px;
+            border: 1px solid #ddd;
             border-radius: 4px;
-            font-size: 1rem;
-        }
-        
-        .form-select:focus, .form-input:focus, .form-textarea:focus {
-            outline: none;
-            border-color: #2563eb;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-        }
-        
-        .form-select:disabled {
-            background-color: #f9fafb;
-            color: #6b7280;
-        }
-        
-        .input-with-currency {
-            position: relative;
-        }
-        
-        .input-with-currency .form-input {
-            padding-right: 3rem;
-        }
-        
-        .input-with-currency .currency {
-            position: absolute;
-            right: 0.75rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #6b7280;
-        }
-        
-        .form-textarea {
-            resize: vertical;
-            min-height: 100px;
+            font-size: 14px;
         }
         
         .form-actions {
@@ -206,177 +72,92 @@
             margin-top: 2rem;
         }
         
-        .error-message {
-            background: #fef2f2;
-            color: #dc2626;
+        .message {
             padding: 1rem;
-            border-radius: 4px;
             margin-bottom: 1rem;
-            border: 1px solid #fecaca;
-        }
-        
-        .success-message {
-            background: #f0fdf4;
-            color: #16a34a;
-            padding: 1rem;
             border-radius: 4px;
-            margin-bottom: 1rem;
-            border: 1px solid #bbf7d0;
         }
         
-        .loading {
-            position: relative;
-            color: transparent !important;
-        }
-        
-        .loading::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 20px;
-            height: 20px;
-            border: 2px solid #f3f3f3;
-            border-top: 2px solid #2563eb;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-            0% { transform: translate(-50%, -50%) rotate(0deg); }
-            100% { transform: translate(-50%, -50%) rotate(360deg); }
-        }
-        
-        @media (max-width: 768px) {
-            .header-content {
-                flex-direction: column;
-                gap: 1rem;
-            }
-            
-            .nav {
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-            
-            .task-form {
-                padding: 1rem;
-            }
-            
-            .form-actions {
-                flex-direction: column;
-            }
-        }
+        .error { background: #fff2f0; border: 1px solid #ffccc7; color: #a8071a; }
+        .success { background: #f6ffed; border: 1px solid #b7eb8f; color: #389e0d; }
     </style>
 </head>
 <body>
-    <div class="app-container">
-        <header class="header">
-            <div class="header-content">
-                <h1 class="logo">💰 Expense Manager</h1>
-                <nav class="nav">
-                    <a href="dashboard.html" class="nav-link">Дашборд</a>
-                    <a href="expense-items.html" class="nav-link">Статьи расходов</a>
-                    <a href="#" class="nav-link active">Создать задачу</a>
-                    <button id="logoutBtn" class="btn btn-outline">Выйти</button>
-                </nav>
-            </div>
-        </header>
-
-        <main class="main-content">
-            <div class="container">
-                <div class="page-header">
-                    <h2>Создать новую задачу</h2>
-                    <p>Заполните информацию о задаче для управляющего</p>
-                </div>
-
-                <div id="messageContainer"></div>
-
-                <form id="createTaskForm" class="task-form">
-                    <div class="form-section">
-                        <h3>Выбор получателя</h3>
-                        
-                        <div class="form-group">
-                            <label for="region">Регион *</label>
-                            <select id="region" name="region" required class="form-select">
-                                <option value="">Выберите регион</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="ip">Индивидуальный предприниматель *</label>
-                            <select id="ip" name="ip" required class="form-select" disabled>
-                                <option value="">Сначала выберите регион</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="card">Карта *</label>
-                            <select id="card" name="card" required class="form-select" disabled>
-                                <option value="">Сначала выберите ИП</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="manager">Управляющий *</label>
-                            <select id="manager" name="manager" required class="form-select" disabled>
-                                <option value="">Сначала выберите регион</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="form-section">
-                        <h3>Детали задачи</h3>
-                        
-                        <div class="form-group">
-                            <label for="expenseItem">Статья расхода *</label>
-                            <select id="expenseItem" name="expenseItem" required class="form-select">
-                                <option value="">Выберите статью расхода</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="plannedAmount">Плановая сумма *</label>
-                            <div class="input-with-currency">
-                                <input type="number" id="plannedAmount" name="plannedAmount" 
-                                       required min="1" step="0.01" class="form-input"
-                                       placeholder="0.00">
-                                <span class="currency">₽</span>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="plannedDate">Плановая дата выполнения *</label>
-                            <input type="date" id="plannedDate" name="plannedDate" required 
-                                   class="form-input">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="comment">Комментарий к задаче</label>
-                            <textarea id="comment" name="comment" rows="4" 
-                                      placeholder="Опишите детали задачи..." class="form-textarea"></textarea>
-                        </div>
-                    </div>
-
-                    <div class="form-actions">
-                        <button type="button" id="cancelBtn" class="btn btn-secondary">Отмена</button>
-                        <button type="submit" id="submitBtn" class="btn btn-primary">
-                            Создать задачу
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </main>
+    <div class="header">
+        <div class="logo">💰 Expense Manager</div>
+        <nav class="nav">
+            <a href="dashboard.html">Дашборд</a>
+            <a href="expense-items.html">Статьи расходов</a>
+            <a href="#" class="active">Создать задачу</a>
+            <button class="btn btn-outline" onclick="logout()">Выйти</button>
+        </nav>
     </div>
 
-    <script src="js/auth.js"></script>
-    <script src="js/api.js"></script>
-    <script>
-        // Простой скрипт для проверки работы
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('Create Task page loaded');
+    <main class="main">
+        <div class="form-container">
+            <h2 style="margin-bottom: 1rem;">Создать новую задачу</h2>
+            <p style="margin-bottom: 2rem; color: #666;">Заполните информацию о задаче для управляющего</p>
             
-            // Проверка авторизации
+            <div id="message"></div>
+            
+            <form id="taskForm">
+                <div class="form-group">
+                    <label>Регион *</label>
+                    <select id="region" required>
+                        <option value="">Выберите регион</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Статья расхода *</label>
+                    <select id="expenseItem" required>
+                        <option value="">Выберите статью расхода</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Плановая сумма *</label>
+                    <input type="number" id="amount" required min="1" step="0.01" placeholder="0.00">
+                </div>
+                
+                <div class="form-group">
+                    <label>Дата выполнения *</label>
+                    <input type="date" id="date" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Комментарий</label>
+                    <textarea id="comment" rows="3" placeholder="Опишите задачу..."></textarea>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="goBack()">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Создать задачу</button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        // Simple utility functions
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'login.html';
+        }
+        
+        function goBack() {
+            window.location.href = 'dashboard.html';
+        }
+        
+        function showMessage(text, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.innerHTML = `<div class="message ${type}">${text}</div>`;
+            setTimeout(() => messageDiv.innerHTML = '', 5000);
+        }
+        
+        // Check auth on page load
+        document.addEventListener('DOMContentLoaded', function() {
             const user = JSON.parse(localStorage.getItem('user'));
             if (!user) {
                 window.location.href = 'login.html';
@@ -384,29 +165,88 @@
             }
             
             if (user.role !== 'accountant') {
-                alert('Только бухгалтеры могут создавать задачи');
-                window.location.href = 'dashboard.html';
+                showMessage('Только бухгалтеры могут создавать задачи', 'error');
+                setTimeout(() => window.location.href = 'dashboard.html', 2000);
                 return;
             }
             
-            // Обработчик выхода
-            document.getElementById('logoutBtn').addEventListener('click', function() {
-                localStorage.removeItem('token');
-                localStorage.removeItem('user');
-                window.location.href = 'login.html';
-            });
+            // Load initial data
+            loadRegions();
+            loadExpenseItems();
             
-            // Обработчик отмены
-            document.getElementById('cancelBtn').addEventListener('click', function() {
-                window.location.href = 'dashboard.html';
-            });
+            // Set minimum date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('date').min = today;
+        });
+        
+        async function loadRegions() {
+            try {
+                const regions = await API.getRegions();
+                const select = document.getElementById('region');
+                
+                regions.forEach(region => {
+                    const option = document.createElement('option');
+                    option.value = region;
+                    option.textContent = region;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                showMessage('Ошибка загрузки регионов: ' + error.message, 'error');
+            }
+        }
+        
+        async function loadExpenseItems() {
+            try {
+                const items = await API.getExpenseItems();
+                const select = document.getElementById('expenseItem');
+                
+                items.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item._id;
+                    option.textContent = item.name + ' (' + item.category + ')';
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                showMessage('Ошибка загрузки статей расходов: ' + error.message, 'error');
+            }
+        }
+        
+        // Form submission
+        document.getElementById('taskForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
             
-            // Базовая валидация формы
-            document.getElementById('createTaskForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                alert('Функционал создания задач в разработке');
-            });
+            const formData = {
+                region: document.getElementById('region').value,
+                expenseItem: document.getElementById('expenseItem').value,
+                plannedAmount: parseFloat(document.getElementById('amount').value),
+                plannedDate: document.getElementById('date').value,
+                comment: document.getElementById('comment').value,
+                status: 'pending'
+            };
+            
+            // Basic validation
+            if (!formData.region || !formData.expenseItem || !formData.plannedAmount || !formData.plannedDate) {
+                showMessage('Заполните все обязательные поля', 'error');
+                return;
+            }
+            
+            try {
+                const user = JSON.parse(localStorage.getItem('user'));
+                formData.createdBy = user._id;
+                
+                const result = await API.createTask(formData);
+                showMessage('Задача успешно создана!', 'success');
+                
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 2000);
+                
+            } catch (error) {
+                showMessage('Ошибка создания задачи: ' + error.message, 'error');
+            }
         });
     </script>
+    
+    <script src="js/api.js"></script>
 </body>
 </html>
