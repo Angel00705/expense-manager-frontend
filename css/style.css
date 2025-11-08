@@ -95,7 +95,6 @@ body {
     text-align: center;
     transition: all 0.3s ease;
     font-family: inherit;
-    text-transform: none;
 }
 
 .btn-primary {
@@ -167,22 +166,6 @@ body {
     margin-bottom: 20px;
     border-left: 4px solid #28a745;
     display: none;
-}
-
-/* Карточки */
-.card {
-    background: white;
-    border-radius: 12px;
-    padding: 24px;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    transition: all 0.3s ease;
-    border: 1px solid #e1e5e9;
-}
-
-.card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
 }
 
 /* Формы */
