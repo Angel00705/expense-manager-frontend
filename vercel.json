@@ -1,6 +1,5 @@
 {
   "version": 2,
-  "name": "expense-manager-frontend",
   "builds": [
     {
       "src": "*.html",
@@ -12,7 +11,5 @@
       "src": "/(.*)",
       "dest": "/index.html"
     }
-  ],
-  "cleanUrls": true,
-  "trailingSlash": false
+  ]
 }
