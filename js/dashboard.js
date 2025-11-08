@@ -1,4 +1,4 @@
-import { CARD_STATUS } from '../config/constants.js';
+import { API_CONFIG } from './config/constants.js';
 import { FormatUtils, DomUtils } from './utils.js';
 
 export class CardsManager {
