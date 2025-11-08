@@ -1,4 +1,4 @@
-import { API_CONFIG } from './config/constants.js';
+import { CARD_STATUS } from './config/constants.js';
 import { FormatUtils, DomUtils } from './utils.js';
 
 export class CardsManager {
@@ -112,7 +112,7 @@ export class CardsManager {
         }
 
         const months = Object.entries(monthStatus)
-            .slice(0, 3) // Показываем только последние 3 месяца
+            .slice(0, 3)
             .map(([month, status]) => `
                 <div class="month-status">
                     <strong>${month}:</strong>
