@@ -13,7 +13,7 @@
         <header class="header">
             <h1>📊 Статьи расходов</h1>
             <div class="user-info">
-                <span id="userName"></span>
+                <span id="userName">Пользователь</span>
                 <button onclick="logout()" class="btn btn-secondary">Выйти</button>
             </div>
         </header>
@@ -33,17 +33,20 @@
                 </button>
             </div>
 
+            <!-- Сообщения об ошибках -->
+            <div class="error-message" id="errorExpenseItems"></div>
+
             <!-- Список статей расходов -->
             <div class="expense-items-list">
-                <div class="loading" id="loadingExpenseItems">Загрузка...</div>
-                <div class="error-message" id="errorExpenseItems" style="display: none;"></div>
-                <div id="expenseItemsContainer"></div>
+                <div id="expenseItemsContainer">
+                    <div class="loading">Загрузка...</div>
+                </div>
             </div>
         </main>
     </div>
 
     <!-- Модальное окно добавления/редактирования -->
-    <div id="expenseItemModal" class="modal" style="display: none;">
+    <div id="expenseItemModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
                 <h3 id="modalTitle">Добавить статью расхода</h3>
@@ -52,12 +55,12 @@
             <div class="modal-body">
                 <form id="expenseItemForm">
                     <div class="form-group">
-                        <label for="expenseItemName">Название статьи:</label>
-                        <input type="text" id="expenseItemName" required>
+                        <label for="expenseItemName">Название статьи:*</label>
+                        <input type="text" id="expenseItemName" required placeholder="Например: Реклама в Google">
                     </div>
                     <div class="form-group">
                         <label for="expenseItemDescription">Описание:</label>
-                        <textarea id="expenseItemDescription" rows="3"></textarea>
+                        <textarea id="expenseItemDescription" rows="3" placeholder="Необязательное описание статьи расхода"></textarea>
                     </div>
                     <div class="form-actions">
                         <button type="button" onclick="closeExpenseItemModal()" class="btn btn-secondary">
