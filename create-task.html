@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Создать задачу - Expense Manager</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><defs><linearGradient id='grad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%23007bff'/><stop offset='100%' stop-color='%236619aa'/></linearGradient></defs><rect width='24' height='24' fill='url(%23grad)' rx='6'/><text x='12' y='16' font-family='Arial' font-size='12' font-weight='bold' fill='white' text-anchor='middle'>💰</text></svg>">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/create-task.css">
 </head>
 <body>
     <div class="app-container">
-        <!-- Header -->
         <header class="header">
             <div class="header-content">
                 <h1 class="logo">💰 Expense Manager</h1>
@@ -22,7 +22,6 @@
             </div>
         </header>
 
-        <!-- Main Content -->
         <main class="main-content">
             <div class="container">
                 <div class="page-header">
@@ -31,11 +30,9 @@
                 </div>
 
                 <form id="createTaskForm" class="task-form">
-                    <!-- Цепочка выборов -->
                     <div class="form-section">
                         <h3>Выбор получателя</h3>
                         
-                        <!-- Регион -->
                         <div class="form-group">
                             <label for="region">Регион *</label>
                             <select id="region" name="region" required class="form-select">
@@ -43,7 +40,6 @@
                             </select>
                         </div>
 
-                        <!-- ИП (загружается после выбора региона) -->
                         <div class="form-group">
                             <label for="ip">Индивидуальный предприниматель *</label>
                             <select id="ip" name="ip" required class="form-select" disabled>
@@ -51,7 +47,6 @@
                             </select>
                         </div>
 
-                        <!-- Карта (загружается после выбора ИП) -->
                         <div class="form-group">
                             <label for="card">Карта *</label>
                             <select id="card" name="card" required class="form-select" disabled>
@@ -59,7 +54,6 @@
                             </select>
                         </div>
 
-                        <!-- Управляющий (автоматически после выбора региона) -->
                         <div class="form-group">
                             <label for="manager">Управляющий *</label>
                             <select id="manager" name="manager" required class="form-select" disabled>
@@ -68,11 +62,9 @@
                         </div>
                     </div>
 
-                    <!-- Детали задачи -->
                     <div class="form-section">
                         <h3>Детали задачи</h3>
                         
-                        <!-- Статья расхода -->
                         <div class="form-group">
                             <label for="expenseItem">Статья расхода *</label>
                             <select id="expenseItem" name="expenseItem" required class="form-select">
@@ -80,7 +72,6 @@
                             </select>
                         </div>
 
-                        <!-- Плановая сумма -->
                         <div class="form-group">
                             <label for="plannedAmount">Плановая сумма *</label>
                             <div class="input-with-currency">
@@ -90,13 +81,11 @@
                             </div>
                         </div>
 
-                        <!-- Плановая дата выполнения -->
                         <div class="form-group">
                             <label for="plannedDate">Плановая дата выполнения *</label>
                             <input type="date" id="plannedDate" name="plannedDate" required class="form-input">
                         </div>
 
-                        <!-- Комментарий -->
                         <div class="form-group">
                             <label for="comment">Комментарий к задаче</label>
                             <textarea id="comment" name="comment" rows="4" 
@@ -104,7 +93,6 @@
                         </div>
                     </div>
 
-                    <!-- Кнопки -->
                     <div class="form-actions">
                         <button type="button" id="cancelBtn" class="btn btn-secondary">Отмена</button>
                         <button type="submit" class="btn btn-primary">Создать задачу</button>
