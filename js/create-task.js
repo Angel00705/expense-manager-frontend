@@ -20,7 +20,7 @@ class CreateTaskManager {
     }
 
     checkAccess() {
-        const user = JSON.parse(localStorage.getItem('user'));
+        const user = getCurrentUser();
         if (!user) {
             window.location.href = 'login.html';
             return false;
@@ -38,11 +38,11 @@ class CreateTaskManager {
     async loadInitialData() {
         try {
             // Загружаем регионы
-            this.regions = await API.getRegions();
+            this.regions = await this.safeApiCall(() => API.getRegions(), []);
             this.populateRegions();
             
             // Загружаем статьи расходов
-            this.expenseItems = await API.getExpenseItems();
+            this.expenseItems = await this.safeApiCall(() => API.getExpenseItems(), []);
             this.populateExpenseItems();
             
         } catch (error) {
@@ -50,8 +50,20 @@ class CreateTaskManager {
         }
     }
 
+    // Безопасный вызов API с обработкой ошибок
+    async safeApiCall(apiCall, defaultValue = []) {
+        try {
+            return await apiCall();
+        } catch (error) {
+            console.error('API call failed:', error);
+            return defaultValue;
+        }
+    }
+
     populateRegions() {
         const regionSelect = document.getElementById('region');
+        if (!regionSelect) return;
+        
         regionSelect.innerHTML = '<option value="">Выберите регион</option>';
         
         this.regions.forEach(region => {
@@ -64,6 +76,8 @@ class CreateTaskManager {
 
     populateExpenseItems() {
         const expenseSelect = document.getElementById('expenseItem');
+        if (!expenseSelect) return;
+        
         expenseSelect.innerHTML = '<option value="">Выберите статью расхода</option>';
         
         this.expenseItems.forEach(item => {
@@ -76,7 +90,7 @@ class CreateTaskManager {
 
     async loadManagersForRegion(region) {
         try {
-            this.managers = await API.getManagersByRegion(region);
+            this.managers = await this.safeApiCall(() => API.getManagersByRegion(region), []);
             this.populateManagers();
         } catch (error) {
             this.showError('Ошибка загрузки управляющих: ' + error.message);
@@ -85,7 +99,7 @@ class CreateTaskManager {
 
     async loadIPsForRegion(region) {
         try {
-            this.ips = await API.getIPsWithCardsByRegion(region);
+            this.ips = await this.safeApiCall(() => API.getIPsWithCardsByRegion(region), []);
             this.populateIPs();
         } catch (error) {
             this.showError('Ошибка загрузки ИП: ' + error.message);
@@ -94,6 +108,8 @@ class CreateTaskManager {
 
     populateManagers() {
         const managerSelect = document.getElementById('manager');
+        if (!managerSelect) return;
+        
         managerSelect.innerHTML = '<option value="">Выберите управляющего</option>';
         
         this.managers.forEach(manager => {
@@ -108,6 +124,8 @@ class CreateTaskManager {
 
     populateIPs() {
         const ipSelect = document.getElementById('ip');
+        if (!ipSelect) return;
+        
         ipSelect.innerHTML = '<option value="">Выберите ИП</option>';
         
         this.ips.forEach(ip => {
@@ -123,6 +141,8 @@ class CreateTaskManager {
 
     populateCards(cardsData) {
         const cardSelect = document.getElementById('card');
+        if (!cardSelect) return;
+        
         cardSelect.innerHTML = '<option value="">Выберите карту</option>';
         
         if (!cardsData || cardsData.length === 0) {
@@ -149,41 +169,61 @@ class CreateTaskManager {
 
     setupEventListeners() {
         // Изменение региона
-        document.getElementById('region').addEventListener('change', (e) => {
-            const region = e.target.value;
-            this.onRegionChange(region);
-        });
+        const regionSelect = document.getElementById('region');
+        if (regionSelect) {
+            regionSelect.addEventListener('change', (e) => {
+                const region = e.target.value;
+                this.onRegionChange(region);
+            });
+        }
 
         // Изменение ИП
-        document.getElementById('ip').addEventListener('change', (e) => {
-            const selectedOption = e.target.options[e.target.selectedIndex];
-            if (selectedOption.dataset.cards) {
-                const cards = JSON.parse(selectedOption.dataset.cards);
-                this.populateCards(cards);
-            } else {
-                this.populateCards([]);
-            }
-        });
+        const ipSelect = document.getElementById('ip');
+        if (ipSelect) {
+            ipSelect.addEventListener('change', (e) => {
+                const selectedOption = e.target.options[e.target.selectedIndex];
+                if (selectedOption.dataset.cards) {
+                    try {
+                        const cards = JSON.parse(selectedOption.dataset.cards);
+                        this.populateCards(cards);
+                    } catch (error) {
+                        console.error('Error parsing cards:', error);
+                        this.populateCards([]);
+                    }
+                } else {
+                    this.populateCards([]);
+                }
+            });
+        }
 
         // Кнопка отмены
-        document.getElementById('cancelBtn').addEventListener('click', () => {
-            if (confirm('Отменить создание задачи? Все введенные данные будут потеряны.')) {
-                window.location.href = 'dashboard.html';
-            }
-        });
+        const cancelBtn = document.getElementById('cancelBtn');
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', () => {
+                if (confirm('Отменить создание задачи? Все введенные данные будут потеряны.')) {
+                    window.location.href = 'dashboard.html';
+                }
+            });
+        }
 
         // Отправка формы
-        document.getElementById('createTaskForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            this.handleSubmit();
-        });
+        const form = document.getElementById('createTaskForm');
+        if (form) {
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                this.handleSubmit();
+            });
+        }
 
         // Выход из системы
-        document.getElementById('logoutBtn').addEventListener('click', () => {
-            if (confirm('Выйти из системы?')) {
-                logout();
-            }
-        });
+        const logoutBtn = document.getElementById('logoutBtn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', () => {
+                if (confirm('Выйти из системы?')) {
+                    logout();
+                }
+            });
+        }
     }
 
     async onRegionChange(region) {
@@ -209,8 +249,10 @@ class CreateTaskManager {
     resetDependentFields(fieldNames) {
         fieldNames.forEach(fieldName => {
             const field = document.getElementById(fieldName);
-            field.innerHTML = `<option value="">Сначала выберите ${this.getFieldLabel(fieldName)}</option>`;
-            field.disabled = true;
+            if (field) {
+                field.innerHTML = `<option value="">Сначала выберите ${this.getFieldLabel(fieldName)}</option>`;
+                field.disabled = true;
+            }
         });
     }
 
@@ -233,6 +275,11 @@ class CreateTaskManager {
         try {
             this.setLoadingState(true, 'submit');
             
+            const user = getCurrentUser();
+            if (!user) {
+                throw new Error('Пользователь не авторизован');
+            }
+
             const taskData = {
                 region: formData.region,
                 ip: formData.ip,
@@ -241,20 +288,26 @@ class CreateTaskManager {
                 expenseItem: formData.expenseItem,
                 plannedAmount: parseFloat(formData.plannedAmount),
                 plannedDate: formData.plannedDate,
-                comment: formData.comment,
+                comment: formData.comment || '',
                 status: 'pending',
-                createdBy: JSON.parse(localStorage.getItem('user'))._id
+                createdBy: user._id
             };
 
-            await API.createTask(taskData);
-            this.showSuccess('Задача успешно создана! Перенаправление на дашборд...');
+            const result = await API.createTask(taskData);
             
-            setTimeout(() => {
-                window.location.href = 'dashboard.html';
-            }, 2000);
+            if (result && result._id) {
+                this.showSuccess('Задача успешно создана! Перенаправление на дашборд...');
+                
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 2000);
+            } else {
+                throw new Error('Не удалось создать задачу');
+            }
 
         } catch (error) {
-            this.showError('Ошибка создания задачи: ' + error.message);
+            console.error('Create task error:', error);
+            this.showError('Ошибка создания задачи: ' + (error.message || 'Неизвестная ошибка'));
         } finally {
             this.setLoadingState(false, 'submit');
         }
@@ -262,15 +315,17 @@ class CreateTaskManager {
 
     getFormData() {
         const form = document.getElementById('createTaskForm');
+        if (!form) return {};
+        
         return {
-            region: form.region.value,
-            ip: form.ip.value,
-            card: form.card.value,
-            manager: form.manager.value,
-            expenseItem: form.expenseItem.value,
-            plannedAmount: form.plannedAmount.value,
-            plannedDate: form.plannedDate.value,
-            comment: form.comment.value
+            region: form.region?.value || '',
+            ip: form.ip?.value || '',
+            card: form.card?.value || '',
+            manager: form.manager?.value || '',
+            expenseItem: form.expenseItem?.value || '',
+            plannedAmount: form.plannedAmount?.value || '',
+            plannedDate: form.plannedDate?.value || '',
+            comment: form.comment?.value || ''
         };
     }
 
@@ -306,6 +361,7 @@ class CreateTaskManager {
 
     setLoadingState(isLoading, type = 'general') {
         const submitBtn = document.querySelector('button[type="submit"]');
+        if (!submitBtn) return;
         
         if (type === 'submit') {
             if (isLoading) {
@@ -329,20 +385,27 @@ class CreateTaskManager {
     }
 
     showMessage(message, type) {
+        // Удаляем существующие сообщения
         const existingMessages = document.querySelectorAll('.success-message, .error-message');
-        existingMessages.forEach(msg => msg.remove());
+        existingMessages.forEach(msg => {
+            if (msg.parentNode) {
+                msg.parentNode.removeChild(msg);
+            }
+        });
 
         const messageDiv = document.createElement('div');
         messageDiv.className = type === 'success' ? 'success-message' : 'error-message';
         messageDiv.innerHTML = message;
 
         const form = document.getElementById('createTaskForm');
-        form.insertBefore(messageDiv, form.firstChild);
+        if (form && form.parentNode) {
+            form.parentNode.insertBefore(messageDiv, form);
+        }
 
         if (type === 'success') {
             setTimeout(() => {
                 if (messageDiv.parentNode) {
-                    messageDiv.remove();
+                    messageDiv.parentNode.removeChild(messageDiv);
                 }
             }, 5000);
         }
@@ -351,5 +414,8 @@ class CreateTaskManager {
 
 // Инициализация при загрузке страницы
 document.addEventListener('DOMContentLoaded', () => {
-    new CreateTaskManager();
+    // Проверяем, что мы на странице создания задачи
+    if (document.getElementById('createTaskForm')) {
+        new CreateTaskManager();
+    }
 });
