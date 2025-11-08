@@ -1,115 +1,108 @@
- Базовые сбросы стилей 
- {
-    margin 0;
-    padding 0;
-    box-sizing border-box;
-}
+import { API_CONFIG } from './config/constants.js';
+import { ApiUtils } from './utils.js';
 
-body {
-    font-family 'Segoe UI', system-ui, -apple-system, sans-serif;
-    line-height 1.6;
-    color #1e293b;
-    background #f8fafc;
-}
-
- Общие стили контейнера 
-.container {
-    max-width 1200px;
-    margin 0 auto;
-    padding 0 20px;
-}
-
- Кнопки 
-.btn {
-    display inline-flex;
-    align-items center;
-    gap 8px;
-    padding 12px 24px;
-    border none;
-    border-radius 8px;
-    font-weight 600;
-    text-decoration none;
-    cursor pointer;
-    transition all 0.3s ease;
-    font-family inherit;
-    font-size 14px;
-}
-
-.btn-primary {
-    background linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color white;
-}
-
-.btn-primaryhover {
-    transform translateY(-2px);
-    box-shadow 0 8px 25px rgba(102, 126, 234, 0.35);
-}
-
-.btn-secondary {
-    background #f1f5f9;
-    color #475569;
-    border 1px solid #e2e8f0;
-}
-
-.btn-secondaryhover {
-    background #e2e8f0;
-}
-
- Карточки 
-.card {
-    background white;
-    border-radius 12px;
-    box-shadow 0 4px 6px rgba(0, 0, 0, 0.05);
-    border 1px solid #f1f5f9;
-    transition all 0.3s ease;
-}
-
-.cardhover {
-    transform translateY(-2px);
-    box-shadow 0 8px 25px rgba(0, 0, 0, 0.1);
-}
-
- Утилиты 
-.text-center { text-align center; }
-.text-left { text-align left; }
-.text-right { text-align right; }
-
-.mt-1 { margin-top 8px; }
-.mt-2 { margin-top 16px; }
-.mt-3 { margin-top 24px; }
-.mt-4 { margin-top 32px; }
-
-.mb-1 { margin-bottom 8px; }
-.mb-2 { margin-bottom 16px; }
-.mb-3 { margin-bottom 24px; }
-.mb-4 { margin-bottom 32px; }
-
-.hidden { display none; }
-.visible { display block; }
-
- Анимации 
-@keyframes spin {
-    0% { transform rotate(0deg); }
-    100% { transform rotate(360deg); }
-}
-
-@keyframes fadeIn {
-    from { opacity 0; transform translateY(10px); }
-    to { opacity 1; transform translateY(0); }
-}
-
-.fade-in {
-    animation fadeIn 0.5s ease;
-}
-
- Адаптивность 
-@media (max-width 768px) {
-    .container {
-        padding 0 16px;
+export class ApiService {
+    constructor() {
+        this.token = localStorage.getItem('auth_token');
     }
-    
-    .btn {
-        padding 10px 20px;
-        font-size 13px;
+
+    setToken(token) {
+        this.token = token;
+        if (token) {
+            localStorage.setItem('auth_token', token);
+        } else {
+            localStorage.removeItem('auth_token');
+        }
+    }
+
+    getAuthHeaders() {
+        const headers = {
+            'Content-Type': 'application/json',
+        };
+
+        if (this.token) {
+            headers['Authorization'] = `Bearer ${this.token}`;
+        }
+
+        return headers;
+    }
+
+    async login(email, password) {
+        try {
+            const response = await ApiUtils.makeApiRequest(API_CONFIG.ENDPOINTS.LOGIN, {
+                method: 'POST',
+                headers: this.getAuthHeaders(),
+                body: JSON.stringify({ email, password }),
+            });
+
+            if (response.token) {
+                this.setToken(response.token);
+            }
+
+            return response;
+        } catch (error) {
+            console.error('Login error:', error);
+            throw new Error('Ошибка входа. Проверьте email и пароль.');
+        }
+    }
+
+    async getCards() {
+        try {
+            const response = await ApiUtils.makeApiRequest(API_CONFIG.ENDPOINTS.CARDS, {
+                method: 'GET',
+                headers: this.getAuthHeaders(),
+            });
+            return response.cards || [];
+        } catch (error) {
+            console.error('Get cards error:', error);
+            throw new Error('Ошибка загрузки карт');
+        }
+    }
+
+    async getIPs() {
+        try {
+            const response = await ApiUtils.makeApiRequest(API_CONFIG.ENDPOINTS.IPS, {
+                method: 'GET',
+                headers: this.getAuthHeaders(),
+            });
+            return response.ips || [];
+        } catch (error) {
+            console.error('Get IPs error:', error);
+            throw new Error('Ошибка загрузки ИП');
+        }
+    }
+
+    async getTasks() {
+        try {
+            const response = await ApiUtils.makeApiRequest(API_CONFIG.ENDPOINTS.TASKS, {
+                method: 'GET',
+                headers: this.getAuthHeaders(),
+            });
+            return response.tasks || [];
+        } catch (error) {
+            console.error('Get tasks error:', error);
+            throw new Error('Ошибка загрузки задач');
+        }
+    }
+
+    async checkData() {
+        try {
+            const response = await ApiUtils.makeApiRequest(API_CONFIG.ENDPOINTS.CHECK_DATA, {
+                method: 'GET',
+                headers: this.getAuthHeaders(),
+            });
+            return response;
+        } catch (error) {
+            console.error('Check data error:', error);
+            throw new Error('Ошибка проверки данных');
+        }
+    }
+
+    async logout() {
+        this.setToken(null);
+        localStorage.removeItem('user_data');
     }
 }
+
+// Создаем глобальный экземпляр API service
+export const apiService = new ApiService();
