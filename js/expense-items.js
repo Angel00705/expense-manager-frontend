@@ -22,8 +22,9 @@ function checkAuth() {
 async function loadExpenseItems() {
     try {
         showLoading('expenseItemsContainer');
+        hideError('errorExpenseItems');
         
-        const expenseItems = await api.get('/expense-items');
+        const expenseItems = await api.getExpenseItems();
         
         if (expenseItems.length === 0) {
             showEmptyState();
@@ -86,7 +87,13 @@ function showAddExpenseItemForm() {
 // Редактирование статьи расхода
 async function editExpenseItem(id) {
     try {
-        const expenseItem = await api.get(`/expense-items/${id}`);
+        // Получаем все статьи и находим нужную
+        const expenseItems = await api.getExpenseItems();
+        const expenseItem = expenseItems.find(item => item._id === id);
+        
+        if (!expenseItem) {
+            throw new Error('Статья расхода не найдена');
+        }
         
         currentExpenseItemId = id;
         document.getElementById('modalTitle').textContent = 'Редактировать статью расхода';
@@ -121,18 +128,19 @@ async function handleExpenseItemSubmit(event) {
     
     try {
         const user = JSON.parse(localStorage.getItem('user'));
-        formData.createdBy = user._id;
+        formData.createdBy = user._id || user.id;
         
         if (currentExpenseItemId) {
             // Редактирование
-            await api.put(`/expense-items/${currentExpenseItemId}`, formData);
+            await api.updateExpenseItem(currentExpenseItemId, formData);
         } else {
             // Создание
-            await api.post('/expense-items', formData);
+            await api.createExpenseItem(formData);
         }
         
         closeExpenseItemModal();
-        loadExpenseItems(); // Перезагружаем список
+        await loadExpenseItems(); // Перезагружаем список
+        alert('Статья расхода успешно сохранена!');
         
     } catch (error) {
         alert('Ошибка сохранения: ' + error.message);
@@ -146,8 +154,9 @@ async function deleteExpenseItem(id) {
     }
     
     try {
-        await api.delete(`/expense-items/${id}`);
-        loadExpenseItems(); // Перезагружаем список
+        await api.deleteExpenseItem(id);
+        await loadExpenseItems(); // Перезагружаем список
+        alert('Статья расхода успешно удалена!');
     } catch (error) {
         alert('Ошибка удаления: ' + error.message);
     }
@@ -161,20 +170,39 @@ function closeExpenseItemModal() {
 
 // Вспомогательные функции
 function showLoading(containerId) {
-    document.getElementById(containerId).innerHTML = '<div class="loading">Загрузка...</div>';
+    const container = document.getElementById(containerId);
+    if (container) {
+        container.innerHTML = '<div class="loading">Загрузка...</div>';
+    }
 }
 
 function hideLoading(containerId) {
-    const loading = document.querySelector(`#${containerId} .loading`);
-    if (loading) loading.remove();
+    const container = document.getElementById(containerId);
+    if (container) {
+        const loading = container.querySelector('.loading');
+        if (loading) {
+            loading.remove();
+        }
+    }
 }
 
 function showError(containerId, message) {
-    document.getElementById(containerId).style.display = 'block';
-    document.getElementById(containerId).textContent = message;
+    const container = document.getElementById(containerId);
+    if (container) {
+        container.style.display = 'block';
+        container.textContent = message;
+    }
+}
+
+function hideError(containerId) {
+    const container = document.getElementById(containerId);
+    if (container) {
+        container.style.display = 'none';
+    }
 }
 
 function escapeHtml(text) {
+    if (!text) return '';
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
