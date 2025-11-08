@@ -73,6 +73,7 @@
     width: 100%;
     height: 100%;
     background-color: rgba(0,0,0,0.5);
+    display: none;
 }
 
 .modal-content {
@@ -132,6 +133,14 @@
     border-radius: 4px;
     font-size: 14px;
     box-sizing: border-box;
+    font-family: inherit;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
 }
 
 .form-group textarea {
@@ -156,6 +165,7 @@
     margin-bottom: 10px;
     color: #95a5a6;
 }
+
 /* Кнопки */
 .btn {
     padding: 10px 16px;
@@ -168,6 +178,7 @@
     display: inline-block;
     text-align: center;
     transition: all 0.2s;
+    font-family: inherit;
 }
 
 .btn-primary {
@@ -223,6 +234,7 @@
     border-radius: 4px;
     margin-bottom: 15px;
     border: 1px solid #f5c6cb;
+    display: none;
 }
 
 /* Навигация */
@@ -234,10 +246,16 @@
     color: #3498db;
     text-decoration: none;
     font-weight: 500;
+    padding: 8px 16px;
+    border: 1px solid #3498db;
+    border-radius: 4px;
+    transition: all 0.2s;
 }
 
 .nav-link:hover {
-    text-decoration: underline;
+    background-color: #3498db;
+    color: white;
+    text-decoration: none;
 }
 
 /* Заголовок */
@@ -259,6 +277,8 @@
     display: flex;
     align-items: center;
     gap: 15px;
+    font-weight: 500;
+    color: #2c3e50;
 }
 
 /* Основной контейнер */
@@ -271,6 +291,49 @@
 .main-content {
     background: white;
     border-radius: 8px;
-    padding: 20px;
+    padding: 30px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+    
+    .main-content {
+        padding: 20px;
+    }
+    
+    .header {
+        flex-direction: column;
+        gap: 15px;
+        align-items: flex-start;
+    }
+    
+    .user-info {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .section-header {
+        flex-direction: column;
+        gap: 15px;
+        align-items: flex-start;
+    }
+    
+    .expense-item-header {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .expense-item-actions {
+        width: 100%;
+        justify-content: flex-start;
+    }
+    
+    .modal-content {
+        margin: 10% auto;
+        width: 95%;
+    }
 }
