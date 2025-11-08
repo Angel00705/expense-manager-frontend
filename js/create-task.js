@@ -1,3 +1,5 @@
+// create-task.js - Функционал создания задач
+
 class CreateTaskManager {
     constructor() {
         this.regions = [];
@@ -10,17 +12,27 @@ class CreateTaskManager {
     }
 
     async init() {
-        await this.checkAuth();
+        // Проверяем авторизацию и роль бухгалтера
+        if (!this.checkAccess()) return;
+        
         await this.loadInitialData();
         this.setupEventListeners();
     }
 
-    async checkAuth() {
+    checkAccess() {
         const user = JSON.parse(localStorage.getItem('user'));
-        if (!user || user.role !== 'accountant') {
+        if (!user) {
             window.location.href = 'login.html';
-            return;
+            return false;
         }
+        
+        if (user.role !== 'accountant') {
+            alert('Доступ запрещен. Только бухгалтеры могут создавать задачи.');
+            window.location.href = 'dashboard.html';
+            return false;
+        }
+        
+        return true;
     }
 
     async loadInitialData() {
@@ -102,7 +114,7 @@ class CreateTaskManager {
             const option = document.createElement('option');
             option.value = ip._id;
             option.textContent = `${ip.name} (${ip.inn})`;
-            option.dataset.cards = JSON.stringify(ip.cards);
+            option.dataset.cards = JSON.stringify(ip.cards || []);
             ipSelect.appendChild(option);
         });
         
@@ -113,10 +125,20 @@ class CreateTaskManager {
         const cardSelect = document.getElementById('card');
         cardSelect.innerHTML = '<option value="">Выберите карту</option>';
         
+        if (!cardsData || cardsData.length === 0) {
+            const option = document.createElement('option');
+            option.value = '';
+            option.textContent = 'Нет доступных карт';
+            cardSelect.appendChild(option);
+            cardSelect.disabled = true;
+            return;
+        }
+        
         cardsData.forEach(card => {
             const option = document.createElement('option');
             option.value = card._id;
-            option.textContent = `${card.cardNumber} - ${card.bankName} (${card.type === 'corporate' ? 'Корпоративная' : 'Персональная'})`;
+            const cardType = card.type === 'corporate' ? 'Корпоративная' : 'Персональная';
+            option.textContent = `${card.cardNumber} - ${card.bankName} (${cardType})`;
             option.dataset.balance = card.balance;
             option.dataset.limit = card.limit;
             cardSelect.appendChild(option);
@@ -138,12 +160,16 @@ class CreateTaskManager {
             if (selectedOption.dataset.cards) {
                 const cards = JSON.parse(selectedOption.dataset.cards);
                 this.populateCards(cards);
+            } else {
+                this.populateCards([]);
             }
         });
 
-        // Изменение карты
-        document.getElementById('card').addEventListener('change', (e) => {
-            this.updateCardInfo(e.target);
+        // Кнопка отмены
+        document.getElementById('cancelBtn').addEventListener('click', () => {
+            if (confirm('Отменить создание задачи? Все введенные данные будут потеряны.')) {
+                window.location.href = 'dashboard.html';
+            }
         });
 
         // Отправка формы
@@ -152,9 +178,11 @@ class CreateTaskManager {
             this.handleSubmit();
         });
 
-        // Кнопка отмены
-        document.getElementById('cancelBtn').addEventListener('click', () => {
-            window.location.href = 'dashboard.html';
+        // Выход из системы
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            if (confirm('Выйти из системы?')) {
+                logout();
+            }
         });
     }
 
@@ -164,11 +192,9 @@ class CreateTaskManager {
             return;
         }
 
-        // Показываем индикатор загрузки
-        this.setLoadingState(true);
+        this.setLoadingState(true, 'region');
 
         try {
-            // Загружаем данные параллельно
             await Promise.all([
                 this.loadManagersForRegion(region),
                 this.loadIPsForRegion(region)
@@ -176,7 +202,7 @@ class CreateTaskManager {
         } catch (error) {
             this.showError('Ошибка загрузки данных региона: ' + error.message);
         } finally {
-            this.setLoadingState(false);
+            this.setLoadingState(false, 'region');
         }
     }
 
@@ -195,14 +221,6 @@ class CreateTaskManager {
             'manager': 'регион'
         };
         return labels[fieldName] || '';
-    }
-
-    updateCardInfo(cardSelect) {
-        // Можно добавить отображение информации о карте
-        const selectedOption = cardSelect.options[cardSelect.selectedIndex];
-        if (selectedOption.dataset.balance) {
-            console.log('Баланс карты:', selectedOption.dataset.balance);
-        }
     }
 
     async handleSubmit() {
@@ -229,13 +247,8 @@ class CreateTaskManager {
             };
 
             await API.createTask(taskData);
-            this.showSuccess('Задача успешно создана!');
+            this.showSuccess('Задача успешно создана! Перенаправление на дашборд...');
             
-            // Очищаем форму
-            document.getElementById('createTaskForm').reset();
-            this.resetDependentFields(['ip', 'card', 'manager']);
-            
-            // Перенаправляем через 2 секунды
             setTimeout(() => {
                 window.location.href = 'dashboard.html';
             }, 2000);
@@ -262,42 +275,29 @@ class CreateTaskManager {
     }
 
     validateForm(data) {
-        if (!data.region) {
-            this.showError('Выберите регион');
-            return false;
-        }
-        if (!data.ip) {
-            this.showError('Выберите ИП');
-            return false;
-        }
-        if (!data.card) {
-            this.showError('Выберите карту');
-            return false;
-        }
-        if (!data.manager) {
-            this.showError('Выберите управляющего');
-            return false;
-        }
-        if (!data.expenseItem) {
-            this.showError('Выберите статью расхода');
-            return false;
-        }
-        if (!data.plannedAmount || data.plannedAmount <= 0) {
-            this.showError('Введите корректную сумму');
-            return false;
-        }
-        if (!data.plannedDate) {
-            this.showError('Выберите дату выполнения');
-            return false;
+        const errors = [];
+        
+        if (!data.region) errors.push('Выберите регион');
+        if (!data.ip) errors.push('Выберите ИП');
+        if (!data.card) errors.push('Выберите карту');
+        if (!data.manager) errors.push('Выберите управляющего');
+        if (!data.expenseItem) errors.push('Выберите статью расхода');
+        if (!data.plannedAmount || data.plannedAmount <= 0) errors.push('Введите корректную сумму');
+        if (!data.plannedDate) errors.push('Выберите дату выполнения');
+
+        // Проверка даты
+        if (data.plannedDate) {
+            const selectedDate = new Date(data.plannedDate);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            if (selectedDate < today) {
+                errors.push('Дата выполнения не может быть в прошлом');
+            }
         }
 
-        // Проверка даты (не может быть в прошлом)
-        const selectedDate = new Date(data.plannedDate);
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        
-        if (selectedDate < today) {
-            this.showError('Дата выполнения не может быть в прошлом');
+        if (errors.length > 0) {
+            this.showError('Исправьте ошибки:<br>' + errors.join('<br>'));
             return false;
         }
 
@@ -329,21 +329,21 @@ class CreateTaskManager {
     }
 
     showMessage(message, type) {
-        // Удаляем существующие сообщения
         const existingMessages = document.querySelectorAll('.success-message, .error-message');
         existingMessages.forEach(msg => msg.remove());
 
         const messageDiv = document.createElement('div');
         messageDiv.className = type === 'success' ? 'success-message' : 'error-message';
-        messageDiv.textContent = message;
+        messageDiv.innerHTML = message;
 
         const form = document.getElementById('createTaskForm');
         form.insertBefore(messageDiv, form.firstChild);
 
-        // Автоматически скрываем через 5 секунд
         if (type === 'success') {
             setTimeout(() => {
-                messageDiv.remove();
+                if (messageDiv.parentNode) {
+                    messageDiv.remove();
+                }
             }, 5000);
         }
     }
