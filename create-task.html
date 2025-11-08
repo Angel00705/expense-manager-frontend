@@ -5,212 +5,160 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Создать задачу - Expense Manager</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: Arial, sans-serif; background: #f0f2f5; }
-        
-        .header { 
-            background: white; 
-            padding: 1rem; 
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .logo { font-size: 1.5rem; font-weight: bold; color: #1890ff; }
-        
-        .nav a { 
-            margin: 0 10px; 
-            text-decoration: none; 
-            color: #666;
-            padding: 5px 10px;
-            border-radius: 4px;
-        }
-        
-        .nav a.active { background: #1890ff; color: white; }
-        
-        .btn { 
-            padding: 8px 16px; 
-            border: none; 
-            border-radius: 4px; 
-            cursor: pointer;
-        }
-        
-        .btn-outline { 
-            background: transparent; 
-            border: 1px solid #ff4d4f; 
-            color: #ff4d4f;
-        }
-        
-        .btn-primary { background: #1890ff; color: white; }
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 600px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        select, input, textarea { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+        .btn { padding: 10px 20px; margin: 5px; border: none; border-radius: 4px; cursor: pointer; }
+        .btn-primary { background: #007bff; color: white; }
         .btn-secondary { background: #6c757d; color: white; }
-        
-        .main { max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
-        
-        .form-container {
-            background: white;
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        
-        .form-group { margin-bottom: 1rem; }
-        label { display: block; margin-bottom: 0.5rem; font-weight: bold; }
-        
-        select, input, textarea {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-        
-        .form-actions {
-            display: flex;
-            gap: 1rem;
-            justify-content: flex-end;
-            margin-top: 2rem;
-        }
-        
-        .message {
-            padding: 1rem;
-            margin-bottom: 1rem;
-            border-radius: 4px;
-        }
-        
-        .error { background: #fff2f0; border: 1px solid #ffccc7; color: #a8071a; }
-        .success { background: #f6ffed; border: 1px solid #b7eb8f; color: #389e0d; }
+        .message { padding: 10px; margin: 10px 0; border-radius: 4px; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .debug { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; font-family: monospace; font-size: 12px; }
     </style>
 </head>
 <body>
-    <div class="header">
-        <div class="logo">💰 Expense Manager</div>
-        <nav class="nav">
-            <a href="dashboard.html">Дашборд</a>
-            <a href="expense-items.html">Статьи расходов</a>
-            <a href="#" class="active">Создать задачу</a>
-            <button class="btn btn-outline" onclick="logout()">Выйти</button>
-        </nav>
+    <div class="container">
+        <h1>💰 Создать задачу</h1>
+        
+        <div id="debugInfo"></div>
+        <div id="message"></div>
+        
+        <form id="taskForm">
+            <div class="form-group">
+                <label>Регион *</label>
+                <select id="region" required>
+                    <option value="">Выберите регион</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Статья расхода *</label>
+                <select id="expenseItem" required>
+                    <option value="">Выберите статью расхода</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Сумма *</label>
+                <input type="number" id="amount" required min="1" step="0.01" placeholder="0.00">
+            </div>
+            
+            <div class="form-group">
+                <label>Дата выполнения *</label>
+                <input type="date" id="date" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Комментарий</label>
+                <textarea id="comment" rows="3" placeholder="Описание задачи..."></textarea>
+            </div>
+            
+            <div>
+                <button type="button" class="btn btn-secondary" onclick="goBack()">Отмена</button>
+                <button type="submit" class="btn btn-primary">Создать задачу</button>
+                <button type="button" class="btn btn-secondary" onclick="testAPI()">Тест API</button>
+            </div>
+        </form>
     </div>
 
-    <main class="main">
-        <div class="form-container">
-            <h2 style="margin-bottom: 1rem;">Создать новую задачу</h2>
-            <p style="margin-bottom: 2rem; color: #666;">Заполните информацию о задаче для управляющего</p>
-            
-            <div id="message"></div>
-            
-            <form id="taskForm">
-                <div class="form-group">
-                    <label>Регион *</label>
-                    <select id="region" required>
-                        <option value="">Выберите регион</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label>Статья расхода *</label>
-                    <select id="expenseItem" required>
-                        <option value="">Выберите статью расхода</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label>Плановая сумма *</label>
-                    <input type="number" id="amount" required min="1" step="0.01" placeholder="0.00">
-                </div>
-                
-                <div class="form-group">
-                    <label>Дата выполнения *</label>
-                    <input type="date" id="date" required>
-                </div>
-                
-                <div class="form-group">
-                    <label>Комментарий</label>
-                    <textarea id="comment" rows="3" placeholder="Опишите задачу..."></textarea>
-                </div>
-                
-                <div class="form-actions">
-                    <button type="button" class="btn btn-secondary" onclick="goBack()">Отмена</button>
-                    <button type="submit" class="btn btn-primary">Создать задачу</button>
-                </div>
-            </form>
-        </div>
-    </main>
-
+    <script src="js/api.js"></script>
     <script>
-        // Simple utility functions
-        function logout() {
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            window.location.href = 'login.html';
-        }
-        
-        function goBack() {
-            window.location.href = 'dashboard.html';
-        }
-        
+        // Utility functions
         function showMessage(text, type) {
             const messageDiv = document.getElementById('message');
             messageDiv.innerHTML = `<div class="message ${type}">${text}</div>`;
             setTimeout(() => messageDiv.innerHTML = '', 5000);
         }
-        
-        // Check auth on page load
-        document.addEventListener('DOMContentLoaded', function() {
+
+        function showDebugInfo(info) {
+            const debugDiv = document.getElementById('debugInfo');
+            debugDiv.innerHTML = `<div class="message debug">${info}</div>`;
+        }
+
+        function goBack() {
+            window.location.href = 'dashboard.html';
+        }
+
+        async function testAPI() {
+            showDebugInfo('🧪 Тестируем API...');
+            
+            try {
+                // Test server connection
+                const health = await API.checkHealth();
+                showDebugInfo(`✅ Сервер доступен: ${health}`);
+                
+                // Test regions
+                const regions = await API.getRegions();
+                showDebugInfo(`✅ Регионы загружены: ${regions.length} шт`);
+                
+                // Test expense items
+                const items = await API.getExpenseItems();
+                showDebugInfo(`✅ Статьи расходов: ${items.length} шт`);
+                
+                showMessage('✅ Все тесты пройдены успешно!', 'success');
+            } catch (error) {
+                showDebugInfo(`❌ Ошибка теста: ${error.message}`);
+                showMessage(`❌ Ошибка API: ${error.message}`, 'error');
+            }
+        }
+
+        // Main initialization
+        document.addEventListener('DOMContentLoaded', async function() {
+            console.log('🚀 Create Task page initialized');
+            
+            // Check authentication
             const user = JSON.parse(localStorage.getItem('user'));
-            if (!user) {
-                window.location.href = 'login.html';
+            const token = localStorage.getItem('token');
+            
+            if (!user || !token) {
+                showMessage('❌ Вы не авторизованы', 'error');
+                setTimeout(() => window.location.href = 'login.html', 2000);
                 return;
             }
-            
+
             if (user.role !== 'accountant') {
-                showMessage('Только бухгалтеры могут создавать задачи', 'error');
+                showMessage('❌ Только бухгалтеры могут создавать задачи', 'error');
                 setTimeout(() => window.location.href = 'dashboard.html', 2000);
                 return;
             }
-            
+
+            showDebugInfo(`✅ Авторизован как: ${user.email} (${user.role})`);
+
             // Load initial data
-            loadRegions();
-            loadExpenseItems();
-            
-            // Set minimum date to today
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('date').min = today;
-        });
-        
-        async function loadRegions() {
             try {
                 const regions = await API.getRegions();
-                const select = document.getElementById('region');
+                const regionSelect = document.getElementById('region');
                 
                 regions.forEach(region => {
                     const option = document.createElement('option');
                     option.value = region;
                     option.textContent = region;
-                    select.appendChild(option);
+                    regionSelect.appendChild(option);
                 });
-            } catch (error) {
-                showMessage('Ошибка загрузки регионов: ' + error.message, 'error');
-            }
-        }
-        
-        async function loadExpenseItems() {
-            try {
+                
                 const items = await API.getExpenseItems();
-                const select = document.getElementById('expenseItem');
+                const itemSelect = document.getElementById('expenseItem');
                 
                 items.forEach(item => {
                     const option = document.createElement('option');
                     option.value = item._id;
-                    option.textContent = item.name + ' (' + item.category + ')';
-                    select.appendChild(option);
+                    option.textContent = `${item.name} (${item.category})`;
+                    itemSelect.appendChild(option);
                 });
+                
+                // Set minimum date to today
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('date').min = today;
+                
+                showMessage('✅ Данные загружены успешно', 'success');
             } catch (error) {
-                showMessage('Ошибка загрузки статей расходов: ' + error.message, 'error');
+                showMessage(`❌ Ошибка загрузки данных: ${error.message}`, 'error');
             }
-        }
-        
+        });
+
         // Form submission
         document.getElementById('taskForm').addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -223,30 +171,32 @@
                 comment: document.getElementById('comment').value,
                 status: 'pending'
             };
-            
-            // Basic validation
+
+            // Validation
             if (!formData.region || !formData.expenseItem || !formData.plannedAmount || !formData.plannedDate) {
-                showMessage('Заполните все обязательные поля', 'error');
+                showMessage('❌ Заполните все обязательные поля', 'error');
                 return;
             }
-            
+
             try {
                 const user = JSON.parse(localStorage.getItem('user'));
                 formData.createdBy = user._id;
                 
+                showDebugInfo('📤 Отправляем задачу...');
                 const result = await API.createTask(formData);
-                showMessage('Задача успешно создана!', 'success');
+                
+                showMessage('✅ Задача успешно создана!', 'success');
+                showDebugInfo(`✅ ID задачи: ${result._id}`);
                 
                 setTimeout(() => {
                     window.location.href = 'dashboard.html';
                 }, 2000);
                 
             } catch (error) {
-                showMessage('Ошибка создания задачи: ' + error.message, 'error');
+                showMessage(`❌ Ошибка создания задачи: ${error.message}`, 'error');
+                showDebugInfo(`❌ Детали ошибки: ${error.message}`);
             }
         });
     </script>
-    
-    <script src="js/api.js"></script>
 </body>
 </html>
