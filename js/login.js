@@ -1,4 +1,4 @@
-import { authService } from './auth.js';
+import { TEST_USERS } from './config/constants.js';
 import { ApiUtils, DomUtils, ValidationUtils } from './utils.js';
 import { TEST_USERS } from '../config/constants.js';
 
