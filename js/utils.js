@@ -1,4 +1,4 @@
-import { API_CONFIG } from '../config/constants.js';
+import { API_CONFIG } from './config/constants.js';
 
 // Утилиты для работы с API
 export class ApiUtils {
