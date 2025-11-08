@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Создать задачу - Expense Manager</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><defs><linearGradient id='borderGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%238b5cf6'/><stop offset='50%' stop-color='%236d28d9'/><stop offset='100%' stop-color='%231e40af'/></linearGradient><linearGradient id='checkGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%23a78bfa'/><stop offset='100%' stop-color='%234f46e5'/></linearGradient><filter id='glow' x='-50%' y='-50%' width='200%' height='200%'><feGaussianBlur in='SourceGraphic' stdDeviation='1' result='blur'/><feMerge><feMergeNode in='blur'/><feMergeNode in='SourceGraphic'/></feMerge></filter></defs><circle cx='10' cy='10' r='9' fill='none' stroke='url(%23borderGrad)' stroke-width='1.5' opacity='0.9'/><path d='M6,10 L8.5,12.5 L14,7' stroke='url(%23checkGrad)' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round' filter='url(%23glow)'/></svg>">
+    <!-- Исправленный фавикон -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%238b5cf6'/%3E%3Cstop offset='100%25' stop-color='%234f46e5'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='24' height='24' fill='url(%23grad)' rx='8'/%3E%3Ctext x='12' y='16' font-family='Arial' font-size='12' font-weight='bold' fill='white' text-anchor='middle'%3E💰%3C/text%3E%3C/svg%3E">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/create-task.css">
 </head>
@@ -28,6 +29,9 @@
                     <h2>Создать новую задачу</h2>
                     <p>Заполните информацию о задаче для управляющего</p>
                 </div>
+
+                <!-- Контейнер для сообщений -->
+                <div id="messageContainer"></div>
 
                 <form id="createTaskForm" class="task-form">
                     <div class="form-section">
@@ -76,14 +80,16 @@
                             <label for="plannedAmount">Плановая сумма *</label>
                             <div class="input-with-currency">
                                 <input type="number" id="plannedAmount" name="plannedAmount" 
-                                       required min="1" step="0.01" class="form-input">
+                                       required min="1" step="0.01" class="form-input"
+                                       placeholder="0.00">
                                 <span class="currency">₽</span>
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label for="plannedDate">Плановая дата выполнения *</label>
-                            <input type="date" id="plannedDate" name="plannedDate" required class="form-input">
+                            <input type="date" id="plannedDate" name="plannedDate" required 
+                                   class="form-input" min="">
                         </div>
 
                         <div class="form-group">
@@ -95,7 +101,10 @@
 
                     <div class="form-actions">
                         <button type="button" id="cancelBtn" class="btn btn-secondary">Отмена</button>
-                        <button type="submit" class="btn btn-primary">Создать задачу</button>
+                        <button type="submit" id="submitBtn" class="btn btn-primary">
+                            <span class="btn-text">Создать задачу</span>
+                            <span class="btn-loading" style="display: none;">Создание...</span>
+                        </button>
                     </div>
                 </form>
             </div>
