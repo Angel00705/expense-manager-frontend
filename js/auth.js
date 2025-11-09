@@ -13,6 +13,11 @@ class Auth {
     static isLoggedIn() {
         return !!localStorage.getItem('token');
     }
+    
+    static getCurrentUser() {
+        const userStr = localStorage.getItem('user');
+        return userStr ? JSON.parse(userStr) : null;
+    }
 }
 
-window.Auth = Auth;
+window.Auth = Auth;  // ← ВНИМАНИЕ: точка с запятой, а не двоеточие
