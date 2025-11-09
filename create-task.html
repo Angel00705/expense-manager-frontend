@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Создание задачи - Expense Manager</title>
+    
+    <!-- ВСТРАИВАЕМ СТИЛИ НАПРЯМУЮ, чтобы избежать проблем с загрузкой -->
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { 
+            max-width: 800px; 
+            margin: 0 auto; 
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        .header { 
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+        .back-btn { 
+            background: none; 
+            border: none; 
+            color: white; 
+            font-size: 16px; 
+            cursor: pointer;
+            float: left;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.1); }
+        .form-container { padding: 30px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; color: #2c3e50; }
+        select, input, textarea { 
+            width: 100%; 
+            padding: 12px; 
+            border: 2px solid #ddd; 
+            border-radius: 8px; 
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        select:focus, input:focus, textarea:focus { 
+            border-color: #3498db; 
+            outline: none;
+        }
+        .chain-step { 
+            background: #f8f9fa; 
+            padding: 15px; 
+            border-radius: 8px; 
+            margin-bottom: 15px;
+            border-left: 4px solid #3498db;
+        }
+        .chain-step h3 { color: #2c3e50; margin-bottom: 10px; }
+        .btn { 
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white; 
+            border: none; 
+            padding: 15px 30px; 
+            border-radius: 8px; 
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            transition: transform 0.2s;
+        }
+        .btn:hover { transform: translateY(-2px); }
+        .btn:active { transform: translateY(0); }
+        .loading { opacity: 0.6; pointer-events: none; }
+        .error { color: #e74c3c; margin-top: 5px; font-size: 14px; }
+        .success { color: #27ae60; margin-top: 5px; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <button class="back-btn" onclick="goBack()">← Назад</button>
+            <h1>Создание новой задачи</h1>
+            <p>Заполните цепочку данных для постановки задачи</p>
+        </div>
+
+        <div class="form-container">
+            <!-- Цепочка выбора: Регион → ИП → Карта -->
+            <div class="chain-step">
+                <h3>🎯 1. Выберите регион</h3>
+                <div class="form-group">
+                    <label for="regionSelect">Регион выполнения:</label>
+                    <select id="regionSelect" onchange="onRegionChange()">
+                        <option value="">-- Выберите регион --</option>
+                    </select>
+                    <div id="regionError" class="error"></div>
+                </div>
+            </div>
+
+            <div class="chain-step">
+                <h3>🏢 2. Выберите ИП</h3>
+                <div class="form-group">
+                    <label for="ipSelect">Индивидуальный предприниматель:</label>
+                    <select id="ipSelect" onchange="onIPChange()" disabled>
+                        <option value="">-- Сначала выберите регион --</option>
+                    </select>
+                    <div id="ipError" class="error"></div>
+                </div>
+            </div>
+
+            <div class="chain-step">
+                <h3>💳 3. Выберите карту</h3>
+                <div class="form-group">
+                    <label for="cardSelect">Карта для оплаты:</label>
+                    <select id="cardSelect" onchange="onCardChange()" disabled>
+                        <option value="">-- Сначала выберите ИП --</option>
+                    </select>
+                    <div id="cardError" class="error"></div>
+                </div>
+            </div>
+
+            <!-- Основные данные задачи -->
+            <div class="form-group">
+                <label for="expenseItemSelect">Статья расхода:</label>
+                <select id="expenseItemSelect">
+                    <option value="">-- Выберите статью расхода --</option>
+                </select>
+                <div id="expenseError" class="error"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="plannedAmount">Плановая сумма (руб):</label>
+                <input type="number" id="plannedAmount" placeholder="Введите сумму" min="1" step="0.01">
+                <div id="amountError" class="error"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="plannedDate">Плановая дата выполнения:</label>
+                <input type="date" id="plannedDate">
+                <div id="dateError" class="error"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="comments">Комментарий бухгалтера:</label>
+                <textarea id="comments" rows="3" placeholder="Дополнительные инструкции..."></textarea>
+            </div>
+
+            <button class="btn" onclick="createTask()" id="createBtn">Создать задачу</button>
+            <div id="resultMessage"></div>
+        </div>
+    </div>
+
+    <!-- ПОДКЛЮЧАЕМ СКРИПТЫ В ПРАВИЛЬНОМ ПОРЯДКЕ -->
+    <script src="js/api.js"></script>
+    <script>
+        // Глобальные переменные для хранения данных
+        let currentIPs = [];
+        let currentExpenseItems = [];
+
+        // Инициализация при загрузке
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Create Task page initialized');
+            loadInitialData();
+        });
+
+        function goBack() {
+            window.location.href = 'dashboard.html';
+        }
+
+        async function loadInitialData() {
+            try {
+                console.log('📥 Loading initial data...');
+                
+                // Загружаем регионы
+                const regionsData = await API.getRegions();
+                const regionSelect = document.getElementById('regionSelect');
+                
+                regionSelect.innerHTML = '<option value="">-- Выберите регион --</option>';
+                regionsData.forEach(region => {
+                    const option = document.createElement('option');
+                    option.value = region;
+                    option.textContent = region;
+                    regionSelect.appendChild(option);
+                });
+
+                // Загружаем статьи расходов
+                const expenseItemsData = await API.getExpenseItems();
+                currentExpenseItems = expenseItemsData;
+                const expenseSelect = document.getElementById('expenseItemSelect');
+                
+                expenseSelect.innerHTML = '<option value="">-- Выберите статью расхода --</option>';
+                expenseItemsData.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item._id;
+                    option.textContent = `${item.name} (${item.category})`;
+                    expenseSelect.appendChild(option);
+                });
+
+                console.log('✅ Initial data loaded successfully');
+
+            } catch (error) {
+                console.error('❌ Error loading initial data:', error);
+                showError('regionError', 'Ошибка загрузки данных: ' + error.message);
+            }
+        }
+
+        async function onRegionChange() {
+            const regionSelect = document.getElementById('regionSelect');
+            const ipSelect = document.getElementById('ipSelect');
+            const cardSelect = document.getElementById('cardSelect');
+            const region = regionSelect.value;
+
+            clearErrors();
+            ipSelect.disabled = true;
+            cardSelect.disabled = true;
+            
+            ipSelect.innerHTML = '<option value="">-- Загрузка ИП... --</option>';
+            cardSelect.innerHTML = '<option value="">-- Сначала выберите ИП --</option>';
+
+            if (!region) {
+                ipSelect.innerHTML = '<option value="">-- Сначала выберите регион --</option>';
+                return;
+            }
+
+            try {
+                console.log(`🌍 Loading IPs for region: ${region}`);
+                const ipsData = await API.getIPsWithCardsByRegion(region);
+                currentIPs = ipsData;
+
+                ipSelect.innerHTML = '<option value="">-- Выберите ИП --</option>';
+                ipsData.forEach(ip => {
+                    const option = document.createElement('option');
+                    option.value = ip._id;
+                    option.textContent = `${ip.name} (ИНН: ${ip.inn})`;
+                    ipSelect.appendChild(option);
+                });
+
+                ipSelect.disabled = false;
+                console.log(`✅ Loaded ${ipsData.length} IPs`);
+
+            } catch (error) {
+                console.error('❌ Error loading IPs:', error);
+                ipSelect.innerHTML = '<option value="">-- Ошибка загрузки --</option>';
+                showError('regionError', 'Ошибка загрузки ИП: ' + error.message);
+            }
+        }
+
+        function onIPChange() {
+            const ipSelect = document.getElementById('ipSelect');
+            const cardSelect = document.getElementById('cardSelect');
+            const ipId = ipSelect.value;
+
+            clearErrors();
+            cardSelect.disabled = true;
+            cardSelect.innerHTML = '<option value="">-- Выберите карту --</option>';
+
+            if (!ipId) {
+                cardSelect.innerHTML = '<option value="">-- Сначала выберите ИП --</option>';
+                return;
+            }
+
+            const selectedIP = currentIPs.find(ip => ip._id === ipId);
+            if (selectedIP && selectedIP.cards) {
+                selectedIP.cards.forEach(card => {
+                    const option = document.createElement('option');
+                    option.value = card._id;
+                    option.textContent = `${card.cardNumber} (${card.bankName}) - ${card.balance} руб`;
+                    cardSelect.appendChild(option);
+                });
+                cardSelect.disabled = false;
+            }
+        }
+
+        function onCardChange() {
+            // Можно добавить дополнительную логику при выборе карты
+            console.log('💳 Card selected:', document.getElementById('cardSelect').value);
+        }
+
+        async function createTask() {
+            const createBtn = document.getElementById('createBtn');
+            const resultMessage = document.getElementById('resultMessage');
+            
+            clearErrors();
+            resultMessage.innerHTML = '';
+
+            // Валидация
+            if (!validateForm()) {
+                return;
+            }
+
+            try {
+                createBtn.classList.add('loading');
+                createBtn.textContent = 'Создание задачи...';
+
+                const taskData = {
+                    region: document.getElementById('regionSelect').value,
+                    ipId: document.getElementById('ipSelect').value,
+                    cardId: document.getElementById('cardSelect').value,
+                    expenseItemId: document.getElementById('expenseItemSelect').value,
+                    plannedAmount: parseFloat(document.getElementById('plannedAmount').value),
+                    plannedDate: document.getElementById('plannedDate').value,
+                    comments: document.getElementById('comments').value,
+                    status: 'assigned',
+                    assignedTo: null // Бэкенд сам назначит управляющего по региону
+                };
+
+                console.log('📤 Sending task data:', taskData);
+                const result = await API.createTask(taskData);
+                
+                resultMessage.innerHTML = `<div class="success">✅ Задача успешно создана! ID: ${result._id}</div>`;
+                createBtn.textContent = 'Задача создана!';
+                
+                // Очистка формы через 2 секунды
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 2000);
+
+            } catch (error) {
+                console.error('❌ Error creating task:', error);
+                resultMessage.innerHTML = `<div class="error">❌ Ошибка создания задачи: ${error.message}</div>`;
+                createBtn.classList.remove('loading');
+                createBtn.textContent = 'Создать задачу';
+            }
+        }
+
+        function validateForm() {
+            let isValid = true;
+
+            if (!document.getElementById('regionSelect').value) {
+                showError('regionError', 'Выберите регион');
+                isValid = false;
+            }
+            if (!document.getElementById('ipSelect').value) {
+                showError('ipError', 'Выберите ИП');
+                isValid = false;
+            }
+            if (!document.getElementById('cardSelect').value) {
+                showError('cardError', 'Выберите карту');
+                isValid = false;
+            }
+            if (!document.getElementById('expenseItemSelect').value) {
+                showError('expenseError', 'Выберите статью расхода');
+                isValid = false;
+            }
+            if (!document.getElementById('plannedAmount').value || document.getElementById('plannedAmount').value <= 0) {
+                showError('amountError', 'Введите корректную сумму');
+                isValid = false;
+            }
+            if (!document.getElementById('plannedDate').value) {
+                showError('dateError', 'Выберите дату');
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        function showError(elementId, message) {
+            document.getElementById(elementId).textContent = message;
+        }
+
+        function clearErrors() {
+            const errorElements = document.querySelectorAll('.error');
+            errorElements.forEach(el => el.textContent = '');
+        }
+    </script>
+</body>
+</html>
