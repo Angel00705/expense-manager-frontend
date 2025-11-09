@@ -1,4 +1,4 @@
-// api.js - Working API Client
+// api.js - Ultra Robust API Client
 class API {
     static BASE_URL = 'https://expense-manager-backend-kq9h.onrender.com';
 
@@ -6,50 +6,63 @@ class API {
         const url = this.BASE_URL + endpoint;
         const token = localStorage.getItem('token');
         
-        console.log('🔄 API Request:', method, endpoint, data);
+        console.log(`🔄 API Call: ${method} ${url}`, data);
 
-        const config = {
+        if (!navigator.onLine) {
+            throw new Error('Отсутствует подключение к интернету. Проверьте ваше соединение.');
+        }
+
+        const options = {
             method: method,
             headers: {
                 'Content-Type': 'application/json',
-            },
+            }
         };
 
         if (token) {
-            config.headers['Authorization'] = `Bearer ${token}`;
+            options.headers['Authorization'] = 'Bearer ' + token;
+            console.log('🔑 Token added to request');
         }
 
         if (data && (method === 'POST' || method === 'PUT')) {
-            config.body = JSON.stringify(data);
+            options.body = JSON.stringify(data);
         }
 
         try {
-            const response = await fetch(url, config);
+            const response = await fetch(url, options);
             
             if (!response.ok) {
+                const errorText = await response.text();
+                console.error(`❌ HTTP Error ${response.status}:`, errorText);
+                
                 if (response.status === 401) {
                     localStorage.removeItem('token');
                     localStorage.removeItem('user');
                     window.location.href = 'login.html';
-                    throw new Error('Сессия истекла');
+                    throw new Error('Сессия истекла. Пожалуйста, войдите снова.');
                 }
-                throw new Error(`HTTP error! status: ${response.status}`);
+                
+                throw new Error(`Ошибка сервера: ${response.status}`);
             }
 
-            return await response.json();
-            
+            const result = await response.json();
+            console.log(`✅ API Success: ${method} ${endpoint}`, result);
+            return result;
+
         } catch (error) {
-            console.error('API Error:', error);
+            console.error(`💥 API Critical Error: ${method} ${endpoint}`, error);
             throw error;
         }
     }
 
-    // Auth
     static async login(credentials) {
         return this.makeRequest('/api/auth/login', 'POST', credentials);
     }
 
-    // Tasks
+    static async validateToken() {
+        return this.makeRequest('/api/auth/validate');
+    }
+
     static async createTask(taskData) {
         return this.makeRequest('/api/tasks', 'POST', taskData);
     }
@@ -58,28 +71,35 @@ class API {
         return this.makeRequest('/api/tasks');
     }
 
-    static async getAssignedTasks(userId) {
-        return this.makeRequest(`/api/tasks/assigned-to/${userId}`);
+    static async getTasksForManager() {
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        return this.makeRequest(`/api/tasks/assigned-to/${user._id}`);
     }
 
-    // Expense Items
+    static async updateTask(taskId, updateData) {
+        return this.makeRequest(`/api/tasks/${taskId}`, 'PUT', updateData);
+    }
+
     static async getExpenseItems() {
         return this.makeRequest('/api/expense-items');
     }
 
-    // Utils
     static async getRegions() {
         return this.makeRequest('/api/utils/regions');
     }
 
     static async getManagersByRegion(region) {
-        return this.makeRequest(`/api/utils/managers/${region}`);
+        if (!region) throw new Error('Регион не указан');
+        return this.makeRequest('/api/utils/managers/' + encodeURIComponent(region));
     }
 
     static async getIPsWithCardsByRegion(region) {
-        return this.makeRequest(`/api/utils/ips-with-cards/${region}`);
+        if (!region) throw new Error('Регион не указан');
+        return this.makeRequest('/api/utils/ips-with-cards/' + encodeURIComponent(region));
     }
 }
 
-// Make global
-window.API = API;
+if (typeof window !== 'undefined') {
+    window.API = API;
+    console.log('✅ API class loaded successfully');
+}
