@@ -4,83 +4,119 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Создание задачи - Expense Manager</title>
+    <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/create-task.css">
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <button class="back-btn" onclick="goBack()">← Назад</button>
-            <h1>Создание новой задачи</h1>
-            <p>Заполните цепочку данных для постановки задачи</p>
-        </div>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>Expense Manager</h1>
+                <nav class="nav">
+                    <a href="dashboard.html" class="nav-link">Дашборд</a>
+                    <a href="expense-items.html" class="nav-link">Статьи расходов</a>
+                    <a href="create-task.html" class="nav-link active">Создать задачу</a>
+                    <button id="logoutBtn" class="btn btn-secondary">Выйти</button>
+                </nav>
+            </div>
+        </header>
 
-        <div class="form-container">
-            <!-- Цепочка выбора: Регион → ИП → Карта -->
-            <div class="chain-step">
-                <h3>🎯 1. Выберите регион</h3>
-                <div class="form-group">
-                    <label for="regionSelect">Регион выполнения:</label>
-                    <select id="regionSelect" onchange="onRegionChange()">
-                        <option value="">-- Выберите регион --</option>
-                    </select>
-                    <div id="regionError" class="error"></div>
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="container">
+                <div class="page-header">
+                    <h2>Создание новой задачи</h2>
+                    <p>Заполните информацию о расходной операции</p>
+                </div>
+
+                <!-- Task Creation Form -->
+                <div class="task-form-container">
+                    <form id="taskForm" class="task-form">
+                        <!-- Region Selection -->
+                        <div class="form-section">
+                            <label for="region" class="form-label">Регион *</label>
+                            <select id="region" name="region" class="form-select" required>
+                                <option value="">Выберите регион</option>
+                            </select>
+                        </div>
+
+                        <!-- IP Selection -->
+                        <div class="form-section">
+                            <label for="ip" class="form-label">Индивидуальный предприниматель *</label>
+                            <select id="ip" name="ip" class="form-select" required disabled>
+                                <option value="">Сначала выберите регион</option>
+                            </select>
+                        </div>
+
+                        <!-- Card Selection -->
+                        <div class="form-section">
+                            <label for="card" class="form-label">Карта для оплаты *</label>
+                            <select id="card" name="card" class="form-select" required disabled>
+                                <option value="">Сначала выберите ИП</option>
+                            </select>
+                            <div id="cardInfo" class="card-info" style="display: none;"></div>
+                        </div>
+
+                        <!-- Expense Item Selection -->
+                        <div class="form-section">
+                            <label for="expenseItem" class="form-label">Статья расхода *</label>
+                            <select id="expenseItem" name="expenseItem" class="form-select" required>
+                                <option value="">Выберите статью расхода</option>
+                            </select>
+                        </div>
+
+                        <!-- Manager Assignment -->
+                        <div class="form-section">
+                            <label for="manager" class="form-label">Ответственный управляющий *</label>
+                            <select id="manager" name="manager" class="form-select" required disabled>
+                                <option value="">Сначала выберите регион</option>
+                            </select>
+                        </div>
+
+                        <!-- Planned Data -->
+                        <div class="form-section">
+                            <h3>Плановые данные</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="plannedAmount" class="form-label">Плановая сумма *</label>
+                                    <input type="number" id="plannedAmount" name="plannedAmount" class="form-input" required min="1" step="0.01">
+                                </div>
+                                <div class="form-group">
+                                    <label for="plannedDate" class="form-label">Плановая дата *</label>
+                                    <input type="date" id="plannedDate" name="plannedDate" class="form-input" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="form-section">
+                            <label for="description" class="form-label">Описание задачи *</label>
+                            <textarea id="description" name="description" class="form-textarea" required placeholder="Опишите суть задачи..."></textarea>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="form-actions">
+                            <button type="button" id="cancelBtn" class="btn btn-secondary">Отмена</button>
+                            <button type="submit" id="createTaskBtn" class="btn btn-primary">
+                                Создать задачу
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
+        </main>
 
-            <div class="chain-step">
-                <h3>🏢 2. Выберите ИП</h3>
-                <div class="form-group">
-                    <label for="ipSelect">Индивидуальный предприниматель:</label>
-                    <select id="ipSelect" onchange="onIPChange()" disabled>
-                        <option value="">-- Сначала выберите регион --</option>
-                    </select>
-                    <div id="ipError" class="error"></div>
-                </div>
-            </div>
-
-            <div class="chain-step">
-                <h3>💳 3. Выберите карту</h3>
-                <div class="form-group">
-                    <label for="cardSelect">Карта для оплаты:</label>
-                    <select id="cardSelect" onchange="onCardChange()" disabled>
-                        <option value="">-- Сначала выберите ИП --</option>
-                    </select>
-                    <div id="cardError" class="error"></div>
-                </div>
-            </div>
-
-            <!-- Основные данные задачи -->
-            <div class="form-group">
-                <label for="expenseItemSelect">Статья расхода:</label>
-                <select id="expenseItemSelect">
-                    <option value="">-- Выберите статью расхода --</option>
-                </select>
-                <div id="expenseError" class="error"></div>
-            </div>
-
-            <div class="form-group">
-                <label for="plannedAmount">Плановая сумма (руб):</label>
-                <input type="number" id="plannedAmount" placeholder="Введите сумму" min="1" step="0.01">
-                <div id="amountError" class="error"></div>
-            </div>
-
-            <div class="form-group">
-                <label for="plannedDate">Плановая дата выполнения:</label>
-                <input type="date" id="plannedDate">
-                <div id="dateError" class="error"></div>
-            </div>
-
-            <div class="form-group">
-                <label for="comments">Комментарий бухгалтера:</label>
-                <textarea id="comments" rows="3" placeholder="Дополнительные инструкции..."></textarea>
-            </div>
-
-            <button class="btn" onclick="createTask()" id="createBtn">Создать задачу</button>
-            <div id="resultMessage"></div>
+        <!-- Loading Overlay -->
+        <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+            <div class="loading-spinner"></div>
+            <p>Создание задачи...</p>
         </div>
     </div>
 
+    <!-- Scripts -->
     <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
     <script src="js/create-task.js"></script>
 </body>
 </html>
