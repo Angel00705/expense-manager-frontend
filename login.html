@@ -4,87 +4,53 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Вход - Expense Manager</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><defs><linearGradient id='borderGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%238b5cf6'/><stop offset='50%' stop-color='%236d28d9'/><stop offset='100%' stop-color='%231e40af'/></linearGradient><linearGradient id='checkGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%23a78bfa'/><stop offset='100%' stop-color='%234f46e5'/></linearGradient><filter id='glow' x='-50%' y='-50%' width='200%' height='200%'><feGaussianBlur in='SourceGraphic' stdDeviation='1' result='blur'/><feMerge><feMergeNode in='blur'/><feMergeNode in='SourceGraphic'/></feMerge></filter></defs><circle cx='10' cy='10' r='9' fill='none' stroke='url(%23borderGrad)' stroke-width='1.5' opacity='0.9'/><path d='M6,10 L8.5,12.5 L14,7' stroke='url(%23checkGrad)' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round' filter='url(%23glow)'/></svg>">
+    <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/login.css">
 </head>
 <body>
     <div class="login-container">
         <div class="login-card">
-            <!-- Логотип и заголовок -->
             <div class="login-header">
-                <div class="logo">
-                    <span class="logo-icon">💰</span>
-                    <h1>Expense Manager</h1>
-                </div>
-                <p class="login-subtitle">Система управления расходами для ИП</p>
+                <h1>Expense Manager</h1>
+                <p>Вход в систему</p>
             </div>
-
-            <!-- Форма входа -->
+            
             <form id="loginForm" class="login-form">
                 <div class="form-group">
                     <label for="email">Email</label>
-                    <input type="email" id="email" name="email" required 
-                           placeholder="Введите ваш email" class="form-input">
-                </div>
-
-                <div class="form-group">
-                    <label for="password">Пароль</label>
-                    <input type="password" id="password" name="password" required 
-                           placeholder="Введите пароль" class="form-input">
-                </div>
-
-                <button type="submit" class="login-btn" id="loginBtn">
-                    <span class="btn-text">Войти в систему</span>
-                    <span class="btn-loading" style="display: none;">Вход...</span>
-                </button>
-            </form>
-
-            <!-- Сообщения об ошибках -->
-            <div id="errorMessage" class="error-message" style="display: none;"></div>
-
-            <!-- Тестовые данные -->
-            <div class="test-accounts">
-                <h3>Тестовые аккаунты:</h3>
-                <div class="accounts-grid">
-                    <div class="account-card">
-                        <h4>👨‍💼 Бухгалтер</h4>
-                        <p><strong>Логин:</strong> admin@test.ru</p>
-                        <p><strong>Пароль:</strong> 123456</p>
-                        <p class="role">Все регионы</p>
-                    </div>
-                    
-                    <div class="account-card">
-                        <h4>🏢 Управляющий Астрахань</h4>
-                        <p><strong>Логин:</strong> astrakhan@test.ru</p>
-                        <p><strong>Пароль:</strong> 123456</p>
-                        <p class="role">Регион: Астрахань</p>
-                    </div>
-
-                    <div class="account-card">
-                        <h4>🏔️ Управляющий Бурятия</h4>
-                        <p><strong>Логин:</strong> buryatia@test.ru</p>
-                        <p><strong>Пароль:</strong> 123456</p>
-                        <p class="role">Регион: Бурятия</p>
-                    </div>
-
-                    <div class="account-card">
-                        <h4>🏛️ Управляющий Курган</h4>
-                        <p><strong>Логин:</strong> kurgan@test.ru</p>
-                        <p><strong>Пароль:</strong> 123456</p>
-                        <p class="role">Регион: Курган</p>
-                    </div>
+                    <input type="email" id="email" name="email" required placeholder="your@email.com">
                 </div>
                 
-                <div class="more-accounts">
-                    <p><strong>Другие управляющие:</strong></p>
-                    <p><strong>kalmykia@test.ru</strong> / 123456 (Калмыкия)</p>
-                    <p><strong>mordovia@test.ru</strong> / 123456 (Мордовия)</p>
-                    <p><strong>udmurtia@test.ru</strong> / 123456 (Удмуртия)</p>
+                <div class="form-group">
+                    <label for="password">Пароль</label>
+                    <input type="password" id="password" name="password" required placeholder="Введите пароль">
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-block">Войти</button>
+            </form>
+            
+            <div class="login-footer">
+                <h3>Тестовые аккаунты:</h3>
+                <div class="test-accounts">
+                    <div class="account">
+                        <strong>Бухгалтер (все регионы)</strong><br>
+                        admin@test.ru / 123456
+                    </div>
+                    <div class="account">
+                        <strong>Управляющий Астрахань</strong><br>
+                        astrakhan@test.ru / 123456
+                    </div>
+                    <div class="account">
+                        <strong>Управляющий Бурятия</strong><br>
+                        buryatia@test.ru / 123456
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
+    <script src="js/app.js"></script>
 </body>
 </html>
