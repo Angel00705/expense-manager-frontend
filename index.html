@@ -3,174 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Expense Manager - Система управления расходами</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title>Expense Manager - Управление расходами</title>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f5f5f5;
+        }
+        .header {
+            background: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
         .hero {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
-            padding: 80px 20px;
+            padding: 4rem 2rem;
             text-align: center;
         }
-        
-        .hero h1 {
-            font-size: 3em;
-            margin-bottom: 20px;
+        .btn {
+            padding: 10px 20px;
+            background: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 0 10px;
         }
-        
-        .hero p {
-            font-size: 1.2em;
-            margin-bottom: 30px;
-            opacity: 0.9;
-        }
-        
         .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 30px;
-            margin: 60px 0;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 3rem 0;
         }
-        
         .stat-card {
             background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 2rem;
+            border-radius: 10px;
             text-align: center;
-        }
-        
-        .stat-number {
-            font-size: 2.5em;
-            font-weight: bold;
-            color: #3498db;
-            display: block;
-        }
-        
-        .stat-label {
-            color: #666;
-            font-size: 0.9em;
-        }
-        
-        .features {
-            margin: 60px 0;
-        }
-        
-        .feature-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin-top: 40px;
-        }
-        
-        .feature-card {
-            background: #f8f9fa;
-            padding: 30px;
-            border-radius: 12px;
-            border-left: 4px solid #3498db;
-        }
-        
-        .cta-buttons {
-            margin: 40px 0;
-            text-align: center;
-        }
-        
-        .btn-large {
-            padding: 15px 30px;
-            font-size: 1.1em;
-            margin: 0 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
     <header class="header">
-        <div class="header-content">
-            <h1>Expense Manager</h1>
-            <nav class="nav">
-                <a href="login.html" class="nav-link">Войти в систему</a>
-            </nav>
-        </div>
+        <h1>Expense Manager</h1>
+        <a href="login.html" class="btn">Войти в систему</a>
     </header>
 
-    <!-- Hero Section -->
     <section class="hero">
-        <div class="container">
-            <h1>Expense Manager</h1>
-            <p>Простая система управления расходами для ИП</p>
-            <div class="cta-buttons">
-                <a href="login.html" class="btn btn-primary btn-large">Войти в систему</a>
-                <a href="#features" class="btn btn-secondary btn-large">Узнать больше</a>
-            </div>
+        <h1>Система управления расходами для ИП</h1>
+        <p>Эффективный контроль финансовых операций across multiple регионов</p>
+        <div>
+            <a href="login.html" class="btn">Начать работу</a>
         </div>
     </section>
 
-    <!-- Stats Section -->
-    <section class="container">
-        <div class="stats">
-            <div class="stat-card">
-                <span class="stat-number">27</span>
-                <span class="stat-label">ИП в системе</span>
-            </div>
-            <div class="stat-card">
-                <span class="stat-number">6</span>
-                <span class="stat-label">Регионов работы</span>
-            </div>
-            <div class="stat-card">
-                <span class="stat-number">42</span>
-                <span class="stat-label">Банковские карты</span>
-            </div>
+    <section class="stats">
+        <div class="stat-card">
+            <h3>27</h3>
+            <p>ИП в системе</p>
+        </div>
+        <div class="stat-card">
+            <h3>6</h3>
+            <p>Регионов</p>
+        </div>
+        <div class="stat-card">
+            <h3>42</h3>
+            <p>Банковские карты</p>
         </div>
     </section>
-
-    <!-- Features Section -->
-    <section id="features" class="container features">
-        <h2 style="text-align: center; margin-bottom: 40px;">Возможности системы</h2>
-        
-        <div class="feature-grid">
-            <div class="feature-card">
-                <h3>Постановка задач</h3>
-                <p>Бухгалтер создает финансовые задачи для управляющих с указанием статей расходов и плановых сумм</p>
-            </div>
-            
-            <div class="feature-card">
-                <h3>Управление картами</h3>
-                <p>Контроль корпоративных и персональных карт по каждому ИП с отслеживанием балансов</p>
-            </div>
-            
-            <div class="feature-card">
-                <h3>Отчетность</h3>
-                <p>Автоматическое отслеживание выполнения задач и формирование финансовых отчетов</p>
-            </div>
-            
-            <div class="feature-card">
-                <h3>Мультирегиональность</h3>
-                <p>Работа с ИП в разных регионах России через назначенных управляющих</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer style="background: #34495e; color: white; padding: 40px 0; margin-top: 60px;">
-        <div class="container" style="text-align: center;">
-            <p>&copy; 2025 Expense Manager. Система управления расходами для ИП</p>
-        </div>
-    </footer>
 
     <script>
-        // Простая проверка загрузки
-        console.log('✅ Expense Manager loaded successfully');
-        
-        // Добавляем класс активной страницы
-        document.addEventListener('DOMContentLoaded', function() {
-            const currentPage = window.location.pathname.split('/').pop();
-            const navLinks = document.querySelectorAll('.nav-link');
-            
-            navLinks.forEach(link => {
-                if (link.getAttribute('href') === currentPage) {
-                    link.classList.add('active');
-                }
-            });
-        });
+        console.log('✅ Главная страница загружена');
     </script>
 </body>
 </html>
