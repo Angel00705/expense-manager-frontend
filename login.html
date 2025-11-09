@@ -1,38 +1,120 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Вход - Expense Manager</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
-        body { margin:0; padding:0; font-family:Arial; background:linear-gradient(135deg,#667eea,#764ba2); min-height:100vh; display:flex; align-items:center; justify-content:center; }
-        .login-box { background:white; padding:2rem; border-radius:10px; box-shadow:0 10px 30px rgba(0,0,0,0.2); width:90%; max-width:400px; }
-        .form-group { margin-bottom:1rem; }
-        input { width:100%; padding:12px; border:1px solid #ddd; border-radius:5px; margin-top:5px; }
-        button { width:100%; padding:12px; background:#3498db; color:white; border:none; border-radius:5px; cursor:pointer; }
-        button:hover { background:#2980b9; }
-        .test-accounts { margin-top:2rem; padding-top:1rem; border-top:1px solid #eee; font-size:0.9em; }
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+        
+        .login-box {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .login-title {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #2c3e50;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: bold;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .login-btn:hover {
+            background: #2980b9;
+        }
+        
+        .test-accounts {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        
+        .test-account {
+            background: #f8f9fa;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
-    <div class="login-box">
-        <h2 style="text-align:center; margin-bottom:1rem;">Expense Manager</h2>
-        <form id="loginForm">
-            <div class="form-group">
-                <label>Email:</label>
-                <input type="email" id="email" value="admin@test.ru" required>
+    <div class="login-container">
+        <div class="login-box">
+            <h2 class="login-title">Expense Manager</h2>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label class="form-label">Email:</label>
+                    <input type="email" class="form-input" id="email" value="admin@test.ru" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Пароль:</label>
+                    <input type="password" class="form-input" id="password" value="123456" required>
+                </div>
+                
+                <button type="submit" class="login-btn">Войти в систему</button>
+            </form>
+            
+            <div class="test-accounts">
+                <h3>Тестовые аккаунты:</h3>
+                <div class="test-account">
+                    <strong>Бухгалтер (все регионы)</strong><br>
+                    admin@test.ru / 123456
+                </div>
+                <div class="test-account">
+                    <strong>Управляющий Астрахань</strong><br>
+                    astrakhan@test.ru / 123456
+                </div>
             </div>
-            <div class="form-group">
-                <label>Пароль:</label>
-                <input type="password" id="password" value="123456" required>
-            </div>
-            <button type="submit">Войти</button>
-        </form>
-
-        <div class="test-accounts">
-            <strong>Тестовые аккаунты:</strong><br>
-            admin@test.ru / 123456<br>
-            astrakhan@test.ru / 123456
         </div>
     </div>
 
