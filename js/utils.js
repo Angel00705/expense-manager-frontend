@@ -129,3 +129,25 @@ export class ValidationUtils {
         return password && password.length >= 6;
     }
 }
+static async testAPI() {
+    console.log('🧪 Testing API connection...');
+    
+    try {
+        // Test health endpoint
+        const health = await API.getHealth();
+        console.log('✅ Health check:', health);
+        
+        // Test regions
+        const regions = await API.getRegions();
+        console.log('✅ Regions:', regions);
+        
+        // Test expense items
+        const items = await API.getExpenseItems();
+        console.log('✅ Expense items:', items);
+        
+        return true;
+    } catch (error) {
+        console.error('❌ API test failed:', error);
+        return false;
+    }
+}
