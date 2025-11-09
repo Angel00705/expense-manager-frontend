@@ -1,21 +1,71 @@
-const API = {
-    BASE_URL: 'https://expense-manager-backend-kq9h.onrender.com',
-    
-    async request(endpoint, options) {
+class API {
+    static BASE_URL = 'https://expense-manager-backend-kq9h.onrender.com';
+
+    static async makeRequest(endpoint, method = 'GET', data = null) {
         const url = this.BASE_URL + endpoint;
         const token = localStorage.getItem('token');
-        const config = {
-            method: options.method,
-            headers: {'Content-Type':'application/json'}
+        
+        const options = {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json',
+            }
         };
-        if (token) config.headers.Authorization = 'Bearer ' + token;
-        if (options.body) config.body = JSON.stringify(options.body);
-        const response = await fetch(url, config);
-        return response.json();
-    },
-    
-    login(credentials) {
-        return this.request('/api/auth/login', {method:'POST', body:credentials});
+
+        if (token) {
+            options.headers['Authorization'] = 'Bearer ' + token;
+        }
+
+        if (data && (method === 'POST' || method === 'PUT')) {
+            options.body = JSON.stringify(data);
+        }
+
+        try {
+            const response = await fetch(url, options);
+            const result = await response.json();
+            
+            if (!response.ok) {
+                throw new Error(result.message || 'API Error');
+            }
+            
+            return result;
+        } catch (error) {
+            console.error('API Error:', error);
+            throw error;
+        }
     }
-};
+
+    static async login(credentials) {
+        return this.makeRequest('/api/auth/login', 'POST', credentials);
+    }
+
+    static async getCurrentUser() {
+        return this.makeRequest('/api/auth/me');
+    }
+
+    static async createTask(taskData) {
+        return this.makeRequest('/api/tasks', 'POST', taskData);
+    }
+
+    static async getTasks() {
+        return this.makeRequest('/api/tasks');
+    }
+
+    static async getExpenseItems() {
+        return this.makeRequest('/api/expense-items');
+    }
+
+    static async getRegions() {
+        return this.makeRequest('/api/utils/regions');
+    }
+
+    static async getManagersByRegion(region) {
+        return this.makeRequest('/api/utils/managers/' + region);
+    }
+
+    static async getIPsWithCardsByRegion(region) {
+        return this.makeRequest('/api/utils/ips-with-cards/' + region);
+    }
+}
+
 window.API = API;
