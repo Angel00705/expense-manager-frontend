@@ -1,4 +1,4 @@
-// js/api.js - Ultra Simple API
+// api.js - API клиент для Expense Manager
 console.log('🔧 API.js loaded');
 
 const API = {
@@ -62,9 +62,44 @@ const API = {
         return this.request('/api/tasks');
     },
     
+    getTasksByRegion(region) {
+        return this.request('/api/tasks/region/' + encodeURIComponent(region));
+    },
+    
+    getAssignedTasks(userId) {
+        return this.request('/api/tasks/assigned-to/' + userId);
+    },
+    
+    updateTask(taskId, updateData) {
+        return this.request('/api/tasks/' + taskId, {
+            method: 'PUT',
+            body: updateData
+        });
+    },
+    
     // Expense Items
     getExpenseItems() {
         return this.request('/api/expense-items');
+    },
+    
+    createExpenseItem(itemData) {
+        return this.request('/api/expense-items', {
+            method: 'POST',
+            body: itemData
+        });
+    },
+    
+    updateExpenseItem(itemId, updateData) {
+        return this.request('/api/expense-items/' + itemId, {
+            method: 'PUT',
+            body: updateData
+        });
+    },
+    
+    deleteExpenseItem(itemId) {
+        return this.request('/api/expense-items/' + itemId, {
+            method: 'DELETE'
+        });
     },
     
     // Utils
@@ -78,6 +113,10 @@ const API = {
     
     getIPsWithCardsByRegion(region) {
         return this.request('/api/utils/ips-with-cards/' + encodeURIComponent(region));
+    },
+    
+    getHealth() {
+        return this.request('/api/health');
     }
 };
 
