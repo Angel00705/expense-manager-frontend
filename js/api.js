@@ -1,17 +1,13 @@
-// api.js - Ultra Robust API Client
+// js/api.js - Ultra Simple API Client
 class API {
     static BASE_URL = 'https://expense-manager-backend-kq9h.onrender.com';
 
     static async makeRequest(endpoint, method = 'GET', data = null) {
+        console.log('🔄 API Request:', method, endpoint, data);
+        
         const url = this.BASE_URL + endpoint;
         const token = localStorage.getItem('token');
         
-        console.log(`🔄 API Call: ${method} ${url}`, data);
-
-        if (!navigator.onLine) {
-            throw new Error('Отсутствует подключение к интернету. Проверьте ваше соединение.');
-        }
-
         const options = {
             method: method,
             headers: {
@@ -21,48 +17,41 @@ class API {
 
         if (token) {
             options.headers['Authorization'] = 'Bearer ' + token;
-            console.log('🔑 Token added to request');
         }
 
-        if (data && (method === 'POST' || method === 'PUT')) {
+        if (data && (method === 'POST' || method === 'PUT' || method === 'PATCH')) {
             options.body = JSON.stringify(data);
         }
 
         try {
+            console.log('📡 Sending request to:', url);
             const response = await fetch(url, options);
             
             if (!response.ok) {
                 const errorText = await response.text();
-                console.error(`❌ HTTP Error ${response.status}:`, errorText);
-                
-                if (response.status === 401) {
-                    localStorage.removeItem('token');
-                    localStorage.removeItem('user');
-                    window.location.href = 'login.html';
-                    throw new Error('Сессия истекла. Пожалуйста, войдите снова.');
-                }
-                
-                throw new Error(`Ошибка сервера: ${response.status}`);
+                console.error('❌ API Error Response:', errorText);
+                throw new Error(`HTTP ${response.status}: ${errorText}`);
             }
-
+            
             const result = await response.json();
-            console.log(`✅ API Success: ${method} ${endpoint}`, result);
+            console.log('✅ API Success:', result);
             return result;
-
         } catch (error) {
-            console.error(`💥 API Critical Error: ${method} ${endpoint}`, error);
+            console.error('💥 API Fetch Error:', error);
             throw error;
         }
     }
 
+    // 🔐 AUTH
     static async login(credentials) {
         return this.makeRequest('/api/auth/login', 'POST', credentials);
     }
 
-    static async validateToken() {
-        return this.makeRequest('/api/auth/validate');
+    static async getCurrentUser() {
+        return this.makeRequest('/api/auth/me');
     }
 
+    // 📋 TASKS
     static async createTask(taskData) {
         return this.makeRequest('/api/tasks', 'POST', taskData);
     }
@@ -71,35 +60,61 @@ class API {
         return this.makeRequest('/api/tasks');
     }
 
-    static async getTasksForManager() {
-        const user = JSON.parse(localStorage.getItem('user') || '{}');
-        return this.makeRequest(`/api/tasks/assigned-to/${user._id}`);
+    static async getTasksByRegion(region) {
+        return this.makeRequest(`/api/tasks/region/${region}`);
+    }
+
+    static async getAssignedTasks(userId) {
+        return this.makeRequest(`/api/tasks/assigned-to/${userId}`);
     }
 
     static async updateTask(taskId, updateData) {
         return this.makeRequest(`/api/tasks/${taskId}`, 'PUT', updateData);
     }
 
+    // 💰 EXPENSE ITEMS
     static async getExpenseItems() {
         return this.makeRequest('/api/expense-items');
     }
 
+    static async createExpenseItem(itemData) {
+        return this.makeRequest('/api/expense-items', 'POST', itemData);
+    }
+
+    static async updateExpenseItem(itemId, updateData) {
+        return this.makeRequest(`/api/expense-items/${itemId}`, 'PUT', updateData);
+    }
+
+    static async deleteExpenseItem(itemId) {
+        return this.makeRequest(`/api/expense-items/${itemId}`, 'DELETE');
+    }
+
+    // 🏢 IPS & CARDS
+    static async getIPs() {
+        return this.makeRequest('/api/ips');
+    }
+
+    static async getCards() {
+        return this.makeRequest('/api/cards');
+    }
+
+    // 🔧 UTILS
     static async getRegions() {
         return this.makeRequest('/api/utils/regions');
     }
 
     static async getManagersByRegion(region) {
-        if (!region) throw new Error('Регион не указан');
-        return this.makeRequest('/api/utils/managers/' + encodeURIComponent(region));
+        return this.makeRequest(`/api/utils/managers/${region}`);
     }
 
     static async getIPsWithCardsByRegion(region) {
-        if (!region) throw new Error('Регион не указан');
-        return this.makeRequest('/api/utils/ips-with-cards/' + encodeURIComponent(region));
+        return this.makeRequest(`/api/utils/ips-with-cards/${region}`);
+    }
+
+    static async getHealth() {
+        return this.makeRequest('/api/health');
     }
 }
 
-if (typeof window !== 'undefined') {
-    window.API = API;
-    console.log('✅ API class loaded successfully');
-}
+// Make it globally available
+window.API = API;
