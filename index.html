@@ -3,305 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Expense Manager - Управление расходами</title>
+    <title>Expense Manager - Система управления расходами</title>
     <link rel="stylesheet" href="css/style.css">
-      <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><defs><linearGradient id='borderGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%238b5cf6'/><stop offset='50%' stop-color='%236d28d9'/><stop offset='100%' stop-color='%231e40af'/></linearGradient><linearGradient id='checkGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%23a78bfa'/><stop offset='100%' stop-color='%234f46e5'/></linearGradient><filter id='glow' x='-50%' y='-50%' width='200%' height='200%'><feGaussianBlur in='SourceGraphic' stdDeviation='1' result='blur'/><feMerge><feMergeNode in='blur'/><feMergeNode in='SourceGraphic'/></feMerge></filter></defs><circle cx='10' cy='10' r='9' fill='none' stroke='url(%23borderGrad)' stroke-width='1.5' opacity='0.9'/><path d='M6,10 L8.5,12.5 L14,7' stroke='url(%23checkGrad)' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round' filter='url(%23glow)'/></svg>">
+    <style>
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 80px 20px;
+            text-align: center;
+        }
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin: 40px 0;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #3498db;
+        }
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            padding: 60px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .feature-card {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .btn-login {
+            background: #3498db;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+        }
+        .btn-login:hover {
+            background: #2980b9;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Главный заголовок -->
-        <header class="header">
-            <h1>💰 Expense Manager</h1>
-            <p class="tagline">Простая система управления расходами для ИП</p>
-        </header>
-
-        <!-- Основной контент -->
-        <main class="main-content text-center">
-            <div class="welcome-section">
-                <h2>Добро пожаловать!</h2>
-                <p class="welcome-text">
-                    Expense Manager помогает бухгалтерам и управляющим эффективно контролировать 
-                    финансовые операции across multiple регионов и ИП.
-                </p>
-
-                <!-- Статистика системы -->
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-number">27</div>
-                        <div class="stat-label">ИП в системе</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">6</div>
-                        <div class="stat-label">Регионов</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">42</div>
-                        <div class="stat-label">Банковских карт</div>
-                    </div>
-                </div>
-
-                <!-- Кнопки действий -->
-                <div class="action-buttons">
-                    <a href="login.html" class="btn btn-primary btn-large">
-                        🔐 Войти в систему
-                    </a>
-                    <a href="dashboard.html" class="btn btn-outline btn-large">
-                        📊 Быстрый доступ
-                    </a>
-                </div>
-
-                <!-- Информация о системе -->
-                <div class="system-info">
-                    <h3>Возможности системы:</h3>
-                    <div class="features-grid">
-                        <div class="feature-card">
-                            <div class="feature-icon">📋</div>
-                            <h4>Постановка задач</h4>
-                            <p>Бухгалтеры создают финансовые задачи для управляющих</p>
-                        </div>
-                        <div class="feature-card">
-                            <div class="feature-icon">💳</div>
-                            <h4>Управление картами</h4>
-                            <p>Контроль корпоративных и персональных карт по ИП</p>
-                        </div>
-                        <div class="feature-card">
-                            <div class="feature-icon">📊</div>
-                            <h4>Отчетность</h4>
-                            <p>Автоматическое отслеживание выполнения задач</p>
-                        </div>
-                        <div class="feature-card">
-                            <div class="feature-icon">🌍</div>
-                            <h4>Мультирегиональность</h4>
-                            <p>Работа с ИП в разных регионах России</p>
-                        </div>
-                    </div>
-                </div>
+    <div class="hero">
+        <h1>Expense Manager</h1>
+        <p>Простая система управления расходами для ИП</p>
+        
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-number">27</div>
+                <div>ИП в системе</div>
             </div>
-     </main>
+            <div class="stat-item">
+                <div class="stat-number">6</div>
+                <div>Регионов</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">42</div>
+                <div>Банковских карт</div>
+            </div>
+        </div>
 
-    <!-- Футер -->
-    <footer class="footer">
-        <p>&copy; 2024 Expense Manager. Система управления расходами.</p>
-    </footer>
-</div>
+        <a href="login.html" class="btn-login">Войти в систему</a>
+    </div>
 
-<style>
-    /* БАЗОВЫЕ СТИЛИ ДЛЯ ГЛАВНОЙ СТРАНИЦЫ */
-    body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        margin: 0;
-        padding: 0;
-        min-height: 100vh;
-    }
-    
-    .container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 20px;
-        min-height: 100vh;
-    }
-    
-    .header {
-        text-align: center;
-        padding: 40px 20px;
-        color: white;
-    }
-    
-    .header h1 {
-        font-size: 48px;
-        margin: 0 0 10px 0;
-    }
-    
-    .tagline {
-        font-size: 20px;
-        opacity: 0.9;
-        margin: 0;
-    }
-    
-    .main-content {
-        background: white;
-        border-radius: 20px;
-        padding: 40px;
-        margin-top: 20px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    }
-    
-    .text-center {
-        text-align: center;
-    }
-    
-    .welcome-section h2 {
-        color: #2c3e50;
-        font-size: 36px;
-        margin-bottom: 20px;
-    }
-    
-    .welcome-text {
-        font-size: 18px;
-        line-height: 1.6;
-        color: #5a6c7d;
-        margin-bottom: 40px;
-        max-width: 600px;
-        margin-left: auto;
-        margin-right: auto;
-    }
-    
-    .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 20px;
-        margin: 40px 0;
-        max-width: 500px;
-        margin-left: auto;
-        margin-right: auto;
-    }
-    
-    .stat-card {
-        background: linear-gradient(135deg, #3498db, #2980b9);
-        color: white;
-        padding: 25px 15px;
-        border-radius: 12px;
-        text-align: center;
-    }
-    
-    .stat-number {
-        font-size: 36px;
-        font-weight: bold;
-        margin-bottom: 5px;
-    }
-    
-    .stat-label {
-        font-size: 14px;
-        opacity: 0.9;
-    }
-    
-    .action-buttons {
-        display: flex;
-        gap: 15px;
-        justify-content: center;
-        margin: 40px 0;
-        flex-wrap: wrap;
-    }
-    
-    .btn {
-        padding: 15px 30px;
-        border: none;
-        border-radius: 8px;
-        font-size: 16px;
-        font-weight: 600;
-        text-decoration: none;
-        display: inline-block;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        text-align: center;
-        min-width: 200px;
-    }
-    
-    .btn-primary {
-        background: #3498db;
-        color: white;
-    }
-    
-    .btn-primary:hover {
-        background: #2980b9;
-        transform: translateY(-2px);
-    }
-    
-    .btn-outline {
-        background: transparent;
-        color: #3498db;
-        border: 2px solid #3498db;
-    }
-    
-    .btn-outline:hover {
-        background: #3498db;
-        color: white;
-        transform: translateY(-2px);
-    }
-    
-    .btn-large {
-        padding: 15px 30px;
-        font-size: 16px;
-    }
-    
-    .system-info h3 {
-        color: #2c3e50;
-        margin-bottom: 30px;
-        font-size: 24px;
-    }
-    
-    .features-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 25px;
-        margin-top: 30px;
-    }
-    
-    .feature-card {
-        background: white;
-        padding: 25px;
-        border-radius: 12px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        text-align: center;
-        border: 1px solid #e1e5e9;
-        transition: transform 0.3s ease;
-    }
-    
-    .feature-card:hover {
-        transform: translateY(-5px);
-    }
-    
-    .feature-icon {
-        font-size: 40px;
-        margin-bottom: 15px;
-    }
-    
-    .feature-card h4 {
-        color: #2c3e50;
-        margin-bottom: 10px;
-        font-size: 18px;
-    }
-    
-    .feature-card p {
-        color: #7f8c8d;
-        line-height: 1.5;
-        font-size: 14px;
-    }
-    
-    .footer {
-        text-align: center;
-        margin-top: 60px;
-        padding: 20px;
-        color: white;
-    }
-    
-    @media (max-width: 768px) {
-        .header h1 {
-            font-size: 36px;
-        }
-        
-        .action-buttons {
-            flex-direction: column;
-            align-items: center;
-        }
-        
-        .btn {
-            width: 100%;
-            max-width: 300px;
-        }
-        
-        .features-grid {
-            grid-template-columns: 1fr;
-        }
-        
-        .main-content {
-            padding: 20px;
-        }
-    }
-</style>
+    <div class="features">
+        <div class="feature-card">
+            <h3>📋 Постановка задач</h3>
+            <p>Автоматическое создание финансовых задач для управляющих</p>
+        </div>
+        <div class="feature-card">
+            <h3>💳 Управление картами</h3>
+            <p>Контроль корпоративных и персональных банковских карт</p>
+        </div>
+        <div class="feature-card">
+            <h3>📊 Отчетность</h3>
+            <p>Автоматическое формирование отчетов по задачам и расходам</p>
+        </div>
+        <div class="feature-card">
+            <h3>🌍 Мультирегиональность</h3>
+            <p>Работа с ИП в 6 регионах России</p>
+        </div>
+    </div>
+
+    <script>
+        // Проверяем авторизацию - если пользователь уже залогинен, перенаправляем на дашборд
+        document.addEventListener('DOMContentLoaded', function() {
+            const token = localStorage.getItem('token');
+            if (token) {
+                window.location.href = 'dashboard.html';
+            }
+        });
+    </script>
 </body>
 </html>
-
-
-
