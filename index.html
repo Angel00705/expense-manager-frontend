@@ -1,49 +1,46 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Expense Manager</title>
-    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body { margin:0; padding:0; font-family:Arial; }
+        .header { background:#2c3e50; color:white; padding:20px; display:flex; justify-content:space-between; }
+        .hero { background:#3498db; color:white; padding:100px 20px; text-align:center; }
+        .btn { background:#2ecc71; color:white; padding:15px 30px; text-decoration:none; border-radius:5px; display:inline-block; margin-top:20px; }
+        .stats { display:flex; justify-content:center; gap:30px; margin:50px 20px; }
+        .stat { background:white; padding:30px; border-radius:10px; text-align:center; box-shadow:0 5px 15px rgba(0,0,0,0.1); }
+    </style>
 </head>
 <body>
-    <header class="header">
-        <div class="container">
-            <h1 class="logo">Expense Manager</h1>
-            <a href="login.html" class="login-btn">Войти в систему</a>
+    <div class="header">
+        <h1>Expense Manager</h1>
+        <a href="login.html" style="color:white; text-decoration:none; background:#e74c3c; padding:10px 20px; border-radius:5px;">Войти</a>
+    </div>
+
+    <div class="hero">
+        <h1>Expense Manager</h1>
+        <p>Система управления расходами для ИП</p>
+        <a href="login.html" class="btn">Начать работу</a>
+    </div>
+
+    <div class="stats">
+        <div class="stat">
+            <h3>27</h3>
+            <p>ИП в системе</p>
         </div>
-    </header>
+        <div class="stat">
+            <h3>6</h3>
+            <p>Регионов</p>
+        </div>
+        <div class="stat">
+            <h3>42</h3>
+            <p>Карты</p>
+        </div>
+    </div>
 
-    <main class="main">
-        <section class="hero">
-            <div class="container">
-                <h1>Expense Manager</h1>
-                <p>Простая система управления расходами для ИП</p>
-                <a href="login.html" class="cta-button">Начать работу</a>
-            </div>
-        </section>
-
-        <section class="stats">
-            <div class="container">
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-number">27</div>
-                        <div class="stat-label">ИП в системе</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">6</div>
-                        <div class="stat-label">Регионов работы</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">42</div>
-                        <div class="stat-label">Банковские карты</div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <script src="js/api.js"></script>
-    <script src="js/auth.js"></script>
+    <script>
+        console.log('Index page loaded');
+    </script>
 </body>
 </html>
