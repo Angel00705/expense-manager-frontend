@@ -1,5 +1,5 @@
-// js/api.js - Super Simple API
-console.log('🔄 API.js loaded');
+// js/api.js - Ultra Simple API
+console.log('🔧 API.js loaded');
 
 const API = {
     BASE_URL: 'https://expense-manager-backend-kq9h.onrender.com',
@@ -13,10 +13,12 @@ const API = {
                 method: options.method || 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    ...(token && { 'Authorization': 'Bearer ' + token }),
-                    ...options.headers
                 }
             };
+            
+            if (token) {
+                config.headers['Authorization'] = 'Bearer ' + token;
+            }
             
             if (options.body) {
                 config.body = JSON.stringify(options.body);
@@ -71,14 +73,12 @@ const API = {
     },
     
     getManagersByRegion(region) {
-        return this.request(`/api/utils/managers/${region}`);
+        return this.request('/api/utils/managers/' + encodeURIComponent(region));
     },
     
     getIPsWithCardsByRegion(region) {
-        return this.request(`/api/utils/ips-with-cards/${region}`);
+        return this.request('/api/utils/ips-with-cards/' + encodeURIComponent(region));
     }
 };
 
-// Глобально доступно
 window.API = API;
-console.log('✅ API initialized');
