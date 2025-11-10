@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IP Expense Manager - Управление расходами ИП</title>
     <link rel="stylesheet" href="css/style.css">
+    <!-- ИСПРАВЛЕННЫЙ ФАВИКОН -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><circle cx='10' cy='10' r='9' fill='none' stroke='%238b5cf6' stroke-width='1.5'/><path d='M6,10 L8.5,12.5 L14,7' stroke='%238b5cf6' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>">
     <style>
         .hero {
             background: var(--gradient-primary);
@@ -182,10 +184,18 @@
                         Просмотр и выполнение задач
                     </div>
                 </div>
+
+                <!-- КНОПКА ОЧИСТКИ ДЛЯ ОТЛАДКИ -->
+                <div style="text-align: center; margin-top: 15px;">
+                    <button type="button" class="btn btn-outline" onclick="clearAuth()" style="font-size: 12px; padding: 8px 16px;">
+                        🧹 Очистить авторизацию
+                    </button>
+                </div>
             </div>
         </div>
     </section>
 
+    <!-- Остальная часть страницы без изменений -->
     <section class="stats">
         <div class="container">
             <div class="row">
@@ -307,25 +317,36 @@
 
     <script src="js/utils.js"></script>
     <script>
+        // ОЧИСТКА АВТОРИЗАЦИИ ДЛЯ ТЕСТИРОВАНИЯ
+        function clearAuth() {
+            Auth.clearAuth();
+            Notification.success('Авторизация очищена! Обновите страницу');
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🏠 Главная страница загружена');
             
-            // Инициализируем авторизацию
+            // Инициализируем авторизацию ТОЛЬКО после полной загрузки DOM
             Auth.init();
             
-            // Проверяем, если пользователь уже авторизован - перенаправляем на дашборд
-            if (Auth.currentUser) {
-                console.log('🔄 Пользователь уже авторизован, перенаправляем на дашборд...');
-                setTimeout(() => {
-                    window.location.href = 'dashboard.html';
-                }, 500);
-                return;
-            } else {
-                console.log('👋 Пользователь не авторизован, показываем форму входа');
-            }
+            // Проверяем авторизацию с задержкой
+            setTimeout(() => {
+                console.log('🔍 Проверка авторизации...');
+                console.log('Текущий пользователь:', Auth.currentUser);
+                
+                if (Auth.currentUser) {
+                    console.log('🔄 Пользователь авторизован, перенаправляем на дашборд...');
+                    Notification.info('Перенаправление в систему...');
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 1000);
+                } else {
+                    console.log('👋 Пользователь не авторизован, показываем форму входа');
+                }
+            }, 100);
 
             // Обработка формы входа
-            document.getElementById('loginForm').addEventListener('submit', function(e) {
+            document.getElementById('loginForm').addEventListener('submit', async function(e) {
                 e.preventDefault();
                 
                 const email = document.getElementById('email').value;
@@ -344,21 +365,27 @@
                 submitBtn.innerHTML = '⏳ Вход...';
                 submitBtn.disabled = true;
                 
-                // Пытаемся войти
-                const result = Auth.login(email, password);
-                
-                if (result.success) {
-                    Notification.success(`Добро пожаловать, ${result.user.name}!`);
-                    console.log('✅ Вход успешен, перенаправляем...');
+                try {
+                    // Используем Promise для входа
+                    const result = await Auth.login(email, password);
                     
-                    // Перенаправляем на дашборд
-                    setTimeout(() => {
-                        window.location.href = 'dashboard.html';
-                    }, 1000);
-                } else {
-                    Notification.error(result.error);
-                    console.log('❌ Ошибка входа:', result.error);
-                    // Восстанавливаем кнопку
+                    if (result.success) {
+                        Notification.success(`Добро пожаловать, ${result.user.name}!`);
+                        console.log('✅ Вход успешен, перенаправляем...');
+                        
+                        // Перенаправляем на дашборд
+                        setTimeout(() => {
+                            window.location.href = 'dashboard.html';
+                        }, 1000);
+                    } else {
+                        Notification.error(result.error);
+                        console.log('❌ Ошибка входа:', result.error);
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.disabled = false;
+                    }
+                } catch (error) {
+                    Notification.error('Ошибка при входе в систему');
+                    console.error('❌ Ошибка:', error);
                     submitBtn.innerHTML = originalText;
                     submitBtn.disabled = false;
                 }

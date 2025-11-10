@@ -1,20 +1,29 @@
-// js/utils.js - ИСПРАВЛЕННАЯ СИСТЕМА АВТОРИЗАЦИИ
+// js/utils.js - ПОЛНОСТЬЮ ПЕРЕПИСАННАЯ СИСТЕМА АВТОРИЗАЦИИ
 
 const Auth = {
   currentUser: null,
+  initialized: false,
   
   init: function() {
-    // Более строгая проверка сохраненного пользователя
+    if (this.initialized) return;
+    
+    console.log('🔄 Инициализация системы авторизации...');
+    
+    // ОЧИСТКА ДЛЯ ТЕСТИРОВАНИЯ - раскомментируй если нужно сбросить
+    // localStorage.clear();
+    // console.log('🧹 LocalStorage очищен');
+    
     const savedUser = localStorage.getItem('currentUser');
+    console.log('💾 Сохраненный пользователь в localStorage:', savedUser);
+    
     if (savedUser) {
       try {
         const user = JSON.parse(savedUser);
-        // Проверяем, что данные пользователя валидны
         if (user && user.email && user.name && user.role) {
           this.currentUser = user;
           console.log('✅ Авторизованный пользователь загружен:', this.currentUser);
         } else {
-          console.warn('⚠️ Невалидные данные пользователя, очищаем...');
+          console.warn('⚠️ Невалидные данные пользователя');
           localStorage.removeItem('currentUser');
         }
       } catch (e) {
@@ -24,10 +33,13 @@ const Auth = {
     } else {
       console.log('🔐 Пользователь не авторизован');
     }
+    
+    this.initialized = true;
   },
   
   login: function(email, password) {
-    // Тестовые пользователи (обновленные)
+    console.log('🔐 Попытка входа:', email);
+    
     const users = {
       'admin@test.ru': { 
         email: 'admin@test.ru', 
@@ -41,71 +53,39 @@ const Auth = {
         role: 'manager',
         region: 'Астрахань',
         password: 'manager123'
-      },
-      'buryatia@test.ru': { 
-        email: 'buryatia@test.ru', 
-        name: 'Управляющий Бурятия', 
-        role: 'manager',
-        region: 'Бурятия',
-        password: 'manager123'
-      },
-      'kurgan@test.ru': { 
-        email: 'kurgan@test.ru', 
-        name: 'Управляющий Курган', 
-        role: 'manager',
-        region: 'Курган',
-        password: 'manager123'
-      },
-      'kalmykia@test.ru': { 
-        email: 'kalmykia@test.ru', 
-        name: 'Управляющий Калмыкия', 
-        role: 'manager',
-        region: 'Калмыкия',
-        password: 'manager123'
-      },
-      'mordovia@test.ru': { 
-        email: 'mordovia@test.ru', 
-        name: 'Управляющий Мордовия', 
-        role: 'manager',
-        region: 'Мордовия',
-        password: 'manager123'
-      },
-      'udmurtia@test.ru': { 
-        email: 'udmurtia@test.ru', 
-        name: 'Управляющий Удмуртия', 
-        role: 'manager',
-        region: 'Удмуртия',
-        password: 'manager123'
       }
     };
     
-    const user = users[email];
-    
-    // Детальная проверка авторизации
-    if (user && user.password === password) {
-      this.currentUser = {
-        email: user.email,
-        name: user.name,
-        role: user.role,
-        region: user.region
-      };
-      
-      // Сохраняем в localStorage
-      localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
-      console.log('✅ Успешный вход:', this.currentUser);
-      
-      return { success: true, user: this.currentUser };
-    }
-    
-    console.log('❌ Неудачная попытка входа:', email);
-    return { success: false, error: 'Неверный email или пароль' };
+    // Добавляем задержку для имитации процесса входа
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        const user = users[email];
+        
+        if (user && user.password === password) {
+          this.currentUser = {
+            email: user.email,
+            name: user.name,
+            role: user.role,
+            region: user.region
+          };
+          
+          localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+          console.log('✅ Успешный вход:', this.currentUser);
+          
+          resolve({ success: true, user: this.currentUser });
+        } else {
+          console.log('❌ Неудачная попытка входа');
+          resolve({ success: false, error: 'Неверный email или пароль' });
+        }
+      }, 500);
+    });
   },
   
   logout: function() {
-    console.log('🚪 Выход пользователя:', this.currentUser?.email);
+    console.log('🚪 Выход из системы');
     this.currentUser = null;
+    this.initialized = false;
     localStorage.removeItem('currentUser');
-    localStorage.removeItem('tasks'); // Очищаем и задачи для чистоты
     window.location.href = 'index.html';
   },
   
@@ -117,66 +97,49 @@ const Auth = {
     return this.currentUser && this.currentUser.role === 'manager';
   },
   
-  requireAuth: function(redirectTo = 'index.html') {
-    console.log('🔐 Проверка авторизации...');
+  requireAuth: function() {
+    console.log('🔐 Проверка авторизации для страницы:', window.location.pathname);
     console.log('Текущий пользователь:', this.currentUser);
     
     if (!this.currentUser) {
-      console.log('❌ Пользователь не авторизован, перенаправляем на:', redirectTo);
-      // Добавляем небольшую задержку для отладки
-      setTimeout(() => {
-        window.location.href = redirectTo;
-      }, 100);
+      console.log('❌ Доступ запрещен - перенаправляем на главную');
+      window.location.href = 'index.html';
       return false;
     }
     
-    console.log('✅ Пользователь авторизован:', this.currentUser.email);
+    console.log('✅ Доступ разрешен для:', this.currentUser.email);
     return true;
   },
   
-  // Получить текущего пользователя
-  getCurrentUser: function() {
-    return this.currentUser;
-  },
-  
-  // Очистка всех данных (для отладки)
-  clearAll: function() {
+  // Принудительная очистка для отладки
+  clearAuth: function() {
     this.currentUser = null;
-    localStorage.clear();
-    console.log('🧹 Все данные очищены');
+    this.initialized = false;
+    localStorage.removeItem('currentUser');
+    console.log('🧹 Авторизация очищена');
   }
 };
 
-// 🔔 СИСТЕМА УВЕДОМЛЕНИЙ
+// Остальные утилиты остаются без изменений...
 const Notification = {
   show: function(message, type = 'info', duration = 5000) {
-    // Создаем элемент уведомления
     const notification = document.createElement('div');
     notification.className = `notification ${type}`;
     notification.innerHTML = `
-      <div class="notification-content">
-        <span class="notification-message">${message}</span>
-        <button class="notification-close" onclick="this.parentElement.parentElement.remove()">×</button>
+      <div style="display: flex; align-items: center; justify-content: between;">
+        <span>${message}</span>
+        <button onclick="this.parentElement.parentElement.remove()" style="margin-left: 10px; background: none; border: none; color: white; cursor: pointer;">×</button>
       </div>
     `;
     
-    // Добавляем в тело документа
     document.body.appendChild(notification);
     
-    // Показываем с анимацией
-    setTimeout(() => {
-      notification.classList.add('show');
-    }, 100);
+    setTimeout(() => notification.classList.add('show'), 100);
     
-    // Автоматическое скрытие
     if (duration > 0) {
       setTimeout(() => {
         notification.classList.remove('show');
-        setTimeout(() => {
-          if (notification.parentElement) {
-            notification.parentElement.removeChild(notification);
-          }
-        }, 300);
+        setTimeout(() => notification.remove(), 300);
       }, duration);
     }
     
