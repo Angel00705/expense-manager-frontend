@@ -1,95 +1,35 @@
-<script src="js/utils.js"></script>
 <script>
-  function clearAuth() {
-    Auth.clearAuth();
-    Notification.success('Авторизация очищена! Обновите страницу');
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('🏠 Главная страница загружена');
+  
+  // Простая инициализация
+  Auth.init();
+  
+  // Проверяем авторизацию
+  if (Auth.currentUser) {
+    console.log('🔄 Перенаправляем на дашборд...');
     setTimeout(() => {
-      location.reload();
+      window.location.href = 'dashboard.html';
     }, 1000);
   }
-
-  document.addEventListener('DOMContentLoaded', function() {
-    console.log('🏠 Главная страница загружена');
+  
+  // Обработка формы входа
+  document.getElementById('loginForm').addEventListener('submit', function(e) {
+    e.preventDefault();
     
-    // Инициализируем авторизацию
-    Auth.init();
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
     
-    // Проверяем авторизацию с задержкой
-    setTimeout(() => {
-      console.log('🔍 Проверка авторизации...');
-      console.log('Текущий пользователь:', Auth.currentUser);
-      
-      if (Auth.currentUser) {
-        console.log('🔄 Пользователь авторизован, перенаправляем на дашборд...');
-        Notification.info('Автоматический вход...');
-        setTimeout(() => {
-          window.location.href = 'dashboard.html';
-        }, 1500);
-      } else {
-        console.log('👋 Пользователь не авторизован, показываем форму входа');
-      }
-    }, 500);
-
-    // Обработка формы входа - УБИРАЕМ ASYNC/AWAIT
-    document.getElementById('loginForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
-      
-      console.log('📧 Попытка входа:', email);
-      
-      if (!email || !password) {
-        Notification.error('Пожалуйста, заполните все поля');
-        return;
-      }
-      
-      // Показываем загрузку
-      const submitBtn = this.querySelector('button[type="submit"]');
-      const originalText = submitBtn.innerHTML;
-      submitBtn.innerHTML = '⏳ Вход...';
-      submitBtn.disabled = true;
-      
-      // СИНХРОННЫЙ ВХОД
-      const result = Auth.login(email, password);
-      
-      if (result.success) {
-        Notification.success(`Добро пожаловать, ${result.user.name}!`);
-        console.log('✅ Вход успешен, перенаправляем...');
-        
-        // Перенаправляем на дашборд
-        setTimeout(() => {
-          window.location.href = 'dashboard.html';
-        }, 1000);
-      } else {
-        Notification.error(result.error);
-        console.log('❌ Ошибка входа:', result.error);
-        submitBtn.innerHTML = originalText;
-        submitBtn.disabled = false;
-      }
-    });
-
-    // Анимации для карточек
-    const observer = new IntersectionObserver(function(entries) {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.style.opacity = '1';
-          entry.target.style.transform = 'translateY(0)';
-        }
-      });
-    }, { threshold: 0.1 });
+    const result = Auth.login(email, password);
     
-    document.querySelectorAll('.feature-card').forEach(card => {
-      card.style.opacity = '0';
-      card.style.transform = 'translateY(20px)';
-      card.style.transition = 'all 0.6s ease';
-      observer.observe(card);
-    });
+    if (result.success) {
+      Notification.success(`Добро пожаловать, ${result.user.name}!`);
+      setTimeout(() => {
+        window.location.href = 'dashboard.html';
+      }, 1000);
+    } else {
+      Notification.error(result.error);
+    }
   });
-
-  function fillCredentials(email, password) {
-    document.getElementById('email').value = email;
-    document.getElementById('password').value = password;
-    Notification.info('Данные заполнены! Нажмите "Войти в систему"');
-  }
+});
 </script>
