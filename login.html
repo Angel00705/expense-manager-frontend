@@ -3,7 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Expense Manager - Вход</title>
+    <title>Вход - Expense Manager</title>
+    
+    <!-- 🎨 FAVICON -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><defs><linearGradient id='borderGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%238b5cf6'/><stop offset='50%' stop-color='%236d28d9'/><stop offset='100%' stop-color='%231e40af'/></linearGradient><linearGradient id='checkGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%23a78bfa'/><stop offset='100%' stop-color='%234f46e5'/></linearGradient><filter id='glow' x='-50%' y='-50%' width='200%' height='200%'><feGaussianBlur in='SourceGraphic' stdDeviation='1' result='blur'/><feMerge><feMergeNode in='blur'/><feMergeNode in='SourceGraphic'/></feMerge></filter></defs><circle cx='10' cy='10' r='9' fill='none' stroke='url(%23borderGrad)' stroke-width='1.5' opacity='0.9'/><path d='M6,10 L8.5,12.5 L14,7' stroke='url(%23checkGrad)' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round' filter='url(%23glow)'/></svg>">
+    
     <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" href="./css/login.css">
 </head>
@@ -11,32 +15,42 @@
     <div class="login-wrapper">
         <div class="login-container">
             <div class="login-header">
-                <h1>💰 Expense Manager</h1>
-                <p>Система управления расходами ИП</p>
+                <div class="logo">💰</div>
+                <h1>Expense Manager</h1>
+                <p>Войдите в свою учетную запись</p>
             </div>
             
             <form id="loginForm" class="login-form">
                 <div class="input-group">
-                    <label for="email">Email</label>
+                    <label for="email">Email адрес</label>
                     <input type="email" id="email" placeholder="your@email.com" required>
                 </div>
                 
                 <div class="input-group">
                     <label for="password">Пароль</label>
-                    <input type="password" id="password" placeholder="Введите пароль" required>
+                    <input type="password" id="password" placeholder="Введите ваш пароль" required>
                 </div>
                 
-                <button type="submit" class="login-btn">
+                <button type="submit" class="login-btn" id="loginButton">
                     <span class="btn-text">Войти в систему</span>
+                    <div class="btn-loader" style="display: none;">
+                        <div class="spinner"></div>
+                    </div>
                 </button>
             </form>
             
             <div id="error-message" class="error-message" style="display: none;"></div>
             
             <div class="login-footer">
-                <p><strong>Тестовые доступы:</strong></p>
-                <p>Бухгалтер: admin@test.ru / 123456</p>
-                <p>Управляющий: astrakhan@test.ru / 123456</p>
+                <h3>Тестовые доступы:</h3>
+                <div class="test-accounts">
+                    <div class="account">
+                        <strong>Бухгалтер:</strong> admin@test.ru / 123456
+                    </div>
+                    <div class="account">
+                        <strong>Управляющий (Астрахань):</strong> astrakhan@test.ru / 123456
+                    </div>
+                </div>
             </div>
         </div>
     </div>
