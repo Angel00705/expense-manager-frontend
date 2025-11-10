@@ -1,22 +1,25 @@
-// js/utils.js - ПОЛНОСТЬЮ ПЕРЕПИСАННАЯ СИСТЕМА АВТОРИЗАЦИИ
+// js/utils.js - ИСПРАВЛЕННАЯ СИСТЕМА АВТОРИЗАЦИИ
 
 const Auth = {
   currentUser: null,
   initialized: false,
   
   init: function() {
-    if (this.initialized) return;
+    if (this.initialized) {
+      console.log('🔄 Auth уже инициализирован');
+      return;
+    }
     
     console.log('🔄 Инициализация системы авторизации...');
     
-    // ОЧИСТКА ДЛЯ ТЕСТИРОВАНИЯ - раскомментируй если нужно сбросить
-    // localStorage.clear();
-    // console.log('🧹 LocalStorage очищен');
+    // ВРЕМЕННО ВКЛЮЧАЕМ ОЧИСТКУ ДЛЯ ТЕСТИРОВАНИЯ
+    localStorage.removeItem('currentUser');
+    console.log('🧹 LocalStorage очищен для тестирования');
     
     const savedUser = localStorage.getItem('currentUser');
     console.log('💾 Сохраненный пользователь в localStorage:', savedUser);
     
-    if (savedUser) {
+    if (savedUser && savedUser !== 'null' && savedUser !== 'undefined') {
       try {
         const user = JSON.parse(savedUser);
         if (user && user.email && user.name && user.role) {
@@ -32,9 +35,11 @@ const Auth = {
       }
     } else {
       console.log('🔐 Пользователь не авторизован');
+      this.currentUser = null;
     }
     
     this.initialized = true;
+    console.log('🏁 Инициализация Auth завершена');
   },
   
   login: function(email, password) {
@@ -56,7 +61,6 @@ const Auth = {
       }
     };
     
-    // Добавляем задержку для имитации процесса входа
     return new Promise((resolve) => {
       setTimeout(() => {
         const user = users[email];
@@ -102,8 +106,10 @@ const Auth = {
     console.log('Текущий пользователь:', this.currentUser);
     
     if (!this.currentUser) {
-      console.log('❌ Доступ запрещен - перенаправляем на главную');
-      window.location.href = 'index.html';
+      console.log('❌ Доступ запрещен - перенаправляем на главную через 100мс');
+      setTimeout(() => {
+        window.location.href = 'index.html';
+      }, 100);
       return false;
     }
     
@@ -117,29 +123,63 @@ const Auth = {
     this.initialized = false;
     localStorage.removeItem('currentUser');
     console.log('🧹 Авторизация очищена');
+    // НЕ ПЕРЕНАПРАВЛЯЕМ - пусть пользователь останется на странице
   }
 };
 
-// Остальные утилиты остаются без изменений...
+// ИСПРАВЛЕННЫЕ УВЕДОМЛЕНИЯ
 const Notification = {
   show: function(message, type = 'info', duration = 5000) {
+    // Создаем элемент уведомления
     const notification = document.createElement('div');
-    notification.className = `notification ${type}`;
+    notification.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 16px 24px;
+      border-radius: 12px;
+      color: white;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      z-index: 1000;
+      transform: translateX(400px);
+      transition: transform 0.3s ease;
+      max-width: 400px;
+    `;
+    
+    // Устанавливаем цвет в зависимости от типа
+    if (type === 'success') {
+      notification.style.background = '#10b981';
+    } else if (type === 'error') {
+      notification.style.background = '#ef4444';
+    } else if (type === 'warning') {
+      notification.style.background = '#f59e0b';
+    } else {
+      notification.style.background = '#3b82f6';
+    }
+    
     notification.innerHTML = `
-      <div style="display: flex; align-items: center; justify-content: between;">
+      <div style="display: flex; align-items: center; justify-content: space-between;">
         <span>${message}</span>
-        <button onclick="this.parentElement.parentElement.remove()" style="margin-left: 10px; background: none; border: none; color: white; cursor: pointer;">×</button>
+        <button onclick="this.parentElement.parentElement.remove()" style="margin-left: 10px; background: none; border: none; color: white; cursor: pointer; font-size: 18px;">×</button>
       </div>
     `;
     
     document.body.appendChild(notification);
     
-    setTimeout(() => notification.classList.add('show'), 100);
+    // Показываем с анимацией
+    setTimeout(() => {
+      notification.style.transform = 'translateX(0)';
+    }, 100);
     
+    // Автоматическое скрытие
     if (duration > 0) {
       setTimeout(() => {
-        notification.classList.remove('show');
-        setTimeout(() => notification.remove(), 300);
+        notification.style.transform = 'translateX(400px)';
+        setTimeout(() => {
+          if (notification.parentElement) {
+            notification.parentElement.removeChild(notification);
+          }
+        }, 300);
       }, duration);
     }
     
@@ -173,19 +213,21 @@ const FormHelper = {
   
   // Валидация обязательных полей
   validateRequired: function(fields) {
+    let isValid = true;
     for (const field of fields) {
       if (!field.value.trim()) {
         this.showFieldError(field, 'Это поле обязательно для заполнения');
-        return false;
+        isValid = false;
+      } else {
+        this.clearFieldError(field);
       }
-      this.clearFieldError(field);
     }
-    return true;
+    return isValid;
   },
   
   // Показать ошибку поля
   showFieldError: function(field, message) {
-    field.style.borderColor = 'var(--error)';
+    field.style.borderColor = '#ef4444';
     
     // Удаляем старую ошибку если есть
     const existingError = field.parentElement.querySelector('.field-error');
@@ -196,7 +238,7 @@ const FormHelper = {
     // Добавляем сообщение об ошибке
     const errorElement = document.createElement('div');
     errorElement.className = 'field-error';
-    errorElement.style.color = 'var(--error)';
+    errorElement.style.color = '#ef4444';
     errorElement.style.fontSize = '14px';
     errorElement.style.marginTop = '4px';
     errorElement.textContent = message;
@@ -240,13 +282,24 @@ const TaskManager = {
   
   // Получить все задачи (из localStorage)
   getAllTasks: function() {
-    const tasks = localStorage.getItem('tasks');
-    return tasks ? JSON.parse(tasks) : [];
+    try {
+      const tasks = localStorage.getItem('tasks');
+      return tasks ? JSON.parse(tasks) : [];
+    } catch (e) {
+      console.error('Ошибка при загрузке задач:', e);
+      return [];
+    }
   },
   
   // Сохранить задачи
   saveTasks: function(tasks) {
-    localStorage.setItem('tasks', JSON.stringify(tasks));
+    try {
+      localStorage.setItem('tasks', JSON.stringify(tasks));
+      return true;
+    } catch (e) {
+      console.error('Ошибка при сохранении задач:', e);
+      return false;
+    }
   },
   
   // Создать новую задачу
@@ -262,9 +315,14 @@ const TaskManager = {
     };
     
     tasks.push(newTask);
-    this.saveTasks(tasks);
+    const success = this.saveTasks(tasks);
     
-    return newTask;
+    if (success) {
+      console.log('✅ Задача создана:', newTask);
+      return newTask;
+    } else {
+      throw new Error('Ошибка при сохранении задачи');
+    }
   },
   
   // Обновить задачу
@@ -279,10 +337,14 @@ const TaskManager = {
         updatedAt: new Date().toISOString()
       };
       
-      this.saveTasks(tasks);
-      return tasks[taskIndex];
+      const success = this.saveTasks(tasks);
+      if (success) {
+        console.log('✅ Задача обновлена:', tasks[taskIndex]);
+        return tasks[taskIndex];
+      }
     }
     
+    console.error('❌ Задача не найдена:', taskId);
     return null;
   },
   
@@ -290,14 +352,21 @@ const TaskManager = {
   deleteTask: function(taskId) {
     const tasks = this.getAllTasks();
     const filteredTasks = tasks.filter(task => task.id !== taskId);
-    this.saveTasks(filteredTasks);
+    const success = this.saveTasks(filteredTasks);
     
-    return filteredTasks.length !== tasks.length;
+    if (success) {
+      console.log('✅ Задача удалена:', taskId);
+      return true;
+    }
+    
+    return false;
   },
   
   // Получить задачи для текущего пользователя
   getUserTasks: function() {
     const tasks = this.getAllTasks();
+    
+    if (!Auth.currentUser) return [];
     
     if (Auth.isAdmin()) {
       return tasks; // Админ видит все задачи
@@ -310,18 +379,6 @@ const TaskManager = {
     }
     
     return [];
-  },
-  
-  // Фильтрация задач
-  filterTasks: function(tasks, filters = {}) {
-    return tasks.filter(task => {
-      if (filters.status && task.status !== filters.status) return false;
-      if (filters.region && task.region !== filters.region) return false;
-      if (filters.responsibleManager && task.responsibleManager !== filters.responsibleManager) return false;
-      if (filters.ip && task.ip !== filters.ip) return false;
-      
-      return true;
-    });
   }
 };
 
@@ -331,7 +388,6 @@ const DOMHelper = {
   createElement: function(tag, attributes = {}, children = []) {
     const element = document.createElement(tag);
     
-    // Устанавливаем атрибуты
     for (const [key, value] of Object.entries(attributes)) {
       if (key === 'className') {
         element.className = value;
@@ -344,7 +400,6 @@ const DOMHelper = {
       }
     }
     
-    // Добавляем детей
     children.forEach(child => {
       if (typeof child === 'string') {
         element.appendChild(document.createTextNode(child));
@@ -354,27 +409,6 @@ const DOMHelper = {
     });
     
     return element;
-  },
-  
-  // Очистить контейнер
-  clearContainer: function(container) {
-    while (container.firstChild) {
-      container.removeChild(container.firstChild);
-    }
-  },
-  
-  // Показать/скрыть элемент
-  toggleElement: function(element, show) {
-    element.style.display = show ? '' : 'none';
-  },
-  
-  // Добавить обработчик с делегированием
-  delegate: function(container, event, selector, handler) {
-    container.addEventListener(event, function(e) {
-      if (e.target.matches(selector)) {
-        handler(e);
-      }
-    });
   }
 };
 
@@ -382,12 +416,16 @@ const DOMHelper = {
 const FormatHelper = {
   // Форматирование даты
   formatDate: function(dateString) {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('ru-RU', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
-    });
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('ru-RU', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      });
+    } catch (e) {
+      return dateString;
+    }
   },
   
   // Форматирование суммы
@@ -396,32 +434,11 @@ const FormatHelper = {
       style: 'currency',
       currency: 'RUB'
     }).format(amount);
-  },
-  
-  // Сокращение текста
-  truncateText: function(text, maxLength = 50) {
-    if (text.length <= maxLength) return text;
-    return text.substring(0, maxLength) + '...';
-  },
-  
-  // Получить цвет статуса
-  getStatusColor: function(status) {
-    const colors = {
-      'pending': 'var(--warning)',
-      'in_progress': 'var(--info)',
-      'completed': 'var(--success)',
-      'cancelled': 'var(--error)',
-      'needs_review': 'var(--warning)'
-    };
-    
-    return colors[status] || 'var(--text-light)';
   }
 };
 
-// Инициализация при загрузке
-document.addEventListener('DOMContentLoaded', function() {
-  Auth.init();
-});
+// НЕ ИНИЦИАЛИЗИРУЕМ АВТОРИЗАЦИЮ АВТОМАТИЧЕСКИ!
+// Пусть каждая страница сама решает когда вызывать Auth.init()
 
 // Делаем утилиты глобально доступными
 window.Auth = Auth;
@@ -430,3 +447,5 @@ window.FormHelper = FormHelper;
 window.TaskManager = TaskManager;
 window.DOMHelper = DOMHelper;
 window.FormatHelper = FormatHelper;
+
+console.log('🔧 Utils.js загружен, Auth НЕ инициализирован автоматически');
