@@ -9,23 +9,73 @@
     --primary-color: #667eea;
     --primary-dark: #5a6fd8;
     --secondary-color: #764ba2;
-    --success-color: #28a745;
-    --error-color: #dc3545;
-    --warning-color: #ffc107;
-    --text-dark: #2d3748;
-    --text-light: #718096;
-    --bg-light: #f7fafc;
-    --border-color: #e2e8f0;
+    --accent-color: #f093fb;
+    --success-color: #4ade80;
+    --error-color: #f87171;
+    --warning-color: #fbbf24;
+    --text-dark: #1f2937;
+    --text-light: #6b7280;
+    --bg-light: #f8fafc;
+    --border-color: #e5e7eb;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
     --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    --shadow-hover: 0 20px 40px rgba(0, 0, 0, 0.15);
+    --shadow-lg: 0 25px 50px rgba(0, 0, 0, 0.15);
+    --shadow-hover: 0 20px 40px rgba(102, 126, 234, 0.2);
+    --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --gradient-accent: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    --gradient-success: linear-gradient(135deg, #4ade80 0%, #22d3ee 100%);
 }
 
 body {
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-    line-height: 1.6;
+    font-family: 'Segoe UI', system-ui, -apple-system, 'BlinkMacSystemFont', sans-serif;
+    line-height: 1.7;
     color: var(--text-dark);
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    background: var(--gradient-primary);
     min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* НЕОНОВЫЕ ЭФФЕКТЫ И АНИМАЦИИ */
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+@keyframes glow {
+    0%, 100% { box-shadow: 0 0 20px rgba(102, 126, 234, 0.3); }
+    50% { box-shadow: 0 0 30px rgba(102, 126, 234, 0.6); }
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes bounceIn {
+    0% { transform: scale(0.3); opacity: 0; }
+    50% { transform: scale(1.05); opacity: 0.8; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+@keyframes shimmer {
+    0% { background-position: -200px 0; }
+    100% { background-position: 200px 0; }
 }
 
 /* ОСНОВНЫЕ КОНТЕЙНЕРЫ */
@@ -35,6 +85,7 @@ body {
     align-items: center;
     justify-content: center;
     padding: 20px;
+    animation: fadeIn 0.8s ease-out;
 }
 
 .login-wrapper {
@@ -43,55 +94,29 @@ body {
     align-items: center;
     justify-content: center;
     padding: 20px;
+    animation: fadeIn 0.8s ease-out;
 }
 
 .dashboard-container {
     min-height: 100vh;
     background: var(--bg-light);
+    animation: fadeIn 0.8s ease-out;
 }
 
-/* АНИМАЦИИ */
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+/* СТИЛИ ДЛЯ СКРОЛЛБАРА */
+::-webkit-scrollbar {
+    width: 8px;
 }
 
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateX(-30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
+::-webkit-scrollbar-track {
+    background: var(--bg-light);
 }
 
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 10px;
 }
 
-/* УТИЛИТЫ */
-.spinner {
-    width: 20px;
-    height: 20px;
-    border: 2px solid transparent;
-    border-top: 2px solid currentColor;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-
-/* АДАПТИВНОСТЬ */
-@media (max-width: 768px) {
-    .main-container,
-    .login-wrapper {
-        padding: 10px;
-    }
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-dark);
 }
