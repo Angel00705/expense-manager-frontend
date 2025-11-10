@@ -1,250 +1,391 @@
 // js/utils.js - УТИЛИТЫ И ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
 
+// 🔐 СИСТЕМА АВТОРИЗАЦИИ
+const Auth = {
+  currentUser: null,
+  
+  init: function() {
+    // Проверяем, есть ли сохраненный пользователь
+    const savedUser = localStorage.getItem('currentUser');
+    if (savedUser) {
+      this.currentUser = JSON.parse(savedUser);
+    }
+  },
+  
+  login: function(email, password) {
+    // Тестовые пользователи (в реальном приложении - запрос к API)
+    const users = {
+      'admin@test.ru': { 
+        email: 'admin@test.ru', 
+        name: 'Главный Бухгалтер', 
+        role: 'admin',
+        password: 'admin123'
+      },
+      'astrakhan@test.ru': { 
+        email: 'astrakhan@test.ru', 
+        name: 'Управляющий Астрахань', 
+        role: 'manager',
+        region: 'Астрахань',
+        password: 'manager123'
+      }
+    };
+    
+    const user = users[email];
+    if (user && user.password === password) {
+      this.currentUser = {
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        region: user.region
+      };
+      
+      localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+      return { success: true, user: this.currentUser };
+    }
+    
+    return { success: false, error: 'Неверный email или пароль' };
+  },
+  
+  logout: function() {
+    this.currentUser = null;
+    localStorage.removeItem('currentUser');
+    window.location.href = 'login.html';
+  },
+  
+  isAdmin: function() {
+    return this.currentUser && this.currentUser.role === 'admin';
+  },
+  
+  isManager: function() {
+    return this.currentUser && this.currentUser.role === 'manager';
+  },
+  
+  requireAuth: function() {
+    if (!this.currentUser) {
+      window.location.href = 'login.html';
+      return false;
+    }
+    return true;
+  }
+};
+
 // 🔔 СИСТЕМА УВЕДОМЛЕНИЙ
-function showNotification(message, type = 'info', duration = 5000) {
+const Notification = {
+  show: function(message, type = 'info', duration = 5000) {
     // Создаем элемент уведомления
     const notification = document.createElement('div');
     notification.className = `notification ${type}`;
     notification.innerHTML = `
-        <div style="display: flex; align-items: center; gap: 12px;">
-            <span style="font-size: 1.2em;">${getNotificationIcon(type)}</span>
-            <span>${message}</span>
-        </div>
+      <div class="notification-content">
+        <span class="notification-message">${message}</span>
+        <button class="notification-close" onclick="this.parentElement.parentElement.remove()">×</button>
+      </div>
     `;
     
     // Добавляем в тело документа
     document.body.appendChild(notification);
     
     // Показываем с анимацией
-    setTimeout(() => notification.classList.add('show'), 100);
+    setTimeout(() => {
+      notification.classList.add('show');
+    }, 100);
     
     // Автоматическое скрытие
-    setTimeout(() => {
+    if (duration > 0) {
+      setTimeout(() => {
         notification.classList.remove('show');
         setTimeout(() => {
-            if (notification.parentNode) {
-                notification.parentNode.removeChild(notification);
-            }
+          if (notification.parentElement) {
+            notification.parentElement.removeChild(notification);
+          }
         }, 300);
-    }, duration);
+      }, duration);
+    }
     
-    // Возможность закрыть кликом
-    notification.addEventListener('click', () => {
-        notification.classList.remove('show');
-        setTimeout(() => {
-            if (notification.parentNode) {
-                notification.parentNode.removeChild(notification);
-            }
-        }, 300);
-    });
-}
+    return notification;
+  },
+  
+  success: function(message, duration = 5000) {
+    return this.show('✅ ' + message, 'success', duration);
+  },
+  
+  error: function(message, duration = 5000) {
+    return this.show('❌ ' + message, 'error', duration);
+  },
+  
+  warning: function(message, duration = 5000) {
+    return this.show('⚠️ ' + message, 'warning', duration);
+  },
+  
+  info: function(message, duration = 5000) {
+    return this.show('ℹ️ ' + message, 'info', duration);
+  }
+};
 
-function getNotificationIcon(type) {
-    const icons = {
-        'success': '✅',
-        'error': '❌',
-        'warning': '⚠️',
-        'info': 'ℹ️'
-    };
-    return icons[type] || '💡';
-}
-
-// 🔐 ПРОВЕРКА ПРАВ ДОСТУПА
-function isAdmin() {
-    return appData.currentUser && appData.currentUser.role === 'admin';
-}
-
-function isManager() {
-    return appData.currentUser && appData.currentUser.role === 'manager';
-}
-
-function checkAdminAccess() {
-    if (!isAdmin()) {
-        showNotification('❌ Доступ запрещен. Требуются права администратора.', 'error');
+// 📝 ФОРМЫ И ВАЛИДАЦИЯ
+const FormHelper = {
+  // Валидация email
+  validateEmail: function(email) {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+  },
+  
+  // Валидация обязательных полей
+  validateRequired: function(fields) {
+    for (const field of fields) {
+      if (!field.value.trim()) {
+        this.showFieldError(field, 'Это поле обязательно для заполнения');
         return false;
+      }
+      this.clearFieldError(field);
     }
     return true;
-}
+  },
+  
+  // Показать ошибку поля
+  showFieldError: function(field, message) {
+    field.style.borderColor = 'var(--error)';
+    
+    // Удаляем старую ошибку если есть
+    const existingError = field.parentElement.querySelector('.field-error');
+    if (existingError) {
+      existingError.remove();
+    }
+    
+    // Добавляем сообщение об ошибке
+    const errorElement = document.createElement('div');
+    errorElement.className = 'field-error';
+    errorElement.style.color = 'var(--error)';
+    errorElement.style.fontSize = '14px';
+    errorElement.style.marginTop = '4px';
+    errorElement.textContent = message;
+    
+    field.parentElement.appendChild(errorElement);
+  },
+  
+  // Очистить ошибку поля
+  clearFieldError: function(field) {
+    field.style.borderColor = '';
+    
+    const existingError = field.parentElement.querySelector('.field-error');
+    if (existingError) {
+      existingError.remove();
+    }
+  },
+  
+  // Сброс формы
+  resetForm: function(form) {
+    form.reset();
+    const errors = form.querySelectorAll('.field-error');
+    errors.forEach(error => error.remove());
+    
+    const fields = form.querySelectorAll('.form-control');
+    fields.forEach(field => {
+      field.style.borderColor = '';
+    });
+  }
+};
 
-// 📝 ФОРМАТИРОВАНИЕ ДАТ И СУММ
-function formatDate(dateString) {
-    if (!dateString) return '—';
+// 🎯 РАБОТА С ДАННЫМИ ЗАДАЧ
+const TaskManager = {
+  // Статусы задач
+  statuses: {
+    'pending': '⏳ Ожидает выполнения',
+    'in_progress': '🔄 В работе', 
+    'completed': '✅ Выполнено',
+    'cancelled': '❌ Отменено',
+    'needs_review': '📝 Требует проверки'
+  },
+  
+  // Получить все задачи (из localStorage)
+  getAllTasks: function() {
+    const tasks = localStorage.getItem('tasks');
+    return tasks ? JSON.parse(tasks) : [];
+  },
+  
+  // Сохранить задачи
+  saveTasks: function(tasks) {
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+  },
+  
+  // Создать новую задачу
+  createTask: function(taskData) {
+    const tasks = this.getAllTasks();
+    
+    const newTask = {
+      id: 'task_' + Date.now(),
+      ...taskData,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      createdBy: Auth.currentUser ? Auth.currentUser.email : 'system'
+    };
+    
+    tasks.push(newTask);
+    this.saveTasks(tasks);
+    
+    return newTask;
+  },
+  
+  // Обновить задачу
+  updateTask: function(taskId, updates) {
+    const tasks = this.getAllTasks();
+    const taskIndex = tasks.findIndex(task => task.id === taskId);
+    
+    if (taskIndex !== -1) {
+      tasks[taskIndex] = {
+        ...tasks[taskIndex],
+        ...updates,
+        updatedAt: new Date().toISOString()
+      };
+      
+      this.saveTasks(tasks);
+      return tasks[taskIndex];
+    }
+    
+    return null;
+  },
+  
+  // Удалить задачу
+  deleteTask: function(taskId) {
+    const tasks = this.getAllTasks();
+    const filteredTasks = tasks.filter(task => task.id !== taskId);
+    this.saveTasks(filteredTasks);
+    
+    return filteredTasks.length !== tasks.length;
+  },
+  
+  // Получить задачи для текущего пользователя
+  getUserTasks: function() {
+    const tasks = this.getAllTasks();
+    
+    if (Auth.isAdmin()) {
+      return tasks; // Админ видит все задачи
+    } else if (Auth.isManager()) {
+      // Управляющий видит только свои задачи
+      return tasks.filter(task => 
+        task.responsibleManager === Auth.currentUser.name ||
+        task.region === Auth.currentUser.region
+      );
+    }
+    
+    return [];
+  },
+  
+  // Фильтрация задач
+  filterTasks: function(tasks, filters = {}) {
+    return tasks.filter(task => {
+      if (filters.status && task.status !== filters.status) return false;
+      if (filters.region && task.region !== filters.region) return false;
+      if (filters.responsibleManager && task.responsibleManager !== filters.responsibleManager) return false;
+      if (filters.ip && task.ip !== filters.ip) return false;
+      
+      return true;
+    });
+  }
+};
+
+// 🎨 УТИЛИТЫ ДЛЯ РАБОТЫ С DOM
+const DOMHelper = {
+  // Создать элемент с атрибутами
+  createElement: function(tag, attributes = {}, children = []) {
+    const element = document.createElement(tag);
+    
+    // Устанавливаем атрибуты
+    for (const [key, value] of Object.entries(attributes)) {
+      if (key === 'className') {
+        element.className = value;
+      } else if (key === 'textContent') {
+        element.textContent = value;
+      } else if (key === 'innerHTML') {
+        element.innerHTML = value;
+      } else {
+        element.setAttribute(key, value);
+      }
+    }
+    
+    // Добавляем детей
+    children.forEach(child => {
+      if (typeof child === 'string') {
+        element.appendChild(document.createTextNode(child));
+      } else {
+        element.appendChild(child);
+      }
+    });
+    
+    return element;
+  },
+  
+  // Очистить контейнер
+  clearContainer: function(container) {
+    while (container.firstChild) {
+      container.removeChild(container.firstChild);
+    }
+  },
+  
+  // Показать/скрыть элемент
+  toggleElement: function(element, show) {
+    element.style.display = show ? '' : 'none';
+  },
+  
+  // Добавить обработчик с делегированием
+  delegate: function(container, event, selector, handler) {
+    container.addEventListener(event, function(e) {
+      if (e.target.matches(selector)) {
+        handler(e);
+      }
+    });
+  }
+};
+
+// 📊 УТИЛИТЫ ДЛЯ ФОРМАТИРОВАНИЯ
+const FormatHelper = {
+  // Форматирование даты
+  formatDate: function(dateString) {
     const date = new Date(dateString);
     return date.toLocaleDateString('ru-RU', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
     });
-}
-
-function formatCurrency(amount) {
-    if (!amount && amount !== 0) return '—';
+  },
+  
+  // Форматирование суммы
+  formatAmount: function(amount) {
     return new Intl.NumberFormat('ru-RU', {
-        style: 'currency',
-        currency: 'RUB',
-        minimumFractionDigits: 2
+      style: 'currency',
+      currency: 'RUB'
     }).format(amount);
-}
-
-function parseCurrency(currencyString) {
-    if (!currencyString) return 0;
-    return parseFloat(currencyString.replace(/[^\d,]/g, '').replace(',', '.'));
-}
-
-// 🎯 РАБОТА С ФОРМАМИ
-function clearForm(formId) {
-    const form = document.getElementById(formId);
-    if (form) {
-        form.reset();
-        // Сбрасываем кастомные селекты
-        const customSelects = form.querySelectorAll('.custom-select');
-        customSelects.forEach(select => {
-            if (select.dataset.value) {
-                delete select.dataset.value;
-            }
-            const display = select.querySelector('.select-display');
-            if (display) {
-                display.textContent = 'Выберите...';
-            }
-        });
-    }
-}
-
-function validateForm(formData, requiredFields) {
-    const errors = [];
+  },
+  
+  // Сокращение текста
+  truncateText: function(text, maxLength = 50) {
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength) + '...';
+  },
+  
+  // Получить цвет статуса
+  getStatusColor: function(status) {
+    const colors = {
+      'pending': 'var(--warning)',
+      'in_progress': 'var(--info)',
+      'completed': 'var(--success)',
+      'cancelled': 'var(--error)',
+      'needs_review': 'var(--warning)'
+    };
     
-    requiredFields.forEach(field => {
-        if (!formData[field] || formData[field].toString().trim() === '') {
-            errors.push(`Поле "${field}" обязательно для заполнения`);
-        }
-    });
-    
-    if (formData.plannedAmount && formData.plannedAmount <= 0) {
-        errors.push('Сумма должна быть больше 0');
-    }
-    
-    return errors;
-}
+    return colors[status] || 'var(--text-light)';
+  }
+};
 
-// 🔄 ЗАГРУЗКА ДАННЫХ
-async function loadData(endpoint) {
-    try {
-        const response = await fetch(`https://expense-manager-backend-kq9h.onrender.com/api/${endpoint}`);
-        if (!response.ok) throw new Error('Ошибка загрузки данных');
-        return await response.json();
-    } catch (error) {
-        console.error('Ошибка загрузки:', error);
-        showNotification('⚠️ Ошибка загрузки данных', 'error');
-        return [];
-    }
-}
+// Инициализация при загрузке
+document.addEventListener('DOMContentLoaded', function() {
+  Auth.init();
+});
 
-async function saveData(endpoint, data) {
-    try {
-        const response = await fetch(`https://expense-manager-backend-kq9h.onrender.com/api/${endpoint}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data)
-        });
-        
-        if (!response.ok) throw new Error('Ошибка сохранения');
-        
-        const result = await response.json();
-        showNotification('✅ Данные успешно сохранены', 'success');
-        return result;
-    } catch (error) {
-        console.error('Ошибка сохранения:', error);
-        showNotification('❌ Ошибка сохранения данных', 'error');
-        throw error;
-    }
-}
-
-// 🎪 АНИМАЦИИ И ЭФФЕКТЫ
-function addHoverEffects() {
-    // Добавляем эффекты при наведении на карточки
-    const cards = document.querySelectorAll('.glass-card');
-    cards.forEach(card => {
-        card.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-5px) scale(1.02)';
-        });
-        
-        card.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0) scale(1)';
-        });
-    });
-    
-    // Эффекты для кнопок
-    const buttons = document.querySelectorAll('.btn');
-    buttons.forEach(btn => {
-        btn.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-2px)';
-        });
-        
-        btn.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0)';
-        });
-    });
-}
-
-// 🔧 ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ
-function initializeApp() {
-    // Загружаем данные пользователя из localStorage
-    const savedUser = localStorage.getItem('currentUser');
-    if (savedUser) {
-        appData.currentUser = JSON.parse(savedUser);
-        updateUIForUser();
-    }
-    
-    // Добавляем визуальные эффекты
-    addHoverEffects();
-    
-    // Показываем приветственное сообщение
-    if (appData.currentUser) {
-        showNotification(`👋 Добро пожаловать, ${appData.currentUser.name}!`, 'success', 3000);
-    }
-}
-
-function updateUIForUser() {
-    // Обновляем интерфейс в зависимости от роли пользователя
-    const adminElements = document.querySelectorAll('.admin-only');
-    const managerElements = document.querySelectorAll('.manager-only');
-    
-    if (isAdmin()) {
-        adminElements.forEach(el => el.style.display = 'block');
-        managerElements.forEach(el => el.style.display = 'block');
-    } else if (isManager()) {
-        adminElements.forEach(el => el.style.display = 'none');
-        managerElements.forEach(el => el.style.display = 'block');
-    } else {
-        adminElements.forEach(el => el.style.display = 'none');
-        managerElements.forEach(el => el.style.display = 'none');
-    }
-    
-    // Обновляем информацию о пользователе в хедере
-    const userInfoElement = document.querySelector('.user-info');
-    if (userInfoElement && appData.currentUser) {
-        userInfoElement.innerHTML = `
-            <span>👤 ${appData.currentUser.name}</span>
-            <span class="badge ${appData.currentUser.role === 'admin' ? 'badge-success' : 'badge-info'}">
-                ${appData.currentUser.role === 'admin' ? '👨‍💼 Бухгалтер' : '👨‍💻 Управляющий'}
-            </span>
-        `;
-    }
-}
-
-// Экспортируем функции для использования в других файлах
-window.showNotification = showNotification;
-window.isAdmin = isAdmin;
-window.isManager = isManager;
-window.checkAdminAccess = checkAdminAccess;
-window.formatDate = formatDate;
-window.formatCurrency = formatCurrency;
-window.parseCurrency = parseCurrency;
-window.clearForm = clearForm;
-window.validateForm = validateForm;
-window.loadData = loadData;
-window.saveData = saveData;
-window.initializeApp = initializeApp;
-window.updateUIForUser = updateUIForUser;
+// Делаем утилиты глобально доступными
+window.Auth = Auth;
+window.Notification = Notification;
+window.FormHelper = FormHelper;
+window.TaskManager = TaskManager;
+window.DOMHelper = DOMHelper;
+window.FormatHelper = FormatHelper;

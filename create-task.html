@@ -3,281 +3,408 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>➕ Создать задачу - IP Expense Manager</title>
+    <title>Создание задачи - IP Expense Manager</title>
     <link rel="stylesheet" href="css/style.css">
-    <!-- 🎨 FAVICON -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><defs><linearGradient id='borderGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%238b5cf6'/><stop offset='50%' stop-color='%236d28d9'/><stop offset='100%' stop-color='%231e40af'/></linearGradient><linearGradient id='checkGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%23a78bfa'/><stop offset='100%' stop-color='%234f46e5'/></linearGradient><filter id='glow' x='-50%' y='-50%' width='200%' height='200%'><feGaussianBlur in='SourceGraphic' stdDeviation='1' result='blur'/><feMerge><feMergeNode in='blur'/><feMergeNode in='SourceGraphic'/></feMerge></filter></defs><circle cx='10' cy='10' r='9' fill='none' stroke='url(%23borderGrad)' stroke-width='1.5' opacity='0.9'/><path d='M6,10 L8.5,12.5 L14,7' stroke='url(%23checkGrad)' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round' filter='url(%23glow)'/></svg>">
-    <!-- 🔧 ПОДКЛЮЧАЕМ УТИЛИТЫ -->
-    <script src="js/data.js"></script>
-    <script src="js/utils.js"></script>
 </head>
 <body>
-    <!-- 🎯 ХЕДЕР -->
-    <header class="header">
-        <nav class="nav">
-            <div class="logo">
-                <span>💰</span>
-                IP Expense Manager
+    <!-- Навигация -->
+    <nav class="navbar">
+        <div class="container">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <a href="dashboard.html" class="navbar-brand">
+                    🎯 IP Expense Manager
+                </a>
+                <div style="display: flex; align-items: center; gap: 20px;">
+                    <span style="color: white;">${Auth.currentUser?.name}</span>
+                    <button onclick="Auth.logout()" class="btn btn-outline" style="color: white; border-color: white;">
+                        🚪 Выйти
+                    </button>
+                </div>
             </div>
-            <div class="nav-links">
-                <a href="dashboard.html" class="nav-link">📊 Дашборд</a>
-                <a href="create-task.html" class="nav-link active">➕ Создать задачу</a>
-                <a href="tasks.html" class="nav-link">📋 Задачи</a>
-                <a href="expense-items.html" class="nav-link">🗂️ Статьи расходов</a>
-                <a href="cards.html" class="nav-link">💳 Карты</a>
-                <div class="user-info">
-                    <!-- Будет заполнено через JavaScript -->
-                </div>
-                <button class="btn btn-outline" onclick="logout()">🚪 Выйти</button>
+        </div>
+    </nav>
+
+    <!-- Основной контент -->
+    <div class="container" style="padding: 40px 20px;">
+        <div class="glass-card" style="max-width: 800px; margin: 0 auto; padding: 40px;">
+            <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 32px;">
+                <a href="dashboard.html" class="btn btn-outline" style="text-decoration: none;">← Назад</a>
+                <h1 style="margin: 0;">📋 Создание новой задачи</h1>
             </div>
-        </nav>
-    </header>
 
-    <main class="container">
-        <div class="glass-card animate-slide-in">
-            <h1 style="margin-bottom: 8px;">➕ Создать новую задачу</h1>
-            <p class="text-muted">Заполните информацию о новой задаче для управляющего</p>
-
-            <form id="createTaskForm" style="margin-top: 30px;">
-                <!-- 📍 РЕГИОН И ИП -->
-                <div class="flex gap-4 mb-6" style="flex-wrap: wrap;">
-                    <div class="form-group" style="flex: 1; min-width: 200px;">
-                        <label class="form-label">🏙️ Регион *</label>
-                        <select class="form-select" id="regionSelect" required onchange="onRegionChange()">
-                            <option value="">Выберите регион...</option>
-                            ${appData.regions.map(region => 
-                                `<option value="${region}">${region}</option>`
-                            ).join('')}
-                        </select>
+            <form id="createTaskForm">
+                <!-- Основная информация -->
+                <div class="glass-card" style="padding: 24px; margin-bottom: 24px;">
+                    <h3 style="margin-bottom: 20px; color: var(--primary);">📝 Основная информация</h3>
+                    
+                    <div class="form-group">
+                        <label class="form-label">🎯 Название задачи *</label>
+                        <input type="text" class="form-control" id="taskTitle" 
+                               placeholder="Например: Закупка продуктов на неделю" required>
                     </div>
 
-                    <div class="form-group" style="flex: 1; min-width: 200px;">
-                        <label class="form-label">💼 Индивидуальный предприниматель *</label>
-                        <select class="form-select" id="ipSelect" required onchange="onIPChange()" disabled>
-                            <option value="">Сначала выберите регион</option>
-                        </select>
+                    <div class="form-group">
+                        <label class="form-label">📄 Описание задачи</label>
+                        <textarea class="form-control" id="taskDescription" 
+                                  placeholder="Подробное описание задачи..." 
+                                  rows="3"></textarea>
                     </div>
                 </div>
 
-                <!-- 💰 СТАТЬЯ РАСХОДОВ И ОТВЕТСТВЕННЫЙ -->
-                <div class="flex gap-4 mb-6" style="flex-wrap: wrap;">
-                    <div class="form-group" style="flex: 1; min-width: 200px;">
-                        <label class="form-label">📊 Статья расходов *</label>
-                        <select class="form-select" id="expenseItemSelect" required onchange="onExpenseItemChange()">
-                            <option value="">Выберите статью расходов...</option>
-                            ${appData.expenseItems.map(item => 
-                                `<option value="${item}">${item}</option>`
-                            ).join('')}
-                        </select>
-                    </div>
-
-                    <div class="form-group" style="flex: 1; min-width: 200px;">
-                        <label class="form-label">👤 Ответственный управляющий</label>
-                        <input type="text" class="form-input" id="responsibleManager" readonly 
-                               placeholder="Выберите статью расходов">
-                    </div>
-                </div>
-
-                <!-- 💳 БАНКОВСКАЯ КАРТА -->
-                <div class="form-group mb-6">
-                    <label class="form-label">💳 Банковская карта для оплаты *</label>
-                    <select class="form-select" id="bankCardSelect" required disabled>
-                        <option value="">Сначала выберите ИП</option>
-                    </select>
-                    <div class="text-muted" style="margin-top: 8px; font-size: 0.9rem;" id="cardStatus">
-                        Статус карты будет показан здесь
-                    </div>
-                </div>
-
-                <!-- 📝 ОСНОВНАЯ ИНФОРМАЦИЯ -->
-                <div class="flex gap-4 mb-6" style="flex-wrap: wrap;">
-                    <div class="form-group" style="flex: 1; min-width: 200px;">
-                        <label class="form-label">🏷️ Название задачи *</label>
-                        <input type="text" class="form-input" id="taskTitle" required 
-                               placeholder="Например: Закупка продуктов">
-                    </div>
-
-                    <div class="form-group" style="flex: 1; min-width: 200px;">
-                        <label class="form-label">💰 Плановая сумма *</label>
-                        <input type="number" class="form-input" id="plannedAmount" required 
-                               placeholder="0.00" step="0.01" min="0">
+                <!-- Цепочка выбора: Регион → ИП → Карта -->
+                <div class="glass-card" style="padding: 24px; margin-bottom: 24px;">
+                    <h3 style="margin-bottom: 20px; color: var(--primary);">🏢 Выбор объекта</h3>
+                    
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label class="form-label">📍 Регион *</label>
+                                <select class="form-control form-select" id="regionSelect" required>
+                                    <option value="">Выберите регион</option>
+                                    <!-- Регионы будут заполнены через JavaScript -->
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label class="form-label">👤 ИП *</label>
+                                <select class="form-control form-select" id="ipSelect" disabled required>
+                                    <option value="">Сначала выберите регион</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label class="form-label">💳 Банковская карта *</label>
+                                <select class="form-control form-select" id="cardSelect" disabled required>
+                                    <option value="">Сначала выберите ИП</option>
+                                </select>
+                                <small id="cardStatus" style="display: block; margin-top: 4px; color: var(--text-light);"></small>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- 📅 ДАТЫ -->
-                <div class="flex gap-4 mb-6" style="flex-wrap: wrap;">
-                    <div class="form-group" style="flex: 1; min-width: 200px;">
-                        <label class="form-label">📅 Плановая дата выполнения *</label>
-                        <input type="date" class="form-input" id="plannedDate" required>
+                <!-- Статья расходов и ответственный -->
+                <div class="glass-card" style="padding: 24px; margin-bottom: 24px;">
+                    <h3 style="margin-bottom: 20px; color: var(--primary);">💰 Финансовая информация</h3>
+                    
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label class="form-label">📊 Статья расходов *</label>
+                                <select class="form-control form-select" id="expenseSelect" required>
+                                    <option value="">Выберите статью расходов</option>
+                                    <!-- Статьи расходов будут заполнены через JavaScript -->
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label class="form-label">👥 Ответственный *</label>
+                                <input type="text" class="form-control" id="responsibleManager" 
+                                       readonly placeholder="Выберите статью расходов">
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="form-group" style="flex: 1; min-width: 200px;">
-                        <label class="form-label">⏰ Приоритет</label>
-                        <select class="form-select" id="prioritySelect">
-                            <option value="low">🟢 Низкий</option>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label class="form-label">💵 Плановая сумма *</label>
+                                <input type="number" class="form-control" id="plannedAmount" 
+                                       placeholder="0" min="0" step="0.01" required>
+                            </div>
+                        </div>
+                        
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label class="form-label">📅 Плановая дата выполнения *</label>
+                                <input type="date" class="form-control" id="plannedDate" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Дополнительная информация -->
+                <div class="glass-card" style="padding: 24px; margin-bottom: 32px;">
+                    <h3 style="margin-bottom: 20px; color: var(--primary);">📎 Дополнительно</h3>
+                    
+                    <div class="form-group">
+                        <label class="form-label">🎯 Приоритет</label>
+                        <select class="form-control form-select" id="prioritySelect">
+                            <option value="low">🔵 Низкий</option>
                             <option value="medium" selected>🟡 Средний</option>
                             <option value="high">🔴 Высокий</option>
                         </select>
                     </div>
+
+                    <div class="form-group">
+                        <label class="form-label">💬 Комментарий для управляющего</label>
+                        <textarea class="form-control" id="managerComment" 
+                                  placeholder="Дополнительные инструкции для управляющего..." 
+                                  rows="2"></textarea>
+                    </div>
                 </div>
 
-                <!-- 📋 ОПИСАНИЕ -->
-                <div class="form-group mb-6">
-                    <label class="form-label">📝 Описание задачи</label>
-                    <textarea class="form-textarea" id="taskDescription" 
-                              placeholder="Подробное описание задачи, дополнительные инструкции..."></textarea>
-                </div>
-
-                <!-- 🔧 КНОПКИ -->
-                <div class="flex gap-4" style="flex-wrap: wrap;">
+                <!-- Кнопки действий -->
+                <div style="display: flex; gap: 16px; justify-content: flex-end;">
+                    <button type="button" onclick="window.history.back()" class="btn btn-outline">
+                        ❌ Отмена
+                    </button>
                     <button type="submit" class="btn btn-primary">
-                        💾 Сохранить задачу
+                        ✅ Создать задачу
                     </button>
-                    <button type="button" class="btn btn-outline" onclick="clearForm('createTaskForm')">
-                        🗑️ Очистить форму
-                    </button>
-                    <a href="tasks.html" class="btn btn-outline">📋 К списку задач</a>
                 </div>
             </form>
         </div>
-    </main>
+    </div>
 
+    <!-- Подключаем скрипты -->
+    <script src="js/data.js"></script>
+    <script src="js/utils.js"></script>
     <script>
-        function onRegionChange() {
-            const region = document.getElementById('regionSelect').value;
-            const ipSelect = document.getElementById('ipSelect');
+        // 🔧 ИНИЦИАЛИЗАЦИЯ ФОРМЫ ПРИ ЗАГРУЗКЕ СТРАНИЦЫ
+        document.addEventListener('DOMContentLoaded', function() {
+            // Проверяем авторизацию
+            if (!Auth.requireAuth()) return;
             
-            if (region) {
-                const ips = getIPsByRegion(region);
-                ipSelect.innerHTML = '<option value="">Выберите ИП...</option>' +
-                    ips.map(ip => `<option value="${ip}">${ip}</option>`).join('');
-                ipSelect.disabled = false;
-            } else {
-                ipSelect.innerHTML = '<option value="">Сначала выберите регион</option>';
-                ipSelect.disabled = true;
-                document.getElementById('bankCardSelect').disabled = true;
-            }
-            
-            // Сбрасываем зависимые поля
-            document.getElementById('bankCardSelect').innerHTML = '<option value="">Сначала выберите ИП</option>';
-            document.getElementById('cardStatus').textContent = 'Статус карты будет показан здесь';
-        }
-
-        function onIPChange() {
-            const ip = document.getElementById('ipSelect').value;
-            const cardSelect = document.getElementById('bankCardSelect');
-            
-            if (ip) {
-                const cards = getCardsByIP(ip);
-                cardSelect.innerHTML = '<option value="">Выберите карту...</option>' +
-                    cards.map(card => 
-                        `<option value="${card.number}">${card.type} ${card.number}</option>`
-                    ).join('');
-                cardSelect.disabled = false;
-                
-                // Показываем статус карты
-                const cardInfo = appData.bankCards[ip];
-                if (cardInfo) {
-                    document.getElementById('cardStatus').innerHTML = 
-                        `<strong>Статус:</strong> ${cardInfo.status}`;
-                }
-            } else {
-                cardSelect.innerHTML = '<option value="">Сначала выберите ИП</option>';
-                cardSelect.disabled = true;
-                document.getElementById('cardStatus').textContent = 'Статус карты будет показан здесь';
-            }
-        }
-
-        function onExpenseItemChange() {
-            const expenseItem = document.getElementById('expenseItemSelect').value;
-            const managerField = document.getElementById('responsibleManager');
-            
-            if (expenseItem) {
-                const manager = getManagerByExpenseItem(expenseItem);
-                managerField.value = manager;
-            } else {
-                managerField.value = '';
-            }
-        }
-
-        function logout() {
-            localStorage.removeItem('currentUser');
-            appData.currentUser = null;
-            showNotification('👋 До свидания!', 'info');
-            setTimeout(() => {
-                window.location.href = 'login.html';
-            }, 1000);
-        }
-
-        // Обработка отправки формы
-        document.getElementById('createTaskForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            if (!checkAdminAccess()) return;
-            
-            const formData = {
-                title: document.getElementById('taskTitle').value,
-                region: document.getElementById('regionSelect').value,
-                ip: document.getElementById('ipSelect').value,
-                expenseItem: document.getElementById('expenseItemSelect').value,
-                responsibleManager: document.getElementById('responsibleManager').value,
-                bankCard: document.getElementById('bankCardSelect').value,
-                plannedAmount: parseFloat(document.getElementById('plannedAmount').value),
-                plannedDate: document.getElementById('plannedDate').value,
-                priority: document.getElementById('prioritySelect').value,
-                description: document.getElementById('taskDescription').value,
-                status: 'pending',
-                createdAt: new Date().toISOString()
-            };
-            
-            // Валидация
-            const errors = validateForm(formData, ['title', 'region', 'ip', 'expenseItem', 'bankCard', 'plannedAmount', 'plannedDate']);
-            if (errors.length > 0) {
-                errors.forEach(error => showNotification(error, 'error'));
+            // Только админы могут создавать задачи
+            if (!Auth.isAdmin()) {
+                Notification.error('Только администраторы могут создавать задачи');
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 2000);
                 return;
             }
             
-            // Сохранение задачи
-            saveTask(formData);
+            initCreateTaskForm();
+            setupFormValidation();
         });
 
-        function saveTask(taskData) {
-            // Здесь будет интеграция с бэкендом
-            console.log('Создаем задачу:', taskData);
-            showNotification('✅ Задача успешно создана!', 'success');
-            
-            // Очищаем форму
-            setTimeout(() => {
-                clearForm('createTaskForm');
-                // Сбрасываем зависимые поля
-                document.getElementById('ipSelect').innerHTML = '<option value="">Сначала выберите регион</option>';
-                document.getElementById('ipSelect').disabled = true;
-                document.getElementById('bankCardSelect').innerHTML = '<option value="">Сначала выберите ИП</option>';
-                document.getElementById('bankCardSelect').disabled = true;
-                document.getElementById('responsibleManager').value = '';
-                document.getElementById('cardStatus').textContent = 'Статус карты будет показан здесь';
-            }, 1500);
-        }
+        // 🎯 ИНИЦИАЛИЗАЦИЯ ФОРМЫ СОЗДАНИЯ ЗАДАЧИ
+        function initCreateTaskForm() {
+            // Заполняем регионы
+            const regionSelect = document.getElementById('regionSelect');
+            appData.regions.forEach(region => {
+                const option = document.createElement('option');
+                option.value = region;
+                option.textContent = region;
+                regionSelect.appendChild(option);
+            });
 
-        // 🔧 ИНИЦИАЛИЗИРУЕМ ПРИЛОЖЕНИЕ ПРИ ЗАГРУЗКЕ СТРАНИЦЫ
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeApp();
-            
-            // Проверяем авторизацию
-            if (!appData.currentUser) {
-                window.location.href = 'login.html';
-                return;
-            }
-            
-            // Устанавливаем сегодняшнюю дату как минимальную
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('plannedDate').min = today;
-            
-            // Если сегодняшняя дата в прошлом, устанавливаем завтрашнюю
+            // Заполняем статьи расходов
+            const expenseSelect = document.getElementById('expenseSelect');
+            appData.expenseItems.forEach(expense => {
+                const option = document.createElement('option');
+                option.value = expense;
+                option.textContent = expense;
+                expenseSelect.appendChild(option);
+            });
+
+            // Устанавливаем дату по умолчанию (завтра)
             const tomorrow = new Date();
             tomorrow.setDate(tomorrow.getDate() + 1);
             document.getElementById('plannedDate').value = tomorrow.toISOString().split('T')[0];
-        });
+
+            // Назначаем обработчики событий
+            setupEventListeners();
+        }
+
+        // 🎧 НАСТРОЙКА ОБРАБОТЧИКОВ СОБЫТИЙ
+        function setupEventListeners() {
+            // Изменение региона
+            document.getElementById('regionSelect').addEventListener('change', function() {
+                updateIPsByRegion(this.value);
+            });
+
+            // Изменение ИП
+            document.getElementById('ipSelect').addEventListener('change', function() {
+                updateCardsByIP(this.value);
+            });
+
+            // Изменение статьи расходов
+            document.getElementById('expenseSelect').addEventListener('change', function() {
+                updateResponsibleManager(this.value);
+            });
+
+            // Отправка формы
+            document.getElementById('createTaskForm').addEventListener('submit', handleFormSubmit);
+        }
+
+        // 🔄 ОБНОВЛЕНИЕ СПИСКА ИП ПО РЕГИОНУ
+        function updateIPsByRegion(region) {
+            const ipSelect = document.getElementById('ipSelect');
+            const cardSelect = document.getElementById('cardSelect');
+            
+            // Очищаем предыдущие значения
+            ipSelect.innerHTML = '<option value="">Выберите ИП</option>';
+            cardSelect.innerHTML = '<option value="">Сначала выберите ИП</option>';
+            cardSelect.disabled = true;
+            document.getElementById('cardStatus').textContent = '';
+
+            if (!region) {
+                ipSelect.disabled = true;
+                return;
+            }
+
+            // Заполняем ИП выбранного региона
+            const ips = appData.getIPsByRegion(region);
+            ips.forEach(ip => {
+                const option = document.createElement('option');
+                option.value = ip;
+                option.textContent = ip;
+                ipSelect.appendChild(option);
+            });
+
+            ipSelect.disabled = false;
+        }
+
+        // 🔄 ОБНОВЛЕНИЕ СПИСКА КАРТ ПО ИП
+        function updateCardsByIP(ip) {
+            const cardSelect = document.getElementById('cardSelect');
+            const cardStatus = document.getElementById('cardStatus');
+            
+            // Очищаем предыдущие значения
+            cardSelect.innerHTML = '<option value="">Выберите карту</option>';
+            cardStatus.textContent = '';
+
+            if (!ip) {
+                cardSelect.disabled = true;
+                return;
+            }
+
+            // Получаем карты для выбранного ИП
+            const cards = appData.getCardsByIP(ip);
+            
+            // Добавляем корпоративную карту если есть
+            if (cards.corpCard) {
+                const option = document.createElement('option');
+                option.value = cards.corpCard;
+                option.textContent = `💳 Корп. карта ${cards.corpCard}`;
+                option.dataset.type = 'corp';
+                cardSelect.appendChild(option);
+            }
+
+            // Добавляем карту ФЛ если есть
+            if (cards.flCard) {
+                const option = document.createElement('option');
+                option.value = cards.flCard;
+                option.textContent = `💳 Карта ФЛ ${cards.flCard}`;
+                option.dataset.type = 'fl';
+                cardSelect.appendChild(option);
+            }
+
+            // Показываем статус карты
+            if (cards.status) {
+                let statusText = '';
+                let statusColor = 'var(--text-light)';
+                
+                if (cards.status === 'в регионе') {
+                    statusText = '✅ Карта в регионе';
+                    statusColor = 'var(--success)';
+                } else if (cards.status.includes('ПВЗ')) {
+                    statusText = `⚠️ ${cards.status}`;
+                    statusColor = 'var(--warning)';
+                } else if (cards.status === 'Перевыпустить') {
+                    statusText = '❌ Требуется перевыпуск';
+                    statusColor = 'var(--error)';
+                }
+                
+                cardStatus.textContent = statusText;
+                cardStatus.style.color = statusColor;
+            }
+
+            cardSelect.disabled = false;
+        }
+
+        // 🔄 ОБНОВЛЕНИЕ ОТВЕТСТВЕННОГО ПО СТАТЬЕ РАСХОДОВ
+        function updateResponsibleManager(expenseItem) {
+            const responsibleInput = document.getElementById('responsibleManager');
+            
+            if (!expenseItem) {
+                responsibleInput.value = '';
+                return;
+            }
+
+            const manager = appData.getManagerByExpense(expenseItem);
+            responsibleInput.value = manager;
+        }
+
+        // ✅ НАСТРОЙКА ВАЛИДАЦИИ ФОРМЫ
+        function setupFormValidation() {
+            const form = document.getElementById('createTaskForm');
+            
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Собираем данные формы
+                const formData = {
+                    title: document.getElementById('taskTitle').value.trim(),
+                    description: document.getElementById('taskDescription').value.trim(),
+                    region: document.getElementById('regionSelect').value,
+                    ip: document.getElementById('ipSelect').value,
+                    bankCard: document.getElementById('cardSelect').value,
+                    expenseItem: document.getElementById('expenseSelect').value,
+                    responsibleManager: document.getElementById('responsibleManager').value,
+                    plannedAmount: parseFloat(document.getElementById('plannedAmount').value),
+                    plannedDate: document.getElementById('plannedDate').value,
+                    priority: document.getElementById('prioritySelect').value,
+                    managerComment: document.getElementById('managerComment').value.trim(),
+                    status: 'pending'
+                };
+
+                // Валидация обязательных полей
+                const requiredFields = [
+                    document.getElementById('taskTitle'),
+                    document.getElementById('regionSelect'),
+                    document.getElementById('ipSelect'),
+                    document.getElementById('cardSelect'),
+                    document.getElementById('expenseSelect'),
+                    document.getElementById('plannedAmount'),
+                    document.getElementById('plannedDate')
+                ];
+
+                if (!FormHelper.validateRequired(requiredFields)) {
+                    Notification.error('Пожалуйста, заполните все обязательные поля');
+                    return;
+                }
+
+                // Валидация суммы
+                if (formData.plannedAmount <= 0) {
+                    FormHelper.showFieldError(document.getElementById('plannedAmount'), 'Сумма должна быть больше 0');
+                    Notification.error('Сумма должна быть больше 0');
+                    return;
+                }
+
+                // Создаем задачу
+                handleCreateTask(formData);
+            });
+        }
+
+        // 🚀 ОБРАБОТКА СОЗДАНИЯ ЗАДАЧИ
+        function handleCreateTask(taskData) {
+            try {
+                const newTask = TaskManager.createTask(taskData);
+                
+                Notification.success(`Задача "${taskData.title}" успешно создана!`);
+                
+                // Очищаем форму
+                FormHelper.resetForm(document.getElementById('createTaskForm'));
+                
+                // Перенаправляем на страницу задач через 2 секунды
+                setTimeout(() => {
+                    window.location.href = 'tasks.html';
+                }, 2000);
+                
+            } catch (error) {
+                console.error('Ошибка при создании задачи:', error);
+                Notification.error('Произошла ошибка при создании задачи');
+            }
+        }
     </script>
 </body>
 </html>
