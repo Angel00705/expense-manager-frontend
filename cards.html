@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Банковские карты - IP Expense Manager</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', system-ui, sans-serif; 
+            background: #f8fafc;
+            min-height: 100vh;
+        }
+        .header { 
+            background: white; 
+            padding: 1rem 2rem; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-bottom: 3px solid #667eea;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .main { 
+            padding: 2rem; 
+            max-width: 1200px; 
+            margin: 0 auto; 
+        }
+        .btn { 
+            padding: 10px 20px; 
+            background: #667eea; 
+            color: white; 
+            text-decoration: none; 
+            border-radius: 8px; 
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            background: #5a6fd8;
+            transform: translateY(-2px);
+        }
+        .back-btn { 
+            background: #6b7280; 
+        }
+        .back-btn:hover {
+            background: #4b5563;
+        }
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        .card-item {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .card-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        .bank-logo {
+            font-size: 2rem;
+        }
+        .card-status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        .status-active { background: #dcfce7; color: #166534; }
+        .status-inactive { background: #f3f4f6; color: #6b7280; }
+        .card-number {
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            margin-bottom: 1rem;
+            color: #1f2937;
+        }
+        .card-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+        .detail-label {
+            font-size: 0.8rem;
+            color: #6b7280;
+            text-transform: uppercase;
+        }
+        .detail-value {
+            font-weight: 600;
+            color: #1f2937;
+        }
+        .card-balance {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        .balance-amount {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .balance-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        .card-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .card-btn {
+            flex: 1;
+            padding: 8px 16px;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            background: white;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+        .card-btn:hover {
+            background: #f8fafc;
+            border-color: #667eea;
+        }
+        .card-btn.primary {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        .card-btn.primary:hover {
+            background: #5a6fd8;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>💳 Банковские карты</h1>
+        <div>
+            <a href="dashboard.html" class="btn back-btn">← Назад</a>
+        </div>
+    </div>
+    
+    <div class="main">
+        <div class="cards-grid">
+            <!-- Карта 1 -->
+            <div class="card-item">
+                <div class="card-header">
+                    <div class="bank-logo">🏦</div>
+                    <div class="card-status status-active">Активна</div>
+                </div>
+                
+                <div class="card-number">**** 1234</div>
+                
+                <div class="card-details">
+                    <div class="detail-item">
+                        <div class="detail-label">Держатель</div>
+                        <div class="detail-value">Иванов И.И.</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Срок действия</div>
+                        <div class="detail-value">12/2026</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Банк</div>
+                        <div class="detail-value">Тинькофф</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Валюта</div>
+                        <div class="detail-value">RUB</div>
+                    </div>
+                </div>
+                
+                <div class="card-balance">
+                    <div class="balance-amount">156 789 ₽</div>
+                    <div class="balance-label">Текущий баланс</div>
+                </div>
+                
+                <div class="card-actions">
+                    <button class="card-btn">📊 Статистика</button>
+                    <button class="card-btn primary">💸 Оплатить</button>
+                </div>
+            </div>
+
+            <!-- Карта 2 -->
+            <div class="card-item">
+                <div class="card-header">
+                    <div class="bank-logo">🏛️</div>
+                    <div class="card-status status-active">Активна</div>
+                </div>
+                
+                <div class="card-number">**** 5678</div>
+                
+                <div class="card-details">
+                    <div class="detail-item">
+                        <div class="detail-label">Держатель</div>
+                        <div class="detail-value">Петров П.П.</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Срок действия</div>
+                        <div class="detail-value">09/2027</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Банк</div>
+                        <div class="detail-value">Сбербанк</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Валюта</div>
+                        <div class="detail-value">RUB</div>
+                    </div>
+                </div>
+                
+                <div class="card-balance">
+                    <div class="balance-amount">89 432 ₽</div>
+                    <div class="balance-label">Текущий баланс</div>
+                </div>
+                
+                <div class="card-actions">
+                    <button class="card-btn">📊 Статистика</button>
+                    <button class="card-btn primary">💸 Оплатить</button>
+                </div>
+            </div>
+
+            <!-- Карта 3 -->
+            <div class="card-item">
+                <div class="card-header">
+                    <div class="bank-logo">💎</div>
+                    <div class="card-status status-inactive">Неактивна</div>
+                </div>
+                
+                <div class="card-number">**** 9012</div>
+                
+                <div class="card-details">
+                    <div class="detail-item">
+                        <div class="detail-label">Держатель</div>
+                        <div class="detail-value">Сидоров С.С.</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Срок действия</div>
+                        <div class="detail-value">03/2025</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Банк</div>
+                        <div class="detail-value">Альфа-Банк</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Валюта</div>
+                        <div class="detail-value">RUB</div>
+                    </div>
+                </div>
+                
+                <div class="card-balance">
+                    <div class="balance-amount">0 ₽</div>
+                    <div class="balance-label">Карта заблокирована</div>
+                </div>
+                
+                <div class="card-actions">
+                    <button class="card-btn">🔄 Активировать</button>
+                    <button class="card-btn">🗑️ Удалить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Простая логика для кнопок карт
+        document.querySelectorAll('.card-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const cardNumber = this.closest('.card-item').querySelector('.card-number').textContent;
+                
+                if (this.textContent.includes('Оплатить')) {
+                    alert(`💳 Оплата с карты ${cardNumber}\nФункция оплаты будет реализована в следующем обновлении!`);
+                } else if (this.textContent.includes('Статистика')) {
+                    alert(`📊 Статистика по карте ${cardNumber}\nГрафики и аналитика будут доступны скоро!`);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

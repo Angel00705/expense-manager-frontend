@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Создать задачу - IP Expense Manager</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', system-ui, sans-serif; 
+            background: #f8fafc;
+            min-height: 100vh;
+        }
+        .header { 
+            background: white; 
+            padding: 1rem 2rem; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-bottom: 3px solid #667eea;
+        }
+        .main { 
+            padding: 2rem; 
+            max-width: 800px; 
+            margin: 0 auto; 
+        }
+        .form-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .form-group { 
+            margin-bottom: 1.5rem; 
+        }
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #374151;
+        }
+        .form-input, .form-select, .form-textarea { 
+            width: 100%; 
+            padding: 12px; 
+            border: 2px solid #e5e7eb; 
+            border-radius: 8px; 
+            font-size: 1rem;
+            transition: border 0.3s ease;
+        }
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+            font-family: inherit;
+        }
+        .btn { 
+            padding: 12px 24px; 
+            background: #667eea; 
+            color: white; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            margin-right: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            background: #5a6fd8;
+            transform: translateY(-2px);
+        }
+        .back-btn { 
+            background: #6b7280; 
+            text-decoration: none;
+            display: inline-block;
+        }
+        .back-btn:hover {
+            background: #4b5563;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📋 Создать задачу</h1>
+    </div>
+    <div class="main">
+        <div class="form-container">
+            <form id="createTaskForm">
+                <div class="form-group">
+                    <label class="form-label">Название задачи *</label>
+                    <input type="text" class="form-input" placeholder="Введите название задачи" required>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Статья расходов *</label>
+                        <select class="form-select" required>
+                            <option value="">Выберите статью</option>
+                            <option value="rent">Аренда помещения</option>
+                            <option value="salary">Зарплата сотрудников</option>
+                            <option value="marketing">Маркетинг и реклама</option>
+                            <option value="taxes">Налоги и сборы</option>
+                            <option value="utilities">Коммунальные услуги</option>
+                            <option value="equipment">Оборудование</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Плановая сумма *</label>
+                        <input type="number" class="form-input" placeholder="0" min="0" step="0.01" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Ответственный управляющий *</label>
+                    <select class="form-select" required>
+                        <option value="">Выберите управляющего</option>
+                        <option value="astrakhan">Астрахань - Иванов И.</option>
+                        <option value="volgograd">Волгоград - Петров П.</option>
+                        <option value="rostov">Ростов - Сидоров С.</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Банковская карта *</label>
+                    <select class="form-select" required>
+                        <option value="">Выберите карту</option>
+                        <option value="card1">**** 1234 - Тинькофф</option>
+                        <option value="card2">**** 5678 - Сбербанк</option>
+                        <option value="card3">**** 9012 - Альфа-Банк</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Описание задачи</label>
+                    <textarea class="form-textarea" placeholder="Подробное описание задачи..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Срок выполнения</label>
+                    <input type="date" class="form-input">
+                </div>
+                
+                <button type="submit" class="btn">✅ Создать задачу</button>
+                <a href="dashboard.html" class="btn back-btn">← Назад</a>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('createTaskForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('✅ Задача успешно создана!');
+            window.location.href = 'tasks.html';
+        });
+    </script>
+</body>
+</html>
