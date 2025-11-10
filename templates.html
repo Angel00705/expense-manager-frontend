@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📋 Шаблоны задач - IP Expense Manager</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <a href="dashboard.html" class="navbar-brand">🎯 IP Expense Manager</a>
+                <div style="display: flex; align-items: center; gap: 20px;">
+                    <span style="color: white; font-size: 14px;" id="userInfo"></span>
+                    <button onclick="Auth.logout()" class="btn" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); font-size: 14px;">
+                        🚪 Выйти
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container" style="padding: 40px 20px;">
+        <div class="glass-card" style="padding: 30px; margin-bottom: 30px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
+                <div>
+                    <h1 style="margin-bottom: 8px; color: var(--primary);">📋 Шаблоны задач</h1>
+                    <p style="color: var(--text-light); margin: 0;">Готовые шаблоны для быстрого создания задач</p>
+                </div>
+                <button class="btn btn-primary" onclick="showTemplateForm()">➕ Новый шаблон</button>
+            </div>
+
+            <div class="row">
+                <div class="col-4">
+                    <div class="glass-card" style="padding: 20px; text-align: center; cursor: pointer;" 
+                         onclick="useTemplate('monthly_rent')">
+                        <div style="font-size: 3rem; margin-bottom: 16px;">🏢</div>
+                        <h3>Аренда офиса</h3>
+                        <p style="color: var(--text-light); margin: 8px 0;">Ежемесячная оплата</p>
+                        <div style="color: var(--primary); font-weight: 600;">15,000 ₽</div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="glass-card" style="padding: 20px; text-align: center; cursor: pointer;"
+                         onclick="useTemplate('office_supplies')">
+                        <div style="font-size: 3rem; margin-bottom: 16px;">📎</div>
+                        <h3>Канцелярия</h3>
+                        <p style="color: var(--text-light); margin: 8px 0;">Офисные расходники</p>
+                        <div style="color: var(--primary); font-weight: 600;">5,000 ₽</div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="glass-card" style="padding: 20px; text-align: center; cursor: pointer;"
+                         onclick="useTemplate('cleaning')">
+                        <div style="font-size: 3rem; margin-bottom: 16px;">🧽</div>
+                        <h3>Уборка офиса</h3>
+                        <p style="color: var(--text-light); margin: 8px 0;">Клининговые услуги</p>
+                        <div style="color: var(--primary); font-weight: 600;">3,000 ₽</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/utils.js"></script>
+    <script src="js/data.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            Auth.init();
+            if (!Auth.requireAuth()) return;
+            updateUserInfo();
+        });
+
+        function updateUserInfo() {
+            const userInfo = document.getElementById('userInfo');
+            if (userInfo && Auth.currentUser) {
+                userInfo.innerHTML = `👋 ${Auth.currentUser.name} <span style="opacity: 0.8;">(${Auth.currentUser.role === 'admin' ? 'Бухгалтер' : 'Управляющий'})</span>`;
+            }
+        }
+
+        function useTemplate(templateKey) {
+            const template = appData.taskTemplates[templateKey];
+            if (template) {
+                // Сохраняем шаблон в localStorage и переходим к созданию задачи
+                localStorage.setItem('selectedTemplate', JSON.stringify(template));
+                window.location.href = 'create-task.html?template=' + templateKey;
+            }
+        }
+
+        function showTemplateForm() {
+            Notification.info('Форма создания шаблона будет добавлена в следующем обновлении');
+        }
+    </script>
+</body>
+</html>

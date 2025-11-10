@@ -139,5 +139,30 @@ const appData = {
   }
 };
 
+// Добавить в data.js
+appData.taskTemplates = {
+  'monthly_rent': {
+    title: 'Оплата аренды офиса',
+    expenseItem: '🏢 АРЕНДА ОФИСЫ',
+    description: 'Ежемесячная аренда офиса',
+    plannedAmount: 15000,
+    priority: 'high'
+  },
+  'office_supplies': {
+    title: 'Закупка канцелярии',
+    expenseItem: '📎 Канцелярия', 
+    description: 'Бумага, ручки, расходные материалы',
+    plannedAmount: 5000,
+    priority: 'medium'
+  },
+  'cleaning': {
+    title: 'Уборка офиса',
+    expenseItem: '🧽 Клининг',
+    description: 'Еженедельная уборка помещения',
+    plannedAmount: 3000,
+    priority: 'medium'
+  }
+};
+
 // Делаем данные глобально доступными
 window.appData = appData;

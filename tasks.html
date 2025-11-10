@@ -168,23 +168,48 @@
             filterTasks();
         }
 
-        function filterTasks() {
-            const statusFilter = document.getElementById('statusFilter').value;
-            const regionFilter = document.getElementById('regionFilter').value;
-            const searchQuery = document.getElementById('searchInput').value.toLowerCase();
-            
-            let filteredTasks = allTasks.filter(task => {
-                const matchesStatus = !statusFilter || task.status === statusFilter;
-                const matchesRegion = !regionFilter || task.region === regionFilter;
-                const matchesSearch = !searchQuery || 
-                    task.title.toLowerCase().includes(searchQuery) ||
-                    (task.description && task.description.toLowerCase().includes(searchQuery));
-                
-                return matchesStatus && matchesRegion && matchesSearch;
-            });
-            
-            displayTasks(filteredTasks);
+        // Обновить filterTasks() в tasks.html
+function filterTasks() {
+    const statusFilter = document.getElementById('statusFilter').value;
+    const regionFilter = document.getElementById('regionFilter').value;
+    const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+    const dateFrom = document.getElementById('dateFrom')?.value;
+    const dateTo = document.getElementById('dateTo')?.value;
+    const amountFrom = document.getElementById('amountFrom')?.value;
+    const amountTo = document.getElementById('amountTo')?.value;
+    
+    let filteredTasks = allTasks.filter(task => {
+        const matchesStatus = !statusFilter || task.status === statusFilter;
+        const matchesRegion = !regionFilter || task.region === regionFilter;
+        const matchesSearch = !searchQuery || 
+            task.title.toLowerCase().includes(searchQuery) ||
+            (task.description && task.description.toLowerCase().includes(searchQuery)) ||
+            task.ip.toLowerCase().includes(searchQuery);
+        
+        // Фильтр по дате
+        const matchesDate = (!dateFrom || task.plannedDate >= dateFrom) && 
+                           (!dateTo || task.plannedDate <= dateTo);
+        
+        // Фильтр по сумме
+        const matchesAmount = (!amountFrom || task.plannedAmount >= parseFloat(amountFrom)) && 
+                             (!amountTo || task.plannedAmount <= parseFloat(amountTo));
+        
+        return matchesStatus && matchesRegion && matchesSearch && matchesDate && matchesAmount;
+    });
+    
+    // Сортировка
+    const sortBy = document.getElementById('sortBy')?.value || 'date';
+    filteredTasks.sort((a, b) => {
+        switch(sortBy) {
+            case 'date': return new Date(a.plannedDate) - new Date(b.plannedDate);
+            case 'amount': return b.plannedAmount - a.plannedAmount;
+            case 'title': return a.title.localeCompare(b.title);
+            default: return 0;
         }
+    });
+    
+    displayTasks(filteredTasks);
+}
 
         function displayTasks(tasks) {
             const tasksList = document.getElementById('tasksList');

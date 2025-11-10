@@ -171,8 +171,61 @@ const FormatHelper = {
     }).format(amount);
   }
 };
+// Добавить в utils.js
+
+const BulkOperations = {
+  // Массовое создание задач
+  createMultipleTasks: function(tasksData) {
+    const results = {
+      success: [],
+      errors: []
+    };
+    
+    tasksData.forEach((taskData, index) => {
+      try {
+        const task = TaskManager.createTask(taskData);
+        results.success.push(task);
+      } catch (error) {
+        results.errors.push({ index, error: error.message });
+      }
+    });
+    
+    return results;
+  },
+  
+  // Массовое обновление статусов
+  updateTasksStatus: function(taskIds, newStatus) {
+    const results = {
+      updated: [],
+      errors: []
+    };
+    
+    taskIds.forEach(taskId => {
+      const updated = TaskManager.updateTask(taskId, { status: newStatus });
+      if (updated) {
+        results.updated.push(updated);
+      } else {
+        results.errors.push(taskId);
+      }
+    });
+    
+    return results;
+  },
+  
+  // Экспорт задач в CSV
+  exportTasksToCSV: function(tasks) {
+    let csv = 'ID,Название,Регион,ИП,Статус,Сумма,Дата\n';
+    
+    tasks.forEach(task => {
+      csv += `"${task.id}","${task.title}","${task.region}","${task.ip}","${task.status}","${task.plannedAmount}","${task.plannedDate}"\n`;
+    });
+    
+    return csv;
+  }
+};
 
 // Экспорт в глобальную область
+window.BulkOperations = BulkOperations;
 window.Auth = Auth;
 window.Notification = Notification;
 window.TaskManager = TaskManager;
