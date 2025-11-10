@@ -32,10 +32,7 @@
                 </div>
                 
                 <button type="submit" class="login-btn" id="loginButton">
-                    <span class="btn-text">Войти в систему</span>
-                    <div class="btn-loader" style="display: none;">
-                        <div class="spinner"></div>
-                    </div>
+                    Войти в систему
                 </button>
             </form>
             
@@ -55,8 +52,56 @@
         </div>
     </div>
 
-    <script src="./js/auth.js"></script>
-    <script src="./js/api.js"></script>
-    <script src="./js/login.js"></script>
+    <!-- ПРОСТОЙ JS ДЛЯ ПРОВЕРКИ РАБОТЫ КНОПОК -->
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('error-message');
+            
+            // Простая проверка
+            if (!email || !password) {
+                errorDiv.textContent = 'Пожалуйста, заполните все поля';
+                errorDiv.style.display = 'block';
+                return;
+            }
+            
+            // Показываем загрузку
+            const button = document.getElementById('loginButton');
+            button.innerHTML = 'Вход...';
+            button.disabled = true;
+            
+            // Тестовые учетки
+            const testAccounts = {
+                'admin@test.ru': '123456',
+                'astrakhan@test.ru': '123456'
+            };
+            
+            // Имитация проверки
+            setTimeout(() => {
+                if (testAccounts[email] && testAccounts[email] === password) {
+                    // Успешный вход
+                    alert('Успешный вход! Перенаправление на дашборд...');
+                    window.location.href = 'dashboard.html';
+                } else {
+                    errorDiv.textContent = 'Неверный email или пароль';
+                    errorDiv.style.display = 'block';
+                    button.innerHTML = 'Войти в систему';
+                    button.disabled = false;
+                }
+            }, 1000);
+        });
+        
+        // Очистка ошибки при вводе
+        document.getElementById('email').addEventListener('input', function() {
+            document.getElementById('error-message').style.display = 'none';
+        });
+        
+        document.getElementById('password').addEventListener('input', function() {
+            document.getElementById('error-message').style.display = 'none';
+        });
+    </script>
 </body>
 </html>
