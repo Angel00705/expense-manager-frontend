@@ -5,15 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Expense Manager - Умное управление расходами ИП</title>
     
-    <!-- 🎨 FAVICON -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><defs><linearGradient id='borderGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%238b5cf6'/><stop offset='50%' stop-color='%236d28d9'/><stop offset='100%' stop-color='%231e40af'/></linearGradient><linearGradient id='checkGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%23a78bfa'/><stop offset='100%' stop-color='%234f46e5'/></linearGradient><filter id='glow' x='-50%' y='-50%' width='200%' height='200%'><feGaussianBlur in='SourceGraphic' stdDeviation='1' result='blur'/><feMerge><feMergeNode in='blur'/><feMergeNode in='SourceGraphic'/></feMerge></filter></defs><circle cx='10' cy='10' r='9' fill='none' stroke='url(%23borderGrad)' stroke-width='1.5' opacity='0.9'/><path d='M6,10 L8.5,12.5 L14,7' stroke='url(%23checkGrad)' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round' filter='url(%23glow)'/></svg>">
-    
-    <!-- СТИЛИ -->
-    <link rel="stylesheet" href="/css/style.css">
-    <link rel="stylesheet" href="/css/components.css">
+    <!-- 🎨 FAVICON (исправленная версия) -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><circle cx='10' cy='10' r='9' fill='none' stroke='%238b5cf6' stroke-width='1.5'/><path d='M6,10 L8.5,12.5 L14,7' stroke='%238b5cf6' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>">
     
     <style>
-        /* БАЗОВЫЕ СТИЛИ НА СЛУЧАЙ ЕСЛИ CSS НЕ ЗАГРУЗЯТСЯ */
+        /* ПОЛНОСТЬЮ ВСТРОЕННЫЕ СТИЛИ */
         * {
             margin: 0;
             padding: 0;
@@ -21,13 +17,14 @@
         }
         
         body {
-            font-family: 'Segoe UI', system-ui, sans-serif;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 20px;
+            line-height: 1.6;
         }
         
         .container {
@@ -35,53 +32,92 @@
             color: white;
             max-width: 500px;
             width: 100%;
+            padding: 40px 20px;
         }
         
         h1 {
             font-size: 3rem;
             font-weight: 800;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
             background: linear-gradient(135deg, #fff 0%, #e2e8f0 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            text-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
         
         p {
-            font-size: 1.2rem;
-            margin-bottom: 2rem;
-            opacity: 0.9;
-            line-height: 1.6;
+            font-size: 1.3rem;
+            margin-bottom: 3rem;
+            opacity: 0.95;
+            font-weight: 500;
         }
         
         .btn {
             display: inline-block;
-            padding: 12px 32px;
+            padding: 16px 40px;
             background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
             color: white;
             text-decoration: none;
-            border-radius: 8px;
+            border-radius: 12px;
             font-weight: 600;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             border: none;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
+            position: relative;
+            overflow: hidden;
         }
         
         .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(139, 92, 246, 0.6);
+        }
+        
+        .btn:active {
+            transform: translateY(-1px);
+        }
+        
+        /* АНИМАЦИИ */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .container {
+            animation: fadeInUp 0.8s ease-out;
         }
         
         /* АДАПТИВНОСТЬ */
         @media (max-width: 768px) {
             h1 {
-                font-size: 2.5rem;
+                font-size: 2.2rem;
             }
             
             p {
                 font-size: 1.1rem;
+            }
+            
+            .btn {
+                padding: 14px 32px;
+                font-size: 1.1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .container {
+                padding: 20px 15px;
             }
         }
     </style>
@@ -90,7 +126,18 @@
     <div class="container">
         <h1>Expense Manager</h1>
         <p>Умное управление расходами для индивидуальных предпринимателей</p>
-        <a href="/login.html" class="btn">Войти в систему</a>
+        <a href="/login.html" class="btn" id="loginBtn">Войти в систему</a>
     </div>
+
+    <script>
+        // ПРОСТАЯ ПРОВЕРКА КНОПКИ
+        document.getElementById('loginBtn').addEventListener('click', function(e) {
+            console.log('Кнопка нажата - переход на логин');
+            // Доверяем обычной навигации по ссылке
+        });
+        
+        // Проверка что страница загружена
+        console.log('Expense Manager loaded successfully');
+    </script>
 </body>
 </html>

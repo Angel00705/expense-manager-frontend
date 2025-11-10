@@ -3,151 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Вход в систему - Expense Manager</title>
+    <title>Вход - Expense Manager</title>
     
-    <!-- 🎨 FAVICON -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><defs><linearGradient id='borderGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%238b5cf6'/><stop offset='50%' stop-color='%236d28d9'/><stop offset='100%' stop-color='%231e40af'/></linearGradient><linearGradient id='checkGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%23a78bfa'/><stop offset='100%' stop-color='%234f46e5'/></linearGradient><filter id='glow' x='-50%' y='-50%' width='200%' height='200%'><feGaussianBlur in='SourceGraphic' stdDeviation='1' result='blur'/><feMerge><feMergeNode in='blur'/><feMergeNode in='SourceGraphic'/></feMerge></filter></defs><circle cx='10' cy='10' r='9' fill='none' stroke='url(%23borderGrad)' stroke-width='1.5' opacity='0.9'/><path d='M6,10 L8.5,12.5 L14,7' stroke='url(%23checkGrad)' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round' filter='url(%23glow)'/></svg>">
+    <!-- ИСПОЛЬЗУЙТЕ ТОЛЬКО login.css который работает -->
+    <link rel="stylesheet" href="/css/login.css">
     
-    <link rel="stylesheet" href="./css/style.css">
-    <link rel="stylesheet" href="./css/components.css">
-    <link rel="stylesheet" href="./css/login.css">
+    <style>
+        /* Запасные стили */
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 20px;
+        }
+    </style>
 </head>
 <body>
-    <div class="login-wrapper">
-        <div class="login-container">
-            <div class="login-header">
-                <a href="index.html" class="back-link">← На главную</a>
-                <div class="logo-small">💰</div>
-                <h1>Expense Manager</h1>
-                <p class="login-subtitle">Войдите в свою учетную запись</p>
-            </div>
-            
-            <form id="loginForm" class="login-form">
-                <div class="input-group">
-                    <label for="email" class="input-label">Email адрес</label>
-                    <input type="email" id="email" class="form-input" placeholder="your@email.com" required>
-                </div>
-                
-                <div class="input-group">
-                    <label for="password" class="input-label">Пароль</label>
-                    <input type="password" id="password" class="form-input" placeholder="Введите ваш пароль" required>
-                </div>
-                
-                <div id="error" class="error-message"></div>
-                <div id="success" class="success-message"></div>
-                
-                <button type="submit" class="btn-primary btn-full" id="loginButton">
-                    <span class="btn-text">Войти в систему</span>
-                    <div class="btn-loader" id="btnLoader">
-                        <div class="spinner"></div>
-                    </div>
-                </button>
-            </form>
-            
-            <div class="demo-section">
-                <h3 class="demo-title">📋 Тестовые доступы</h3>
-                <div class="demo-accounts">
-                    <div class="demo-account">
-                        <div class="account-role">👨‍💼 Бухгалтер</div>
-                        <div class="account-info">admin@test.ru</div>
-                        <div class="account-info">123456</div>
-                    </div>
-                    <div class="demo-account">
-                        <div class="account-role">👨‍💻 Управляющий (Астрахань)</div>
-                        <div class="account-info">astrakhan@test.ru</div>
-                        <div class="account-info">123456</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script src="./js/auth.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const loginForm = document.getElementById('loginForm');
-            const emailInput = document.getElementById('email');
-            const passwordInput = document.getElementById('password');
-            const errorDiv = document.getElementById('error');
-            const successDiv = document.getElementById('success');
-            const loginButton = document.getElementById('loginButton');
-            const btnLoader = document.getElementById('btnLoader');
-
-            // Тестовые логины
-            const validLogins = {
-                'admin@test.ru': '123456',
-                'astrakhan@test.ru': '123456'
-            };
-
-            loginForm.addEventListener('submit', async function(event) {
-                event.preventDefault();
-                
-                errorDiv.style.display = 'none';
-                successDiv.style.display = 'none';
-                
-                const email = emailInput.value.trim();
-                const password = passwordInput.value;
-
-                if (!email || !password) {
-                    showError("Заполните все поля");
-                    return;
-                }
-
-                // Показываем загрузку
-                loginButton.disabled = true;
-                btnLoader.style.display = 'block';
-                loginButton.querySelector('.btn-text').textContent = "Выполняется вход...";
-
-                try {
-                    // Имитация запроса к API
-                    await new Promise(resolve => setTimeout(resolve, 1500));
-                    
-                    if (validLogins[email] && validLogins[email] === password) {
-                        showSuccess("Успешный вход! Перенаправление...");
-                        
-                        // Сохраняем данные авторизации
-                        localStorage.setItem('auth_token', 'demo_token');
-                        localStorage.setItem('user_email', email);
-                        localStorage.setItem('user_role', email === 'admin@test.ru' ? 'accountant' : 'manager');
-                        
-                        // Переход на дашборд
-                        setTimeout(() => {
-                            window.location.href = 'dashboard.html';
-                        }, 1000);
-                    } else {
-                        showError("Неверный email или пароль");
-                        resetButton();
-                    }
-                } catch (error) {
-                    showError("Ошибка соединения");
-                    resetButton();
-                }
-            });
-
-            function showError(message) {
-                errorDiv.textContent = message;
-                errorDiv.style.display = 'block';
-            }
-
-            function showSuccess(message) {
-                successDiv.textContent = message;
-                successDiv.style.display = 'block';
-            }
-
-            function resetButton() {
-                loginButton.disabled = false;
-                btnLoader.style.display = 'none';
-                loginButton.querySelector('.btn-text').textContent = "Войти в систему";
-            }
-
-            // Очистка ошибок при вводе
-            [emailInput, passwordInput].forEach(input => {
-                input.addEventListener('input', function() {
-                    errorDiv.style.display = 'none';
-                    successDiv.style.display = 'none';
-                });
-            });
-        });
-    </script>
+    <!-- Ваша форма логина -->
+    
+    <script src="/js/login.js"></script>
 </body>
 </html>
