@@ -4,18 +4,224 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Вход - Expense Manager</title>
+    
+    <!-- 🎨 FAVICON -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><defs><linearGradient id='borderGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%238b5cf6'/><stop offset='50%' stop-color='%236d28d9'/><stop offset='100%' stop-color='%231e40af'/></linearGradient><linearGradient id='checkGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%23a78bfa'/><stop offset='100%' stop-color='%234f46e5'/></linearGradient><filter id='glow' x='-50%' y='-50%' width='200%' height='200%'><feGaussianBlur in='SourceGraphic' stdDeviation='1' result='blur'/><feMerge><feMergeNode in='blur'/><feMergeNode in='SourceGraphic'/></feMerge></filter></defs><circle cx='10' cy='10' r='9' fill='none' stroke='url(%23borderGrad)' stroke-width='1.5' opacity='0.9'/><path d='M6,10 L8.5,12.5 L14,7' stroke='url(%23checkGrad)' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round' filter='url(%23glow)'/></svg>">
+    
     <link rel="stylesheet" href="./css/style.css">
-    <link rel="stylesheet" href="./css/login.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .login-container {
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 450px;
+            width: 100%;
+        }
+        
+        .logo {
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        
+        h1 {
+            color: #2d3748;
+            text-align: center;
+            margin-bottom: 0.5rem;
+            font-size: 2rem;
+        }
+        
+        .subtitle {
+            color: #718096;
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 1rem;
+        }
+        
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #2d3748;
+            font-weight: 500;
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .login-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
+        }
+        
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .test-accounts {
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-top: 1.5rem;
+            border-left: 4px solid #667eea;
+        }
+        
+        .test-accounts h3 {
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .account {
+            margin-bottom: 0.5rem;
+            font-size: 0.8rem;
+            color: #4a5568;
+        }
+        
+        .account strong {
+            color: #2d3748;
+        }
+        
+        .error-message {
+            background: #fed7d7;
+            color: #c53030;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            text-align: center;
+            display: none;
+        }
+    </style>
 </head>
 <body>
     <div class="login-container">
-        <h1>Вход в систему</h1>
+        <div class="logo">💰</div>
+        <h1>Expense Manager</h1>
+        <p class="subtitle">Войдите в свою учетную запись</p>
+        
         <form id="loginForm">
-            <input type="email" placeholder="Email" required>
-            <input type="password" placeholder="Пароль" required>
-            <button type="submit">Войти</button>
+            <div class="input-group">
+                <label for="email">Email адрес</label>
+                <input type="email" id="email" placeholder="your@email.com" required>
+            </div>
+            
+            <div class="input-group">
+                <label for="password">Пароль</label>
+                <input type="password" id="password" placeholder="Введите ваш пароль" required>
+            </div>
+            
+            <div id="error-message" class="error-message"></div>
+            
+            <button type="submit" class="login-btn" id="loginButton">
+                Войти в систему
+            </button>
         </form>
+        
+        <div class="test-accounts">
+            <h3>Тестовые доступы:</h3>
+            <div class="account">
+                <strong>Бухгалтер:</strong> admin@test.ru / 123456
+            </div>
+            <div class="account">
+                <strong>Управляющий (Астрахань):</strong> astrakhan@test.ru / 123456
+            </div>
+        </div>
     </div>
-    <script src="./js/login.js"></script>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('error-message');
+            const button = document.getElementById('loginButton');
+            
+            // Сброс ошибки
+            errorDiv.style.display = 'none';
+            
+            // Проверка заполнения
+            if (!email || !password) {
+                errorDiv.textContent = 'Пожалуйста, заполните все поля';
+                errorDiv.style.display = 'block';
+                return;
+            }
+            
+            // Показываем загрузку
+            button.textContent = 'Вход...';
+            button.disabled = true;
+            
+            // Тестовые учетные записи
+            const testAccounts = {
+                'admin@test.ru': '123456',
+                'astrakhan@test.ru': '123456'
+            };
+            
+            // Имитация проверки на сервере
+            setTimeout(() => {
+                if (testAccounts[email] && testAccounts[email] === password) {
+                    // Успешный вход
+                    alert('✅ Успешный вход! Перенаправление на дашборд...');
+                    window.location.href = 'dashboard.html';
+                } else {
+                    // Ошибка входа
+                    errorDiv.textContent = '❌ Неверный email или пароль';
+                    errorDiv.style.display = 'block';
+                    button.textContent = 'Войти в систему';
+                    button.disabled = false;
+                }
+            }, 1000);
+        });
+        
+        // Очистка ошибки при вводе
+        document.getElementById('email').addEventListener('input', function() {
+            document.getElementById('error-message').style.display = 'none';
+        });
+        
+        document.getElementById('password').addEventListener('input', function() {
+            document.getElementById('error-message').style.display = 'none';
+        });
+    </script>
 </body>
 </html>

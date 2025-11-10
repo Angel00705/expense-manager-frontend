@@ -3,14 +3,130 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Expense Manager</title>
+    <title>Expense Manager - Система управления расходами</title>
+    
+    <!-- 🎨 FAVICON -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><defs><linearGradient id='borderGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%238b5cf6'/><stop offset='50%' stop-color='%236d28d9'/><stop offset='100%' stop-color='%231e40af'/></linearGradient><linearGradient id='checkGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%23a78bfa'/><stop offset='100%' stop-color='%234f46e5'/></linearGradient><filter id='glow' x='-50%' y='-50%' width='200%' height='200%'><feGaussianBlur in='SourceGraphic' stdDeviation='1' result='blur'/><feMerge><feMergeNode in='blur'/><feMergeNode in='SourceGraphic'/></feMerge></filter></defs><circle cx='10' cy='10' r='9' fill='none' stroke='url(%23borderGrad)' stroke-width='1.5' opacity='0.9'/><path d='M6,10 L8.5,12.5 L14,7' stroke='url(%23checkGrad)' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round' filter='url(%23glow)'/></svg>">
+    
     <link rel="stylesheet" href="./css/style.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+        }
+        
+        .logo {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+        
+        h1 {
+            color: #2d3748;
+            margin-bottom: 1rem;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+        
+        .subtitle {
+            color: #4a5568;
+            font-size: 1.2rem;
+            margin-bottom: 2.5rem;
+            line-height: 1.6;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        
+        .feature {
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .feature h3 {
+            color: #2d3748;
+            font-size: 0.9rem;
+            margin-bottom: 0.3rem;
+        }
+        
+        .feature p {
+            color: #718096;
+            font-size: 0.8rem;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
+        <div class="logo">💰</div>
         <h1>Expense Manager</h1>
-        <p>Система управления расходами</p>
-        <button onclick="window.location.href='login.html'">Войти</button>
+        <p class="subtitle">Профессиональная система управления расходами для индивидуальных предпринимателей</p>
+        
+        <div class="features">
+            <div class="feature">
+                <h3>📊 Учет по регионам</h3>
+                <p>27 ИП в 6 регионах</p>
+            </div>
+            <div class="feature">
+                <h3>💳 Контроль платежей</h3>
+                <p>42 банковские карты</p>
+            </div>
+            <div class="feature">
+                <h3>👥 Командная работа</h3>
+                <p>Бухгалтеры и управляющие</p>
+            </div>
+            <div class="feature">
+                <h3>📱 Удобный интерфейс</h3>
+                <p>Интуитивное управление</p>
+            </div>
+        </div>
+        
+        <button class="btn-primary" onclick="window.location.href='login.html'">
+            Войти в систему
+        </button>
     </div>
 </body>
 </html>
