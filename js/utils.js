@@ -1,4 +1,4 @@
-// js/utils.js - ИСПРАВЛЕННАЯ ВЕРСИЯ
+// js/utils.js - ПОЛНОСТЬЮ ИСПРАВЛЕННАЯ ВЕРСИЯ
 
 const Auth = {
   currentUser: null,
@@ -98,11 +98,14 @@ const Auth = {
   }
 };
 
-// Простые уведомления
+// Уведомления
 const Notification = {
   show: function(message, type = 'info') {
     console.log(`🔔 ${type}: ${message}`);
-    alert(message);
+    // Временное решение - alert
+    if (typeof alert !== 'undefined') {
+      alert(message);
+    }
   },
   
   success: function(message) {
@@ -118,31 +121,107 @@ const Notification = {
   }
 };
 
-// Базовый менеджер задач
+// ПОЛНЫЙ TaskManager с ВСЕМИ методами
 const TaskManager = {
   statuses: {
     'pending': '⏳ Ожидает выполнения',
     'in_progress': '🔄 В работе', 
-    'completed': '✅ Выполнено'
+    'completed': '✅ Выполнено',
+    'cancelled': '❌ Отменено'
   },
   
+  // Получить все задачи
   getAllTasks: function() {
     try {
       const tasks = localStorage.getItem('tasks');
       return tasks ? JSON.parse(tasks) : [];
     } catch (e) {
+      console.error('Ошибка загрузки задач:', e);
       return [];
     }
   },
   
+  // Сохранить задачи
+  saveTasks: function(tasks) {
+    try {
+      localStorage.setItem('tasks', JSON.stringify(tasks));
+      return true;
+    } catch (e) {
+      console.error('Ошибка сохранения задач:', e);
+      return false;
+    }
+  },
+  
+  // СОЗДАТЬ задачу
+  createTask: function(taskData) {
+    const tasks = this.getAllTasks();
+    
+    const newTask = {
+      id: 'task_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+      ...taskData,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      createdBy: Auth.currentUser ? Auth.currentUser.email : 'system'
+    };
+    
+    tasks.push(newTask);
+    const success = this.saveTasks(tasks);
+    
+    if (success) {
+      console.log('✅ Задача создана:', newTask);
+      return newTask;
+    } else {
+      throw new Error('Ошибка при сохранении задачи');
+    }
+  },
+  
+  // ОБНОВИТЬ задачу
+  updateTask: function(taskId, updates) {
+    const tasks = this.getAllTasks();
+    const taskIndex = tasks.findIndex(task => task.id === taskId);
+    
+    if (taskIndex !== -1) {
+      tasks[taskIndex] = {
+        ...tasks[taskIndex],
+        ...updates,
+        updatedAt: new Date().toISOString()
+      };
+      
+      const success = this.saveTasks(tasks);
+      if (success) {
+        console.log('✅ Задача обновлена:', tasks[taskIndex]);
+        return tasks[taskIndex];
+      }
+    }
+    
+    console.error('❌ Задача не найдена:', taskId);
+    return null;
+  },
+  
+  // УДАЛИТЬ задачу
+  deleteTask: function(taskId) {
+    const tasks = this.getAllTasks();
+    const filteredTasks = tasks.filter(task => task.id !== taskId);
+    const success = this.saveTasks(filteredTasks);
+    
+    if (success) {
+      console.log('✅ Задача удалена:', taskId);
+      return true;
+    }
+    
+    return false;
+  },
+  
+  // Получить задачи для текущего пользователя
   getUserTasks: function() {
     const tasks = this.getAllTasks();
     
     if (!Auth.currentUser) return [];
     
     if (Auth.isAdmin()) {
-      return tasks;
+      return tasks; // Админ видит все задачи
     } else if (Auth.isManager()) {
+      // Управляющий видит только свои задачи
       return tasks.filter(task => 
         task.responsibleManager === Auth.currentUser.name ||
         task.region === Auth.currentUser.region
@@ -158,7 +237,11 @@ const FormatHelper = {
   formatDate: function(dateString) {
     try {
       const date = new Date(dateString);
-      return date.toLocaleDateString('ru-RU');
+      return date.toLocaleDateString('ru-RU', {
+        day: '2-digit',
+        month: '2-digit', 
+        year: 'numeric'
+      });
     } catch (e) {
       return dateString;
     }
@@ -171,10 +254,9 @@ const FormatHelper = {
     }).format(amount);
   }
 };
-// Добавить в utils.js
 
+// Массовые операции
 const BulkOperations = {
-  // Массовое создание задач
   createMultipleTasks: function(tasksData) {
     const results = {
       success: [],
@@ -193,7 +275,6 @@ const BulkOperations = {
     return results;
   },
   
-  // Массовое обновление статусов
   updateTasksStatus: function(taskIds, newStatus) {
     const results = {
       updated: [],
@@ -212,7 +293,6 @@ const BulkOperations = {
     return results;
   },
   
-  // Экспорт задач в CSV
   exportTasksToCSV: function(tasks) {
     let csv = 'ID,Название,Регион,ИП,Статус,Сумма,Дата\n';
     
@@ -225,10 +305,10 @@ const BulkOperations = {
 };
 
 // Экспорт в глобальную область
-window.BulkOperations = BulkOperations;
 window.Auth = Auth;
 window.Notification = Notification;
 window.TaskManager = TaskManager;
 window.FormatHelper = FormatHelper;
+window.BulkOperations = BulkOperations;
 
 console.log('🔧 Utils.js загружен успешно');
