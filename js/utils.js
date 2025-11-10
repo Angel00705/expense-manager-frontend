@@ -1,6 +1,7 @@
 // js/utils.js - УТИЛИТЫ И ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
 
 // 🔐 СИСТЕМА АВТОРИЗАЦИИ
+// 🔐 СИСТЕМА АВТОРИЗАЦИИ (ОБНОВЛЕННАЯ)
 const Auth = {
   currentUser: null,
   
@@ -8,12 +9,18 @@ const Auth = {
     // Проверяем, есть ли сохраненный пользователь
     const savedUser = localStorage.getItem('currentUser');
     if (savedUser) {
-      this.currentUser = JSON.parse(savedUser);
+      try {
+        this.currentUser = JSON.parse(savedUser);
+        console.log('Авторизованный пользователь:', this.currentUser);
+      } catch (e) {
+        console.error('Ошибка при загрузке пользователя:', e);
+        localStorage.removeItem('currentUser');
+      }
     }
   },
   
   login: function(email, password) {
-    // Тестовые пользователи (в реальном приложении - запрос к API)
+    // Тестовые пользователи
     const users = {
       'admin@test.ru': { 
         email: 'admin@test.ru', 
@@ -27,6 +34,20 @@ const Auth = {
         role: 'manager',
         region: 'Астрахань',
         password: 'manager123'
+      },
+      'buryatia@test.ru': { 
+        email: 'buryatia@test.ru', 
+        name: 'Управляющий Бурятия', 
+        role: 'manager',
+        region: 'Бурятия',
+        password: 'manager123'
+      },
+      'kurgan@test.ru': { 
+        email: 'kurgan@test.ru', 
+        name: 'Управляющий Курган', 
+        role: 'manager',
+        region: 'Курган',
+        password: 'manager123'
       }
     };
     
@@ -39,7 +60,10 @@ const Auth = {
         region: user.region
       };
       
+      // Сохраняем в localStorage
       localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+      console.log('Успешный вход:', this.currentUser);
+      
       return { success: true, user: this.currentUser };
     }
     
@@ -60,12 +84,17 @@ const Auth = {
     return this.currentUser && this.currentUser.role === 'manager';
   },
   
-  requireAuth: function() {
-    if (!this.currentUser) {
-      window.location.href = 'login.html';
-      return false;
-    }
-    return true;
+  requireAuth: function(redirectTo = 'index.html') {  // Изменили с login.html на index.html
+  if (!this.currentUser) {
+    window.location.href = redirectTo;
+    return false;
+  }
+  return true;
+  },
+  
+  // Получить текущего пользователя
+  getCurrentUser: function() {
+    return this.currentUser;
   }
 };
 

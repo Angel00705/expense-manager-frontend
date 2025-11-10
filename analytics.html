@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📊 Аналитика - IP Expense Manager</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/analytics.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Навигация -->
+    <nav class="navbar">
+        <div class="container">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <a href="dashboard.html" class="navbar-brand">
+                    🎯 IP Expense Manager
+                </a>
+                <div style="display: flex; align-items: center; gap: 20px;">
+                    <span style="color: white; font-size: 14px;" id="userInfo">
+                        <!-- Заполнится через JavaScript -->
+                    </span>
+                    <button onclick="Auth.logout()" class="btn" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); font-size: 14px;">
+                        🚪 Выйти
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container" style="padding: 40px 20px;">
+        <!-- 🎪 ЗАГОЛОВОК И ДЕЙСТВИЯ -->
+        <div class="glass-card" style="padding: 30px; margin-bottom: 30px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 16px;">
+                <div>
+                    <h1 style="margin-bottom: 8px; color: var(--primary);">📊 Аналитика и отчеты</h1>
+                    <p style="color: var(--text-light); margin: 0;">Комплексная аналитика расходов и эффективности</p>
+                </div>
+                <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                    <button class="btn btn-outline" onclick="Analytics.refreshData()">
+                        🔄 Обновить
+                    </button>
+                    <div class="dropdown">
+                        <button class="btn btn-primary">
+                            📄 Экспорт отчета
+                        </button>
+                        <div class="dropdown-content">
+                            <a href="#" onclick="Analytics.exportReport('csv')">📊 CSV</a>
+                            <a href="#" onclick="Analytics.exportReport('pdf')">📄 PDF</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 📈 КЛЮЧЕВЫЕ МЕТРИКИ -->
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-value" id="kpiTotalTasks">0</div>
+                    <div class="metric-label">Всего задач</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="kpiCompletedTasks">0</div>
+                    <div class="metric-label">Выполнено задач</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="kpiCompletionRate">0%</div>
+                    <div class="metric-label">Процент выполнения</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="kpiAvgCompletionTime">0 дн.</div>
+                    <div class="metric-label">Среднее время выполнения</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 📊 СЕТКА ГРАФИКОВ -->
+        <div class="analytics-grid">
+            <!-- 📈 РАСХОДЫ ПО РЕГИОНАМ -->
+            <div class="chart-card analytics-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">💰 Расходы по регионам</h3>
+                </div>
+                <div class="chart-container">
+                    <canvas id="expensesByRegionChart"></canvas>
+                </div>
+            </div>
+
+            <!-- 👥 ЭФФЕКТИВНОСТЬ УПРАВЛЯЮЩИХ -->
+            <div class="chart-card analytics-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">👥 Эффективность управляющих</h3>
+                </div>
+                <div class="chart-container">
+                    <canvas id="managerPerformanceChart"></canvas>
+                </div>
+            </div>
+
+            <!-- 🎯 СТАТУСЫ ЗАДАЧ -->
+            <div class="chart-card analytics-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">🎯 Статусы задач</h3>
+                </div>
+                <div class="chart-container">
+                    <canvas id="taskStatusChart"></canvas>
+                </div>
+            </div>
+
+            <!-- 📊 РАСПРЕДЕЛЕНИЕ РАСХОДОВ -->
+            <div class="chart-card analytics-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">📊 Распределение расходов</h3>
+                </div>
+                <div class="chart-container">
+                    <canvas id="expenseDistributionChart"></canvas>
+                </div>
+            </div>
+
+            <!-- 💰 ПЛАН VS ФАКТ -->
+            <div class="chart-card analytics-card-wide">
+                <div class="chart-header">
+                    <h3 class="chart-title">💳 План vs Факт (ежемесячно)</h3>
+                </div>
+                <div class="chart-container">
+                    <canvas id="planVsActualChart"></canvas>
+                </div>
+            </div>
+
+            <!-- 📈 ТРЕНДЫ ПО МЕСЯЦАМ -->
+            <div class="chart-card analytics-card-wide">
+                <div class="chart-header">
+                    <h3 class="chart-title">📈 Тренды по месяцам</h3>
+                </div>
+                <div class="chart-container">
+                    <canvas id="monthlyTrendsChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- 👥 ТАБЛИЦА ЭФФЕКТИВНОСТИ УПРАВЛЯЮЩИХ -->
+        <div class="chart-card">
+            <div class="chart-header">
+                <h3 class="chart-title">📊 Детальная эффективность управляющих</h3>
+            </div>
+            <div style="overflow-x: auto;">
+                <table class="report-table">
+                    <thead>
+                        <tr>
+                            <th>Управляющий</th>
+                            <th>Всего задач</th>
+                            <th>Выполнено</th>
+                            <th>Процент выполнения</th>
+                            <th>Средняя сумма</th>
+                            <th>Регионы</th>
+                        </tr>
+                    </thead>
+                    <tbody id="managerPerformanceTable">
+                        <!-- Заполнится через JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Подключаем скрипты -->
+    <script src="js/data.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/analytics.js"></script>
+    <script>
+        // 🔧 ИНИЦИАЛИЗАЦИЯ ПРИ ЗАГРУЗКЕ СТРАНИЦЫ
+        document.addEventListener('DOMContentLoaded', function() {
+            // Проверяем авторизацию
+            if (!Auth.requireAuth()) return;
+            
+            // Обновляем информацию о пользователе
+            updateUserInfo();
+            
+            // Инициализируем аналитику
+            Analytics.init();
+        });
+
+        function updateUserInfo() {
+            const userInfo = document.getElementById('userInfo');
+            if (userInfo && Auth.currentUser) {
+                userInfo.innerHTML = `👋 ${Auth.currentUser.name} 
+                    <span style="opacity: 0.8;">(${Auth.currentUser.role === 'admin' ? 'Бухгалтер' : 'Управляющий'})</span>`;
+            }
+        }
+
+        // Стили для dropdown
+        const style = document.createElement('style');
+        style.textContent = `
+            .dropdown {
+                position: relative;
+                display: inline-block;
+            }
+            .dropdown-content {
+                display: none;
+                position: absolute;
+                background: white;
+                min-width: 160px;
+                box-shadow: var(--shadow-lg);
+                border-radius: 8px;
+                z-index: 1;
+                margin-top: 4px;
+            }
+            .dropdown-content a {
+                color: var(--text-dark);
+                padding: 12px 16px;
+                text-decoration: none;
+                display: block;
+                border-radius: 8px;
+                transition: var(--transition);
+            }
+            .dropdown-content a:hover {
+                background: var(--bg-light);
+            }
+            .dropdown:hover .dropdown-content {
+                display: block;
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

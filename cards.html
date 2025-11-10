@@ -1,6 +1,29 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+<!-- ПОДКЛЮЧАЕМ УТИЛИТЫ И ПРОВЕРЯЕМ АВТОРИЗАЦИЮ -->
+<script src="js/utils.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Проверяем авторизацию - если не авторизован, перенаправляем на главную
+    if (!Auth.requireAuth()) return;
+    
+    console.log('Пользователь авторизован:', Auth.currentUser);
+    
+    // Можно добавить логику для скрытия/показа элементов по ролям
+    if (Auth.isAdmin()) {
+      console.log('Режим администратора');
+      // Показываем элементы только для админов
+      const adminElements = document.querySelectorAll('.admin-only');
+      adminElements.forEach(el => el.style.display = 'block');
+    } else if (Auth.isManager()) {
+      console.log('Режим управляющего');
+      // Скрываем элементы для админов
+      const adminElements = document.querySelectorAll('.admin-only');
+      adminElements.forEach(el => el.style.display = 'none');
+    }
+  });
+</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>💳 Карты - IP Expense Manager</title>
@@ -14,23 +37,25 @@
 <body>
     <!-- 🎯 ХЕДЕР -->
     <header class="header">
-        <nav class="nav">
-            <div class="logo">
-                <span>💰</span>
-                IP Expense Manager
+        <!-- Навигация -->
+<nav class="navbar">
+    <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <a href="dashboard.html" class="navbar-brand">
+                🎯 IP Expense Manager
+            </a>
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <span style="color: white; font-size: 14px;">
+                    👋 ${Auth.currentUser?.name} 
+                    <span style="opacity: 0.8;">(${Auth.currentUser?.role === 'admin' ? 'Бухгалтер' : 'Управляющий'})</span>
+                </span>
+                <button onclick="Auth.logout()" class="btn" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); font-size: 14px;">
+                    🚪 Выйти
+                </button>
             </div>
-            <div class="nav-links">
-                <a href="dashboard.html" class="nav-link">📊 Дашборд</a>
-                <a href="create-task.html" class="nav-link">➕ Создать задачу</a>
-                <a href="tasks.html" class="nav-link">📋 Задачи</a>
-                <a href="expense-items.html" class="nav-link">🗂️ Статьи расходов</a>
-                <a href="cards.html" class="nav-link active">💳 Карты</a>
-                <div class="user-info">
-                    <!-- Будет заполнено через JavaScript -->
-                </div>
-                <button class="btn btn-outline" onclick="logout()">🚪 Выйти</button>
-            </div>
-        </nav>
+        </div>
+    </div>
+</nav>
     </header>
 
     <main class="container">

@@ -3,150 +3,403 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>💰 IP Expense Manager - Управление расходами ИП</title>
+    <title>IP Expense Manager - Управление расходами ИП</title>
     <link rel="stylesheet" href="css/style.css">
-    <!-- 🎨 FAVICON -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><defs><linearGradient id='borderGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%238b5cf6'/><stop offset='50%' stop-color='%236d28d9'/><stop offset='100%' stop-color='%231e40af'/></linearGradient><linearGradient id='checkGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%23a78bfa'/><stop offset='100%' stop-color='%234f46e5'/></linearGradient><filter id='glow' x='-50%' y='-50%' width='200%' height='200%'><feGaussianBlur in='SourceGraphic' stdDeviation='1' result='blur'/><feMerge><feMergeNode in='blur'/><feMergeNode in='SourceGraphic'/></feMerge></filter></defs><circle cx='10' cy='10' r='9' fill='none' stroke='url(%23borderGrad)' stroke-width='1.5' opacity='0.9'/><path d='M6,10 L8.5,12.5 L14,7' stroke='url(%23checkGrad)' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round' filter='url(%23glow)'/></svg>">
+    <style>
+        /* Специфичные стили для главной страницы */
+        .hero {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+        
+        .hero p {
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+        
+        .login-section {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: var(--shadow-lg);
+            max-width: 450px;
+            margin: -50px auto 0;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .features {
+            padding: 100px 0 60px;
+        }
+        
+        .feature-card {
+            text-align: center;
+            padding: 30px 20px;
+            height: 100%;
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+        
+        .test-accounts {
+            background: var(--bg-light);
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 25px;
+        }
+        
+        .test-account {
+            padding: 12px;
+            margin: 8px 0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: var(--transition);
+        }
+        
+        .test-account:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+        
+        .role-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            background: var(--primary);
+            color: white;
+            border-radius: 6px;
+            font-size: 12px;
+            margin-left: 8px;
+        }
+        
+        .stats {
+            background: var(--bg-light);
+            padding: 60px 0;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+        
+        .regions {
+            padding: 60px 0;
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .login-section {
+                margin: -30px 20px 0;
+                padding: 30px 20px;
+            }
+            
+            .features {
+                padding: 80px 0 40px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <!-- 🎯 ХЕДЕР -->
-    <header class="header">
-        <nav class="nav">
-            <div class="logo">
-                <span>💰</span>
-                IP Expense Manager
-            </div>
-            <div class="nav-links">
-                <a href="index.html" class="nav-link active">🏠 Главная</a>
-                <a href="login.html" class="btn btn-primary">🔐 Войти в систему</a>
-            </div>
-        </nav>
-    </header>
-
-    <!-- 🎪 ГЛАВНЫЙ ЭКРАН -->
-    <main class="container">
-        <div class="glass-card animate-bounce-in" style="max-width: 800px; margin: 60px auto; text-align: center;">
-            <h1 style="font-size: 3em; margin-bottom: 20px;">💰</h1>
-            <h1 style="font-size: 2.5rem; margin-bottom: 16px; background: linear-gradient(135deg, #8b5cf6, #6366f1); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
-                Умное управление расходами ИП
-            </h1>
-            <p class="text-muted" style="font-size: 1.2rem; margin-bottom: 40px; line-height: 1.6;">
-                Единая платформа для бухгалтерии и управляющих в 6 регионах России.<br>
-                Автоматизация, контроль и аналитика финансовых операций.
-            </p>
-
-            <!-- 🎯 СТАТИСТИКА -->
-            <div class="flex justify-between gap-4 mb-8" style="flex-wrap: wrap;">
-                <div class="glass-card" style="flex: 1; min-width: 150px;">
-                    <div style="font-size: 2rem; margin-bottom: 8px;">🏢</div>
-                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary);">6</div>
-                    <div class="text-muted">Регионов</div>
-                </div>
-                <div class="glass-card" style="flex: 1; min-width: 150px;">
-                    <div style="font-size: 2rem; margin-bottom: 8px;">💼</div>
-                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--success);">28</div>
-                    <div class="text-muted">Индивидуальных предпринимателей</div>
-                </div>
-                <div class="glass-card" style="flex: 1; min-width: 150px;">
-                    <div style="font-size: 2rem; margin-bottom: 8px;">💳</div>
-                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--warning);">40+</div>
-                    <div class="text-muted">Банковских карт</div>
-                </div>
-                <div class="glass-card" style="flex: 1; min-width: 150px;">
-                    <div style="font-size: 2rem; margin-bottom: 8px;">👥</div>
-                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--secondary);">12</div>
-                    <div class="text-muted">Управляющих</div>
-                </div>
-            </div>
-
-            <!-- 🚀 ПРИЗЫВ К ДЕЙСТВИЮ -->
-            <div class="flex gap-4 justify-center" style="flex-wrap: wrap;">
-                <a href="login.html" class="btn btn-primary glow-effect" style="padding: 16px 32px; font-size: 1.1rem;">
-                    🚀 Начать работу
-                </a>
-                <a href="#features" class="btn btn-outline" style="padding: 16px 32px; font-size: 1.1rem;">
-                    📚 Узнать больше
+    <!-- Навигация - ТОЛЬКО БРЕНД -->
+    <nav class="navbar">
+        <div class="container">
+            <div style="display: flex; justify-content: center; align-items: center;">
+                <a href="index.html" class="navbar-brand">
+                    🎯 IP Expense Manager
                 </a>
             </div>
         </div>
+    </nav>
 
-        <!-- 💡 ВОЗМОЖНОСТИ -->
-        <section id="features" class="glass-card mt-8 animate-slide-in">
-            <h2 class="text-center mb-8" style="font-size: 2rem;">✨ Возможности системы</h2>
-            
-            <div class="flex gap-6" style="flex-wrap: wrap;">
-                <!-- Карточка 1 -->
-                <div class="glass-card" style="flex: 1; min-width: 300px;">
-                    <div style="font-size: 3rem; text-align: center; margin-bottom: 16px;">📊</div>
-                    <h3 style="margin-bottom: 12px; color: var(--primary);">Для бухгалтерии</h3>
-                    <ul style="list-style: none; line-height: 1.8;">
-                        <li>✅ Создание и планирование задач</li>
-                        <li>✅ Контроль бюджетов и лимитов</li>
-                        <li>✅ Автоматические уведомления</li>
-                        <li>✅ Детальная аналитика и отчеты</li>
-                    </ul>
+    <!-- Герой секция -->
+    <section class="hero">
+        <div class="container">
+            <h1>🎯 Управление расходами для ИП</h1>
+            <p>Автоматизируйте финансовые операции для 28 ИП в 6 регионах России</p>
+        </div>
+    </section>
+
+    <!-- ФОРМА АВТОРИЗАЦИИ -->
+    <section class="container">
+        <div class="login-section">
+            <div style="text-align: center; margin-bottom: 30px;">
+                <h2 style="color: var(--primary); margin-bottom: 10px;">🔐 Вход в систему</h2>
+                <p style="color: var(--text-light);">Введите ваши учетные данные</p>
+            </div>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label class="form-label">📧 Email</label>
+                    <input type="email" class="form-control" id="email" 
+                           placeholder="your@email.com" required>
                 </div>
 
-                <!-- Карточка 2 -->
-                <div class="glass-card" style="flex: 1; min-width: 300px;">
-                    <div style="font-size: 3rem; text-align: center; margin-bottom: 16px;">📱</div>
-                    <h3 style="margin-bottom: 12px; color: var(--success);">Для управляющих</h3>
-                    <ul style="list-style: none; line-height: 1.8;">
-                        <li>✅ Удобный просмотр задач</li>
-                        <li>✅ Быстрое выполнение и отчетность</li>
-                        <li>✅ Работа с мобильных устройств</li>
-                        <li>✅ Прямая связь с бухгалтерией</li>
-                    </ul>
+                <div class="form-group">
+                    <label class="form-label">🔒 Пароль</label>
+                    <input type="password" class="form-control" id="password" 
+                           placeholder="Введите пароль" required>
                 </div>
 
-                <!-- Карточка 3 -->
-                <div class="glass-card" style="flex: 1; min-width: 300px;">
-                    <div style="font-size: 3rem; text-align: center; margin-bottom: 16px;">🔒</div>
-                    <h3 style="margin-bottom: 12px; color: var(--warning);">Безопасность</h3>
-                    <ul style="list-style: none; line-height: 1.8;">
-                        <li>✅ Разделение прав доступа</li>
-                        <li>✅ Шифрование данных</li>
-                        <li>✅ Резервное копирование</li>
-                        <li>✅ Аудит действий</li>
-                    </ul>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">
+                    🚀 Войти в систему
+                </button>
+            </form>
+
+            <!-- Тестовые аккаунты -->
+            <div class="test-accounts">
+                <h4 style="margin-bottom: 15px; text-align: center; color: var(--text-dark);">🧪 Быстрый вход</h4>
+                
+                <div class="test-account" onclick="fillCredentials('admin@test.ru', 'admin123')">
+                    <strong>👨‍💼 Бухгалтер (Админ)</strong>
+                    <span class="role-badge">Полный доступ</span>
+                    <div style="font-size: 12px; color: var(--text-light); margin-top: 4px;">
+                        Все функции управления
+                    </div>
+                </div>
+                
+                <div class="test-account" onclick="fillCredentials('astrakhan@test.ru', 'manager123')">
+                    <strong>👥 Управляющий Астрахань</strong>
+                    <span class="role-badge">Регион: Астрахань</span>
+                    <div style="font-size: 12px; color: var(--text-light); margin-top: 4px;">
+                        Просмотр и выполнение задач
+                    </div>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <!-- 📞 КОНТАКТЫ -->
-        <section class="glass-card mt-8 text-center animate-fade-in">
-            <h2 style="margin-bottom: 16px;">📞 Нужна помощь?</h2>
-            <p class="text-muted mb-4">Наша команда поддержки всегда готова помочь вам с настройкой и работой в системе</p>
-            <a href="mailto:support@ip-expense.ru" class="btn btn-primary">✉️ Написать в поддержку</a>
-        </section>
-    </main>
+    <!-- Статистика -->
+    <section class="stats">
+        <div class="container">
+            <div class="row">
+                <div class="col-3">
+                    <div class="stat-item">
+                        <div class="stat-number">6</div>
+                        <div class="stat-label">🏢 Регионов</div>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="stat-item">
+                        <div class="stat-number">28</div>
+                        <div class="stat-label">👤 ИП</div>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="stat-item">
+                        <div class="stat-number">40+</div>
+                        <div class="stat-label">💳 Карт</div>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="stat-item">
+                        <div class="stat-number">23</div>
+                        <div class="stat-label">📊 Статьи</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    <!-- 🦶 ФУТЕР -->
-    <footer style="text-align: center; padding: 40px 20px; color: white; margin-top: 60px;">
-        <p>© 2024 IP Expense Manager. Все права защищены.</p>
-        <p class="text-muted" style="margin-top: 8px;">Система управления расходами для индивидуальных предпринимателей</p>
+    <!-- Возможности -->
+    <section class="features">
+        <div class="container">
+            <h2 style="text-align: center; margin-bottom: 50px; color: var(--text-dark);">
+                ✨ Ключевые возможности
+            </h2>
+            
+            <div class="row">
+                <div class="col-4">
+                    <div class="feature-card glass-card">
+                        <div class="feature-icon">📋</div>
+                        <h3>Умное создание задач</h3>
+                        <p>Автоматическое назначение ответственных по цепочке: Регион → ИП → Карта</p>
+                    </div>
+                </div>
+                
+                <div class="col-4">
+                    <div class="feature-card glass-card">
+                        <div class="feature-icon">📊</div>
+                        <h3>Аналитика и отчеты</h3>
+                        <p>Визуализация расходов, KPI управляющих, план vs факт по регионам</p>
+                    </div>
+                </div>
+                
+                <div class="col-4">
+                    <div class="feature-card glass-card">
+                        <div class="feature-icon">👥</div>
+                        <h3>Ролевая модель</h3>
+                        <p>Разделение прав: бухгалтеры создают задачи, управляющие выполняют</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Регионы -->
+    <section class="regions">
+        <div class="container">
+            <h2 style="text-align: center; margin-bottom: 40px;">🏢 Поддерживаемые регионы</h2>
+            
+            <div class="row">
+                <div class="col-4">
+                    <div style="text-align: center; padding: 15px;">
+                        <h4>Астрахань</h4>
+                        <p>5 ИП</p>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div style="text-align: center; padding: 15px;">
+                        <h4>Бурятия</h4>
+                        <p>4 ИП</p>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div style="text-align: center; padding: 15px;">
+                        <h4>Курган</h4>
+                        <p>7 ИП</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-4">
+                    <div style="text-align: center; padding: 15px;">
+                        <h4>Калмыкия</h4>
+                        <p>3 ИП</p>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div style="text-align: center; padding: 15px;">
+                        <h4>Мордовия</h4>
+                        <p>3 ИП</p>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div style="text-align: center; padding: 15px;">
+                        <h4>Удмуртия</h4>
+                        <p>6 ИП</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Футер -->
+    <footer style="background: var(--text-dark); color: white; padding: 30px 0; text-align: center;">
+        <div class="container">
+            <p>🎯 IP Expense Manager - Система управления расходами для индивидуальных предпринимателей</p>
+        </div>
     </footer>
 
-    <script src="js/data.js"></script>
+    <!-- Подключаем утилиты -->
+    <script src="js/utils.js"></script>
     <script>
-        // Простая анимация появления элементов при скролле
         document.addEventListener('DOMContentLoaded', function() {
-            const observer = new IntersectionObserver((entries) => {
+            console.log('IP Expense Manager - Объединенная главная страница загружена');
+            
+            // Проверяем, если пользователь уже авторизован - перенаправляем на дашборд
+            if (Auth.currentUser) {
+                window.location.href = 'dashboard.html';
+                return;
+            }
+
+            // Обработка формы входа
+            document.getElementById('loginForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                
+                if (!email || !password) {
+                    Notification.error('Пожалуйста, заполните все поля');
+                    return;
+                }
+                
+                // Показываем загрузку
+                const submitBtn = this.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '⏳ Вход...';
+                submitBtn.disabled = true;
+                
+                // Пытаемся войти
+                const result = Auth.login(email, password);
+                
+                if (result.success) {
+                    Notification.success(`Добро пожаловать, ${result.user.name}!`);
+                    
+                    // Перенаправляем на дашборд
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 1000);
+                } else {
+                    Notification.error(result.error);
+                    // Восстанавливаем кнопку
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }
+            });
+
+            // Добавляем анимации для карточек
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+            
+            const observer = new IntersectionObserver(function(entries) {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         entry.target.style.opacity = '1';
                         entry.target.style.transform = 'translateY(0)';
                     }
                 });
-            });
-
-            document.querySelectorAll('.glass-card').forEach(card => {
+            }, observerOptions);
+            
+            // Анимируем карточки возможностей
+            document.querySelectorAll('.feature-card').forEach(card => {
                 card.style.opacity = '0';
                 card.style.transform = 'translateY(20px)';
-                card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                card.style.transition = 'all 0.6s ease';
                 observer.observe(card);
             });
         });
+
+        // Функция для заполнения тестовых учетных данных
+        function fillCredentials(email, password) {
+            document.getElementById('email').value = email;
+            document.getElementById('password').value = password;
+            
+            // Показываем что данные заполнены
+            Notification.info('Данные заполнены! Нажмите "Войти в систему"');
+            
+            // Можно раскомментировать для автоматического входа:
+            // setTimeout(() => {
+            //     document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+            // }, 500);
+        }
     </script>
 </body>
 </html>
