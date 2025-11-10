@@ -9,7 +9,7 @@
             font-family: Arial, sans-serif;
             background: linear-gradient(135deg, #667eea, #764ba2);
             margin: 0;
-            padding: 0;
+            padding: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -21,7 +21,7 @@
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             text-align: center;
-            max-width: 400px;
+            max-width: 500px;
         }
         h1 {
             color: #333;
@@ -31,31 +31,39 @@
             background: #667eea;
             color: white;
             border: none;
-            padding: 12px 30px;
-            border-radius: 5px;
+            padding: 15px 40px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 1rem;
+            font-size: 1.1rem;
+            margin: 10px;
         }
         button:hover {
             background: #5a6fd8;
+            transform: translateY(-2px);
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>💰 Expense Manager</h1>
-        <p>Система управления расходами ИП</p>
-        <button onclick="goToLogin()">Войти в систему</button>
+        <div style="font-size: 4rem; margin-bottom: 1rem;">💰</div>
+        <h1>Expense Manager</h1>
+        <p style="color: #666; margin-bottom: 2rem; font-size: 1.1rem;">
+            Профессиональная система управления расходами для ИП
+        </p>
+        <button id="loginBtn">Войти в систему</button>
     </div>
 
     <script>
-        function goToLogin() {
-            console.log("Кнопка нажата! Переход на login.html");
-            window.location.href = 'login.html';
-        }
-        
-        // Тестовая функция
-        console.log("index.html загружен - JavaScript работает!");
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginBtn = document.getElementById('loginBtn');
+            
+            loginBtn.addEventListener('click', function() {
+                console.log("Кнопка нажата! Переход на login.html");
+                window.location.href = 'login.html';
+            });
+            
+            console.log("index.html: Кнопка готова к работе");
+        });
     </script>
 </body>
 </html>

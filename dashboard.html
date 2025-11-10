@@ -17,6 +17,7 @@
             border-radius: 10px;
             text-align: center;
             margin-bottom: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
         button {
             background: #667eea;
@@ -27,26 +28,29 @@
             cursor: pointer;
             margin: 5px;
         }
+        button:hover {
+            background: #5a6fd8;
+        }
     </style>
 </head>
 <body>
     <div class="header">
         <h1>🎯 Дашборд Expense Manager</h1>
-        <p>Система управления расходами ИП</p>
-        <button onclick="goToMain()">На главную</button>
-        <button onclick="goToLogin()">Выйти</button>
+        <p>Добро пожаловать в систему управления расходами!</p>
+        <button id="mainBtn">На главную</button>
+        <button id="logoutBtn">Выйти</button>
     </div>
 
     <script>
-        function goToMain() {
-            window.location.href = 'index.html';
-        }
-        
-        function goToLogin() {
-            window.location.href = 'login.html';
-        }
-        
-        console.log("dashboard.html загружен");
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('mainBtn').addEventListener('click', function() {
+                window.location.href = 'index.html';
+            });
+            
+            document.getElementById('logoutBtn').addEventListener('click', function() {
+                window.location.href = 'login.html';
+            });
+        });
     </script>
 </body>
 </html>

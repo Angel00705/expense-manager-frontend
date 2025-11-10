@@ -9,7 +9,7 @@
             font-family: Arial, sans-serif;
             background: linear-gradient(135deg, #667eea, #764ba2);
             margin: 0;
-            padding: 0;
+            padding: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -21,7 +21,7 @@
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             max-width: 400px;
-            width: 90%;
+            width: 100%;
         }
         h1 {
             text-align: center;
@@ -56,12 +56,25 @@
             border-radius: 5px;
             margin-top: 20px;
             font-size: 0.9rem;
+            line-height: 1.4;
         }
         .error {
             color: red;
             text-align: center;
             margin: 10px 0;
             display: none;
+            background: #ffe6e6;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .success {
+            color: green;
+            text-align: center;
+            margin: 10px 0;
+            display: none;
+            background: #e6ffe6;
+            padding: 10px;
+            border-radius: 5px;
         }
     </style>
 </head>
@@ -70,76 +83,128 @@
         <h1>🔐 Вход в систему</h1>
         
         <form id="loginForm">
-            <input type="email" id="email" placeholder="Email" required>
-            <input type="password" id="password" placeholder="Пароль" required>
+            <input type="email" id="email" placeholder="Введите email" required>
+            <input type="password" id="password" placeholder="Введите пароль" required>
             
             <div id="error" class="error"></div>
+            <div id="success" class="success"></div>
             
-            <button type="submit">Войти</button>
+            <button type="submit" id="loginButton">Войти в систему</button>
         </form>
         
         <div class="test-accounts">
-            <strong>Тестовые доступы:</strong><br>
-            Бухгалтер: admin@test.ru / 123456<br>
-            Управляющий: astrakhan@test.ru / 123456
+            <strong>Тестовые доступы:</strong><br><br>
+            👨‍💼 <strong>Бухгалтер:</strong><br>
+            Email: admin@test.ru<br>
+            Пароль: 123456<br><br>
+            
+            👨‍💻 <strong>Управляющий (Астрахань):</strong><br>
+            Email: astrakhan@test.ru<br>
+            Пароль: 123456
         </div>
     </div>
 
     <script>
-        // Тест - проверяем что JS работает
-        console.log("login.html загружен - JavaScript активен!");
-        
-        document.getElementById('loginForm').addEventListener('submit', function(event) {
-            event.preventDefault(); // Останавливаем отправку формы
+        // Ждем полной загрузки DOM
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("DOM загружен - начинаем инициализацию");
             
-            console.log("Форма отправлена!");
-            
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
+            const loginForm = document.getElementById('loginForm');
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
             const errorDiv = document.getElementById('error');
+            const successDiv = document.getElementById('success');
+            const loginButton = document.getElementById('loginButton');
             
-            console.log("Email:", email, "Password:", password);
+            console.log("Найденные элементы:", {
+                form: loginForm,
+                email: emailInput,
+                password: passwordInput,
+                error: errorDiv,
+                button: loginButton
+            });
             
-            // Сбрасываем ошибку
-            errorDiv.style.display = 'none';
-            
-            // Проверяем заполнение
-            if (!email || !password) {
-                showError("Заполните все поля");
+            // Проверяем что все элементы найдены
+            if (!loginForm || !emailInput || !passwordInput) {
+                console.error("Не все элементы найдены!");
                 return;
             }
             
-            // Тестовые логины
-            const validLogins = {
-                'admin@test.ru': '123456',
-                'astrakhan@test.ru': '123456'
-            };
+            // Обработчик отправки формы
+            loginForm.addEventListener('submit', function(event) {
+                event.preventDefault(); // Останавливаем отправку формы
+                
+                console.log("=== ФОРМА ОТПРАВЛЕНА ===");
+                console.log("Email:", emailInput.value);
+                console.log("Password:", passwordInput.value);
+                
+                // Сбрасываем сообщения
+                errorDiv.style.display = 'none';
+                successDiv.style.display = 'none';
+                
+                // Проверяем заполнение
+                if (!emailInput.value || !passwordInput.value) {
+                    showError("❌ Заполните все поля");
+                    return;
+                }
+                
+                // Тестовые логины
+                const validLogins = {
+                    'admin@test.ru': '123456',
+                    'astrakhan@test.ru': '123456'
+                };
+                
+                // Проверяем логин
+                if (validLogins[emailInput.value] && validLogins[emailInput.value] === passwordInput.value) {
+                    console.log("✅ Успешный вход!");
+                    showSuccess("✅ Успешный вход! Перенаправление...");
+                    
+                    // Меняем текст кнопки
+                    loginButton.textContent = "Вход выполнен!";
+                    loginButton.style.background = "#28a745";
+                    loginButton.disabled = true;
+                    
+                    // Через 2 секунды переходим (в реальной системе сразу)
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 2000);
+                    
+                } else {
+                    console.log("❌ Неверные данные");
+                    showError("❌ Неверный email или пароль");
+                }
+            });
             
-            // Проверяем логин
-            if (validLogins[email] && validLogins[email] === password) {
-                console.log("Успешный вход! Переход на dashboard.html");
-                // В реальной системе здесь был бы переход после успешной авторизации
-                alert("✅ Успешный вход! В реальной системе здесь был бы переход в личный кабинет.");
-                // window.location.href = 'dashboard.html';
-            } else {
-                showError("Неверный email или пароль");
+            function showError(message) {
+                errorDiv.textContent = message;
+                errorDiv.style.display = 'block';
+                console.log("Ошибка:", message);
             }
-        });
-        
-        function showError(message) {
-            const errorDiv = document.getElementById('error');
-            errorDiv.textContent = message;
-            errorDiv.style.display = 'block';
-            console.log("Ошибка:", message);
-        }
-        
-        // Очищаем ошибку при вводе
-        document.getElementById('email').addEventListener('input', function() {
-            document.getElementById('error').style.display = 'none';
-        });
-        
-        document.getElementById('password').addEventListener('input', function() {
-            document.getElementById('error').style.display = 'none';
+            
+            function showSuccess(message) {
+                successDiv.textContent = message;
+                successDiv.style.display = 'block';
+                console.log("Успех:", message);
+            }
+            
+            // Очищаем ошибку при вводе
+            emailInput.addEventListener('input', function() {
+                errorDiv.style.display = 'none';
+                successDiv.style.display = 'none';
+                loginButton.textContent = "Войти в систему";
+                loginButton.style.background = "#667eea";
+                loginButton.disabled = false;
+            });
+            
+            passwordInput.addEventListener('input', function() {
+                errorDiv.style.display = 'none';
+                successDiv.style.display = 'none';
+                loginButton.textContent = "Войти в систему";
+                loginButton.style.background = "#667eea";
+                loginButton.disabled = false;
+            });
+            
+            console.log("Обработчики событий установлены - форма готова к работе!");
         });
     </script>
 </body>
