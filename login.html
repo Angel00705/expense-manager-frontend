@@ -4,141 +4,75 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Вход - Expense Manager</title>
-    
-    <!-- ПРОСТОЙ FAVICON -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23667eea'/><text x='50' y='60' font-family='Arial' font-size='40' text-anchor='middle' fill='white'>EM</text></svg>">
-    
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23667eea'/><text x='50' y='65' font-family='Arial' font-size='40' text-anchor='middle' fill='white'>EM</text></svg>">
     <style>
-        /* INLINE СТИЛИ ДЛЯ LOGIN */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
             font-family: 'Segoe UI', system-ui, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            min-height: 100vh; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
             padding: 20px;
         }
-        
-        .login-container {
-            background: white;
-            padding: 3rem;
-            border-radius: 20px;
+        .login-container { 
+            background: white; 
+            padding: 3rem; 
+            border-radius: 15px; 
             box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            max-width: 450px;
+            max-width: 450px; 
             width: 100%;
             animation: slideIn 0.6s ease-out;
         }
-        
-        .login-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        
-        .login-header h1 {
-            color: #1f2937;
-            margin-bottom: 0.5rem;
-            font-size: 2rem;
-        }
-        
-        .login-subtitle {
-            color: #6b7280;
+        .login-header { text-align: center; margin-bottom: 2rem; }
+        .login-header h1 { color: #1f2937; margin-bottom: 0.5rem; }
+        .login-subtitle { color: #6b7280; }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-label { display: block; margin-bottom: 0.5rem; color: #374151; font-weight: 600; }
+        .form-input { 
+            width: 100%; 
+            padding: 12px; 
+            border: 2px solid #e5e7eb; 
+            border-radius: 8px; 
             font-size: 1rem;
+            transition: border 0.3s ease;
         }
-        
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-        
-        .form-label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: #374151;
-            font-weight: 600;
-        }
-        
-        .form-input {
-            width: 100%;
-            padding: 12px 16px;
-            border: 2px solid #e5e7eb;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-        
-        .form-input:focus {
-            outline: none;
-            border-color: #667eea;
+        .form-input:focus { 
+            outline: none; 
+            border-color: #667eea; 
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
-        
-        .login-btn {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
+        .login-btn { 
+            width: 100%; 
+            padding: 14px; 
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white; 
+            border: none; 
+            border-radius: 8px; 
+            font-size: 1rem; 
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
         }
-        
-        .login-btn:hover {
-            transform: translateY(-2px);
+        .login-btn:hover { 
+            transform: translateY(-2px); 
             box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
         }
-        
-        .demo-section {
-            background: #f8fafc;
-            padding: 1.5rem;
-            border-radius: 12px;
+        .demo-section { 
+            background: #f8fafc; 
+            padding: 1.5rem; 
+            border-radius: 10px; 
             margin-top: 2rem;
             border-left: 4px solid #667eea;
         }
-        
-        .demo-title {
-            color: #374151;
-            margin-bottom: 1rem;
-            font-weight: 600;
-        }
-        
-        .demo-account {
-            background: white;
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            border: 1px solid #e5e7eb;
-        }
-        
-        .account-role {
-            font-weight: 600;
-            color: #1f2937;
-            margin-bottom: 0.5rem;
-        }
-        
-        .account-info {
-            color: #6b7280;
-            font-family: monospace;
-            font-size: 0.9rem;
-        }
-        
+        .demo-title { color: #374151; margin-bottom: 1rem; font-weight: 600; }
+        .demo-account { background: white; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; }
+        .account-role { font-weight: 600; color: #1f2937; margin-bottom: 0.5rem; }
+        .account-info { color: #6b7280; font-family: monospace; }
         @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
@@ -177,16 +111,13 @@
     </div>
 
     <script>
-        // ПРОСТАЯ ЛОГИКА ЛОГИНА
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
             const email = this.querySelector('input[type="email"]').value;
             const password = this.querySelector('input[type="password"]').value;
             
-            console.log('Логин attempt:', email, password);
-            
-            // ПРОСТАЯ ПРОВЕРКА
+            // Проверка логина
             if ((email === 'admin@test.ru' && password === '123456') || 
                 (email === 'astrakhan@test.ru' && password === '123456')) {
                 alert('Успешный вход! Перенаправление на дашборд...');
