@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Создать задачу - Expense Manager</title>
+    
+    <!-- 🎨 FAVICON -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><defs><linearGradient id='borderGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%238b5cf6'/><stop offset='50%' stop-color='%236d28d9'/><stop offset='100%' stop-color='%231e40af'/></linearGradient><linearGradient id='checkGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%23a78bfa'/><stop offset='100%' stop-color='%234f46e5'/></linearGradient><filter id='glow' x='-50%' y='-50%' width='200%' height='200%'><feGaussianBlur in='SourceGraphic' stdDeviation='1' result='blur'/><feMerge><feMergeNode in='blur'/><feMergeNode in='SourceGraphic'/></feMerge></filter></defs><circle cx='10' cy='10' r='9' fill='none' stroke='url(%23borderGrad)' stroke-width='1.5' opacity='0.9'/><path d='M6,10 L8.5,12.5 L14,7' stroke='url(%23checkGrad)' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round' filter='url(%23glow)'/></svg>">
+    
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/components.css">
+    <link rel="stylesheet" href="./css/forms.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="header-left">
+                <a href="dashboard.html" class="back-link">← Назад к дашборду</a>
+                <div class="logo">💰</div>
+                <h1>Создание задачи</h1>
+            </div>
+            <div class="header-right">
+                <span class="user-info" id="userInfo"></span>
+                <button class="btn-secondary" onclick="window.location.href='dashboard.html'">Дашборд</button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <div class="form-container">
+                <div class="form-header">
+                    <h2>📋 Новая задача для управляющего</h2>
+                    <p>Заполните информацию о планируемом расходе</p>
+                </div>
+
+                <form id="createTaskForm" class="task-form">
+                    <!-- Информация об ИП -->
+                    <div class="form-section">
+                        <h3>🏢 Информация об ИП</h3>
+                        <div class="form-row">
+                            <div class="input-group">
+                                <label for="ipSelect" class="input-label">Выберите ИП *</label>
+                                <select id="ipSelect" class="form-select" required>
+                                    <option value="">-- Выберите ИП --</option>
+                                    <option value="ip1">ИП "Восток" (Астрахань)</option>
+                                    <option value="ip2">ИП "Север" (Москва)</option>
+                                    <option value="ip3">ИП "Юг" (Краснодар)</option>
+                                    <option value="ip4">ИП "Запад" (Санкт-Петербург)</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label for="managerSelect" class="input-label">Ответственный управляющий *</label>
+                                <select id="managerSelect" class="form-select" required>
+                                    <option value="">-- Выберите управляющего --</option>
+                                    <option value="manager1">Иванов А.С. (Астрахань)</option>
+                                    <option value="manager2">Петрова М.И. (Москва)</option>
+                                    <option value="manager3">Сидоров В.П. (Краснодар)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Информация о расходе -->
+                    <div class="form-section">
+                        <h3>💰 Информация о расходе</h3>
+                        <div class="form-row">
+                            <div class="input-group">
+                                <label for="expenseItem" class="input-label">Статья расхода *</label>
+                                <select id="expenseItem" class="form-select" required>
+                                    <option value="">-- Выберите статью --</option>
+                                    <option value="rent">Аренда помещения</option>
+                                    <option value="utilities">Коммунальные услуги</option>
+                                    <option value="salary">Заработная плата</option>
+                                    <option value="taxes">Налоги и сборы</option>
+                                    <option value="marketing">Маркетинг и реклама</option>
+                                    <option value="supplies">Хозяйственные товары</option>
+                                    <option value="other">Прочие расходы</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label for="plannedAmount" class="input-label">Плановая сумма *</label>
+                                <input type="number" id="plannedAmount" class="form-input" placeholder="0.00" min="0" step="0.01" required>
+                            </div>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="expenseDescription" class="input-label">Описание расхода</label>
+                            <textarea id="expenseDescription" class="form-textarea" placeholder="Подробное описание планируемого расхода..." rows="3"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Информация об оплате -->
+                    <div class="form-section">
+                        <h3>💳 Информация об оплате</h3>
+                        <div class="form-row">
+                            <div class="input-group">
+                                <label for="paymentCard" class="input-label">Банковская карта *</label>
+                                <select id="paymentCard" class="form-select" required>
+                                    <option value="">-- Выберите карту --</option>
+                                    <option value="card1">**** 1234 (Тинькофф) - Основная</option>
+                                    <option value="card2">**** 5678 (Сбер) - Резервная</option>
+                                    <option value="card3">**** 9012 (Альфа) - Операционная</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label for="plannedDate" class="input-label">Планируемая дата оплаты *</label>
+                                <input type="date" id="plannedDate" class="form-input" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Дополнительная информация -->
+                    <div class="form-section">
+                        <h3>📝 Дополнительная информация</h3>
+                        <div class="input-group">
+                            <label for="taskComment" class="input-label">Комментарий для управляющего</label>
+                            <textarea id="taskComment" class="form-textarea" placeholder="Дополнительные инструкции или примечания..." rows="3"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Кнопки отправки -->
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary" onclick="window.location.href='dashboard.html'">Отмена</button>
+                        <button type="submit" class="btn-primary btn-large">
+                            <span class="btn-text">Создать задачу</span>
+                            <div class="btn-loader" style="display: none;">
+                                <div class="spinner"></div>
+                            </div>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Проверка авторизации
+            const token = localStorage.getItem('auth_token');
+            const userEmail = localStorage.getItem('user_email');
+            
+            if (!token) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            document.getElementById('userInfo').textContent = userEmail;
+
+            // Установка минимальной даты - сегодня
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('plannedDate').min = today;
+
+            // Обработка формы
+            document.getElementById('createTaskForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = {
+                    ip: document.getElementById('ipSelect').value,
+                    manager: document.getElementById('managerSelect').value,
+                    expenseItem: document.getElementById('expenseItem').value,
+                    plannedAmount: document.getElementById('plannedAmount').value,
+                    description: document.getElementById('expenseDescription').value,
+                    paymentCard: document.getElementById('paymentCard').value,
+                    plannedDate: document.getElementById('plannedDate').value,
+                    comment: document.getElementById('taskComment').value
+                };
+
+                // Валидация
+                if (!formData.ip || !formData.manager || !formData.expenseItem || !formData.plannedAmount || !formData.paymentCard || !formData.plannedDate) {
+                    alert('Пожалуйста, заполните все обязательные поля');
+                    return;
+                }
+
+                // Имитация создания задачи
+                console.log('Создана задача:', formData);
+                alert('✅ Задача успешно создана и назначена управляющему!');
+                window.location.href = 'tasks.html';
+            });
+        });
+    </script>
+</body>
+</html>

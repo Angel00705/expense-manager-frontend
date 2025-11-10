@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Банковские карты - Expense Manager</title>
+    
+    <!-- 🎨 FAVICON -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><defs><linearGradient id='borderGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%238b5cf6'/><stop offset='50%' stop-color='%236d28d9'/><stop offset='100%' stop-color='%231e40af'/></linearGradient><linearGradient id='checkGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%23a78bfa'/><stop offset='100%' stop-color='%234f46e5'/></linearGradient><filter id='glow' x='-50%' y='-50%' width='200%' height='200%'><feGaussianBlur in='SourceGraphic' stdDeviation='1' result='blur'/><feMerge><feMergeNode in='blur'/><feMergeNode in='SourceGraphic'/></feMerge></filter></defs><circle cx='10' cy='10' r='9' fill='none' stroke='url(%23borderGrad)' stroke-width='1.5' opacity='0.9'/><path d='M6,10 L8.5,12.5 L14,7' stroke='url(%23checkGrad)' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round' filter='url(%23glow)'/></svg>">
+    
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/components.css">
+    <link rel="stylesheet" href="./css/cards.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="header-left">
+                <a href="dashboard.html" class="back-link">← Назад к дашборду</a>
+                <div class="logo">💰</div>
+                <h1>Банковские карты</h1>
+            </div>
+            <div class="header-right">
+                <span class="user-info" id="userInfo"></span>
+                <button class="btn-primary" onclick="showAddCardForm()">+ Добавить карту</button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <div class="page-header">
+                <h2>💳 Управление банковскими картами</h2>
+                <p>Все карты для осуществления платежей по ИП</p>
+            </div>
+
+            <!-- Карточки карт -->
+            <div class="cards-grid" id="cardsGrid">
+                <!-- Карты загружаются через JS -->
+            </div>
+
+            <!-- Статистика по картам -->
+            <div class="cards-stats">
+                <div class="stat-card">
+                    <div class="stat-icon">💳</div>
+                    <div class="stat-content">
+                        <h3>42</h3>
+                        <p>Всего карт</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-content">
+                        <h3>38</h3>
+                        <p>Активные карты</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🏢</div>
+                    <div class="stat-content">
+                        <h3>27</h3>
+                        <p>Привязано к ИП</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Модальное окно добавления карты -->
+    <div id="addCardModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>💳 Добавить новую карту</h3>
+                <button class="modal-close" onclick="hideAddCardForm()">×</button>
+            </div>
+            <form id="addCardForm" class="modal-form">
+                <div class="input-group">
+                    <label>Банк *</label>
+                    <select class="form-select" required>
+                        <option value="">Выберите банк</option>
+                        <option value="tinkoff">Тинькофф</option>
+                        <option value="sber">Сбербанк</option>
+                        <option value="alfa">Альфа-Банк</option>
+                        <option value="vtb">ВТБ</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Номер карты *</label>
+                    <input type="text" class="form-input" placeholder="0000 0000 0000 0000" required>
+                </div>
+                <div class="form-row">
+                    <div class="input-group">
+                        <label>Срок действия *</label>
+                        <input type="text" class="form-input" placeholder="ММ/ГГ" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Держатель карты *</label>
+                        <input type="text" class="form-input" placeholder="IVANOV I" required>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Привязать к ИП</label>
+                    <select class="form-select">
+                        <option value="">Не привязывать</option>
+                        <option value="ip1">ИП "Восток"</option>
+                        <option value="ip2">ИП "Север"</option>
+                        <option value="ip3">ИП "Юг"</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Лимит карты</label>
+                    <input type="number" class="form-input" placeholder="0.00">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="hideAddCardForm()">Отмена</button>
+                    <button type="submit" class="btn-primary">Добавить карту</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Данные банковских карт
+        const bankCards = [
+            { 
+                id: 1, 
+                bank: 'Тинькофф', 
+                number: '**** 1234', 
+                type: 'debit', 
+                balance: '125,430 ₽', 
+                limit: '500,000 ₽',
+                status: 'active',
+                ip: 'ИП "Восток"',
+                color: '#ffdd2d'
+            },
+            { 
+                id: 2, 
+                bank: 'Сбербанк', 
+                number: '**** 5678', 
+                type: 'debit', 
+                balance: '89,210 ₽', 
+                limit: '300,000 ₽',
+                status: 'active',
+                ip: 'ИП "Север"',
+                color: '#21a038'
+            },
+            { 
+                id: 3, 
+                bank: 'Альфа-Банк', 
+                number: '**** 9012', 
+                type: 'credit', 
+                balance: '-15,000 ₽', 
+                limit: '150,000 ₽',
+                status: 'active',
+                ip: 'ИП "Юг"',
+                color: '#ef3124'
+            }
+        ];
+
+        function loadBankCards() {
+            const grid = document.getElementById('cardsGrid');
+            grid.innerHTML = bankCards.map(card => `
+                <div class="bank-card" style="border-left-color: ${card.color}">
+                    <div class="card-header">
+                        <div class="card-bank">${card.bank}</div>
+                        <div class="card-type">${card.type === 'debit' ? 'Дебетовая' : 'Кредитная'}</div>
+                    </div>
+                    <div class="card-number">${card.number}</div>
+                    <div class="card-details">
+                        <div class="card-balance">
+                            <span class="label">Баланс:</span>
+                            <span class="value ${card.balance.startsWith('-') ? 'negative' : ''}">${card.balance}</span>
+                        </div>
+                        <div class="card-limit">
+                            <span class="label">Лимит:</span>
+                            <span class="value">${card.limit}</span>
+                        </div>
+                        <div class="card-ip">
+                            <span class="label">ИП:</span>
+                            <span class="value">${card.ip}</span>
+                        </div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn-sm btn-secondary" onclick="editCard(${card.id})">✏️</button>
+                        <button class="btn-sm btn-danger" onclick="blockCard(${card.id})">🚫</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showAddCardForm() {
+            document.getElementById('addCardModal').style.display = 'flex';
+        }
+
+        function hideAddCardForm() {
+            document.getElementById('addCardModal').style.display = 'none';
+        }
+
+        function editCard(id) {
+            alert(`Редактирование карты #${id}`);
+        }
+
+        function blockCard(id) {
+            if (confirm('Вы уверены, что хотите заблокировать эту карту?')) {
+                alert(`Карта #${id} заблокирована`);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const token = localStorage.getItem('auth_token');
+            const userEmail = localStorage.getItem('user_email');
+            
+            if (!token) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            document.getElementById('userInfo').textContent = userEmail;
+            loadBankCards();
+
+            // Обработка формы добавления карты
+            document.getElementById('addCardForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('Новая карта добавлена!');
+                hideAddCardForm();
+            });
+        });
+    </script>
+</body>
+</html>
