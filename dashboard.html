@@ -3,126 +3,167 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Дашборд - IP Expense Manager</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            font-family: 'Segoe UI', system-ui, sans-serif; 
-            background: #f8fafc;
-            min-height: 100vh;
-        }
-        .header { 
-            background: white; 
-            padding: 1rem 2rem; 
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 3px solid #667eea;
-        }
-        .main { 
-            padding: 2rem; 
-            max-width: 1200px; 
-            margin: 0 auto; 
-        }
-        .welcome { 
-            text-align: center; 
-            margin-bottom: 3rem; 
-            background: white;
-            padding: 2rem;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-        .btn { 
-            display: inline-block; 
-            padding: 12px 24px; 
-            background: #667eea; 
-            color: white; 
-            text-decoration: none; 
-            border-radius: 8px; 
-            margin: 5px;
-            transition: all 0.3s ease;
-            font-weight: 500;
-        }
-        .btn:hover { 
-            background: #5a6fd8; 
-            transform: translateY(-2px); 
-        }
-        .grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
-            gap: 1.5rem; 
-            margin-top: 2rem;
-        }
-        .card { 
-            background: white; 
-            padding: 2rem; 
-            border-radius: 12px; 
-            text-align: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-            border-top: 4px solid #667eea;
-        }
-        .card:hover { 
-            transform: translateY(-5px); 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-        }
-        .card h3 {
-            margin-bottom: 1rem;
-            color: #1f2937;
-        }
-        .card p {
-            color: #6b7280;
-            margin-bottom: 1rem;
-        }
-        .logout-btn {
-            background: #6b7280;
-        }
-        .logout-btn:hover {
-            background: #4b5563;
-        }
-    </style>
+    <title>📊 Дашборд - IP Expense Manager</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- 🎨 FAVICON -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><defs><linearGradient id='borderGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%238b5cf6'/><stop offset='50%' stop-color='%236d28d9'/><stop offset='100%' stop-color='%231e40af'/></linearGradient><linearGradient id='checkGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%23a78bfa'/><stop offset='100%' stop-color='%234f46e5'/></linearGradient><filter id='glow' x='-50%' y='-50%' width='200%' height='200%'><feGaussianBlur in='SourceGraphic' stdDeviation='1' result='blur'/><feMerge><feMergeNode in='blur'/><feMergeNode in='SourceGraphic'/></feMerge></filter></defs><circle cx='10' cy='10' r='9' fill='none' stroke='url(%23borderGrad)' stroke-width='1.5' opacity='0.9'/><path d='M6,10 L8.5,12.5 L14,7' stroke='url(%23checkGrad)' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round' filter='url(%23glow)'/></svg>">
+    <!-- 🔧 ПОДКЛЮЧАЕМ УТИЛИТЫ -->
+    <script src="js/data.js"></script>
+    <script src="js/utils.js"></script>
 </head>
 <body>
-    <div class="header">
-        <h1>💼 IP Expense Manager</h1>
-        <div>
-            <a href="index.html" class="btn logout-btn">🚪 Выйти</a>
+    <!-- 🎯 ХЕДЕР -->
+    <header class="header">
+        <nav class="nav">
+            <div class="logo">
+                <span>💰</span>
+                IP Expense Manager
+            </div>
+            <div class="nav-links">
+                <a href="dashboard.html" class="nav-link active">📊 Дашборд</a>
+                <a href="create-task.html" class="nav-link">➕ Создать задачу</a>
+                <a href="tasks.html" class="nav-link">📋 Задачи</a>
+                <a href="expense-items.html" class="nav-link">🗂️ Статьи расходов</a>
+                <a href="cards.html" class="nav-link">💳 Карты</a>
+                <div class="user-info">
+                    <!-- Будет заполнено через JavaScript -->
+                </div>
+                <button class="btn btn-outline" onclick="logout()">🚪 Выйти</button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <!-- 🎪 ПРИВЕТСТВИЕ -->
+        <div class="glass-card animate-bounce-in">
+            <h1 style="margin-bottom: 8px;">📊 Обзор системы</h1>
+            <p class="text-muted">Добро пожаловать в панель управления расходами ИП</p>
         </div>
-    </div>
-    
-    <div class="main">
-        <div class="welcome">
-            <h2>🎉 Добро пожаловать в систему!</h2>
-            <p><strong>IP Expense Manager</strong> - профессиональное управление расходами для индивидуальных предпринимателей</p>
-            <p>✅ Система работает на домене: ip-expense-manager.vercel.app</p>
+
+        <!-- 📈 СТАТИСТИКА -->
+        <div class="flex gap-6 mt-6" style="flex-wrap: wrap;">
+            <div class="glass-card" style="flex: 1; min-width: 200px;">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-muted">Всего ИП</div>
+                        <div style="font-size: 2rem; font-weight: 700; color: var(--primary);">28</div>
+                    </div>
+                    <div style="font-size: 2.5rem;">🏢</div>
+                </div>
+            </div>
+
+            <div class="glass-card" style="flex: 1; min-width: 200px;">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-muted">Активных задач</div>
+                        <div style="font-size: 2rem; font-weight: 700; color: var(--warning);" id="activeTasks">0</div>
+                    </div>
+                    <div style="font-size: 2.5rem;">📋</div>
+                </div>
+            </div>
+
+            <div class="glass-card" style="flex: 1; min-width: 200px;">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-muted">Выполнено сегодня</div>
+                        <div style="font-size: 2rem; font-weight: 700; color: var(--success);" id="completedToday">0</div>
+                    </div>
+                    <div style="font-size: 2.5rem;">✅</div>
+                </div>
+            </div>
+
+            <div class="glass-card" style="flex: 1; min-width: 200px;">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-muted">Регионов</div>
+                        <div style="font-size: 2rem; font-weight: 700; color: var(--secondary);">6</div>
+                    </div>
+                    <div style="font-size: 2.5rem;">🗺️</div>
+                </div>
+            </div>
         </div>
-        
-        <div class="grid">
-            <a href="create-task.html" class="card">
-                <h3>📋 Создать задачу</h3>
-                <p>Добавление новых задач по расходам для управляющих</p>
-                <div class="btn">Перейти</div>
-            </a>
-            
-            <a href="tasks.html" class="card">
-                <h3>📊 Мои задачи</h3>
-                <p>Просмотр и управление назначенными задачами</p>
-                <div class="btn">Перейти</div>
-            </a>
-            
-            <a href="expense-items.html" class="card">
-                <h3>💰 Статьи расходов</h3>
-                <p>Управление категориями и статьями расходов</p>
-                <div class="btn">Перейти</div>
-            </a>
-            
-            <a href="cards.html" class="card">
-                <h3>💳 Банковские карты</h3>
-                <p>Управление платежными средствами и картами</p>
-                <div class="btn">Перейти</div>
-            </a>
+
+        <!-- 🚀 БЫСТРЫЕ ДЕЙСТВИЯ -->
+        <div class="glass-card mt-6">
+            <h2 style="margin-bottom: 20px;">🚀 Быстрые действия</h2>
+            <div class="flex gap-4" style="flex-wrap: wrap;">
+                <a href="create-task.html" class="btn btn-primary">➕ Создать задачу</a>
+                <a href="tasks.html" class="btn btn-success">📋 Все задачи</a>
+                <a href="expense-items.html" class="btn btn-warning">🗂️ Статьи расходов</a>
+                <a href="cards.html" class="btn btn-outline">💳 Управление картами</a>
+            </div>
         </div>
-    </div>
+
+        <!-- 📊 ПОСЛЕДНИЕ ЗАДАЧИ -->
+        <div class="glass-card mt-6">
+            <div class="flex items-center justify-between mb-4">
+                <h2>📝 Последние задачи</h2>
+                <a href="tasks.html" class="btn btn-outline">Смотреть все</a>
+            </div>
+            <div id="recentTasks">
+                <div class="text-center text-muted" style="padding: 40px;">
+                    <div style="font-size: 3rem; margin-bottom: 16px;">📋</div>
+                    <p>Задачи будут загружены здесь</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function logout() {
+            localStorage.removeItem('currentUser');
+            appData.currentUser = null;
+            showNotification('👋 До свидания!', 'info');
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 1000);
+        }
+
+        function loadDashboardData() {
+            // Заглушка для демонстрации
+            document.getElementById('activeTasks').textContent = '12';
+            document.getElementById('completedToday').textContent = '5';
+            
+            // Загрузка последних задач
+            const recentTasks = [
+                { title: 'Закупка продуктов', status: 'completed', region: 'Астрахань', date: new Date() },
+                { title: 'Оплата аренды', status: 'in_progress', region: 'Курган', date: new Date() },
+                { title: 'Заправка автомобиля', status: 'pending', region: 'Бурятия', date: new Date() }
+            ];
+            
+            const tasksHtml = recentTasks.map(task => `
+                <div class="flex items-center justify-between p-4 border-b border-gray-200 last:border-b-0">
+                    <div>
+                        <div class="font-semibold">${task.title}</div>
+                        <div class="text-sm text-muted">${task.region} • ${formatDate(task.date)}</div>
+                    </div>
+                    <span class="badge ${task.status === 'completed' ? 'badge-success' : task.status === 'in_progress' ? 'badge-warning' : 'badge-info'}">
+                        ${appData.taskStatuses[task.status]}
+                    </span>
+                </div>
+            `).join('');
+            
+            document.getElementById('recentTasks').innerHTML = tasksHtml || `
+                <div class="text-center text-muted" style="padding: 40px;">
+                    <div style="font-size: 3rem; margin-bottom: 16px;">📋</div>
+                    <p>Нет задач для отображения</p>
+                </div>
+            `;
+        }
+
+        // 🔧 ИНИЦИАЛИЗИРУЕМ ПРИЛОЖЕНИЕ ПРИ ЗАГРУЗКЕ СТРАНИЦЫ
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+            
+            // Проверяем авторизацию
+            if (!appData.currentUser) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Загружаем данные дашборда
+            loadDashboardData();
+        });
+    </script>
 </body>
 </html>

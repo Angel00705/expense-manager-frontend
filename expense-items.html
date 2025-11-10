@@ -3,238 +3,238 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Статьи расходов - IP Expense Manager</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            font-family: 'Segoe UI', system-ui, sans-serif; 
-            background: #f8fafc;
-            min-height: 100vh;
-        }
-        .header { 
-            background: white; 
-            padding: 1rem 2rem; 
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            border-bottom: 3px solid #667eea;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .main { 
-            padding: 2rem; 
-            max-width: 1200px; 
-            margin: 0 auto; 
-        }
-        .btn { 
-            padding: 10px 20px; 
-            background: #667eea; 
-            color: white; 
-            text-decoration: none; 
-            border-radius: 8px; 
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-        .btn:hover {
-            background: #5a6fd8;
-            transform: translateY(-2px);
-        }
-        .back-btn { 
-            background: #6b7280; 
-        }
-        .back-btn:hover {
-            background: #4b5563;
-        }
-        .categories-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-            margin-top: 2rem;
-        }
-        .category-card {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-        }
-        .category-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-        }
-        .category-header {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 1rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid #f3f4f6;
-        }
-        .category-icon {
-            font-size: 2rem;
-        }
-        .category-title {
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: #1f2937;
-        }
-        .expense-items {
-            display: flex;
-            flex-direction: column;
-            gap: 0.8rem;
-        }
-        .expense-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.8rem;
-            background: #f8fafc;
-            border-radius: 8px;
-            transition: background 0.3s ease;
-        }
-        .expense-item:hover {
-            background: #e5e7eb;
-        }
-        .item-name {
-            font-weight: 500;
-            color: #374151;
-        }
-        .item-stats {
-            font-size: 0.9rem;
-            color: #6b7280;
-        }
-        .budget-badge {
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
-        .budget-normal { background: #dcfce7; color: #166534; }
-        .budget-warning { background: #fef3c7; color: #d97706; }
-        .budget-danger { background: #fee2e2; color: #dc2626; }
-    </style>
+    <title>🗂️ Статьи расходов - IP Expense Manager</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- 🎨 FAVICON -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><defs><linearGradient id='borderGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%238b5cf6'/><stop offset='50%' stop-color='%236d28d9'/><stop offset='100%' stop-color='%231e40af'/></linearGradient><linearGradient id='checkGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%23a78bfa'/><stop offset='100%' stop-color='%234f46e5'/></linearGradient><filter id='glow' x='-50%' y='-50%' width='200%' height='200%'><feGaussianBlur in='SourceGraphic' stdDeviation='1' result='blur'/><feMerge><feMergeNode in='blur'/><feMergeNode in='SourceGraphic'/></feMerge></filter></defs><circle cx='10' cy='10' r='9' fill='none' stroke='url(%23borderGrad)' stroke-width='1.5' opacity='0.9'/><path d='M6,10 L8.5,12.5 L14,7' stroke='url(%23checkGrad)' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round' filter='url(%23glow)'/></svg>">
+    <!-- 🔧 ПОДКЛЮЧАЕМ УТИЛИТЫ -->
+    <script src="js/data.js"></script>
+    <script src="js/utils.js"></script>
 </head>
 <body>
-    <div class="header">
-        <h1>💰 Статьи расходов</h1>
-        <div>
-            <a href="dashboard.html" class="btn back-btn">← Назад</a>
-        </div>
-    </div>
-    
-    <div class="main">
-        <div class="categories-grid">
-            <!-- Операционные расходы -->
-            <div class="category-card">
-                <div class="category-header">
-                    <div class="category-icon">🏢</div>
-                    <div class="category-title">Операционные расходы</div>
+    <!-- 🎯 ХЕДЕР -->
+    <header class="header">
+        <nav class="nav">
+            <div class="logo">
+                <span>💰</span>
+                IP Expense Manager
+            </div>
+            <div class="nav-links">
+                <a href="dashboard.html" class="nav-link">📊 Дашборд</a>
+                <a href="create-task.html" class="nav-link">➕ Создать задачу</a>
+                <a href="tasks.html" class="nav-link">📋 Задачи</a>
+                <a href="expense-items.html" class="nav-link active">🗂️ Статьи расходов</a>
+                <a href="cards.html" class="nav-link">💳 Карты</a>
+                <div class="user-info">
+                    <!-- Будет заполнено через JavaScript -->
                 </div>
-                <div class="expense-items">
-                    <div class="expense-item">
-                        <div class="item-name">Аренда помещения</div>
-                        <div class="item-stats">
-                            <span class="budget-badge budget-normal">25 000 ₽</span>
-                        </div>
-                    </div>
-                    <div class="expense-item">
-                        <div class="item-name">Коммунальные услуги</div>
-                        <div class="item-stats">
-                            <span class="budget-badge budget-warning">8 500 ₽</span>
-                        </div>
-                    </div>
-                    <div class="expense-item">
-                        <div class="item-name">Связь и интернет</div>
-                        <div class="item-stats">
-                            <span class="budget-badge budget-normal">3 200 ₽</span>
-                        </div>
-                    </div>
+                <button class="btn btn-outline" onclick="logout()">🚪 Выйти</button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <div class="glass-card animate-slide-in">
+            <div class="flex items-center justify-between mb-6" style="flex-wrap: wrap; gap: 16px;">
+                <div>
+                    <h1 style="margin-bottom: 8px;">🗂️ Статьи расходов</h1>
+                    <p class="text-muted">Управление категориями расходов и назначение ответственных</p>
                 </div>
+                ${isAdmin() ? `
+                    <button class="btn btn-primary" onclick="showAddForm()">➕ Добавить статью</button>
+                ` : ''}
             </div>
 
-            <!-- Персонал -->
-            <div class="category-card">
-                <div class="category-header">
-                    <div class="category-icon">👥</div>
-                    <div class="category-title">Персонал</div>
-                </div>
-                <div class="expense-items">
-                    <div class="expense-item">
-                        <div class="item-name">Зарплата сотрудников</div>
-                        <div class="item-stats">
-                            <span class="budget-badge budget-normal">150 000 ₽</span>
-                        </div>
-                    </div>
-                    <div class="expense-item">
-                        <div class="item-name">Налоги на ФОТ</div>
-                        <div class="item-stats">
-                            <span class="budget-badge budget-normal">45 000 ₽</span>
-                        </div>
-                    </div>
-                    <div class="expense-item">
-                        <div class="item-name">Обучение персонала</div>
-                        <div class="item-stats">
-                            <span class="budget-badge budget-warning">15 000 ₽</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Маркетинг -->
-            <div class="category-card">
-                <div class="category-header">
-                    <div class="category-icon">📢</div>
-                    <div class="category-title">Маркетинг</div>
-                </div>
-                <div class="expense-items">
-                    <div class="expense-item">
-                        <div class="item-name">Контекстная реклама</div>
-                        <div class="item-stats">
-                            <span class="budget-badge budget-normal">20 000 ₽</span>
-                        </div>
-                    </div>
-                    <div class="expense-item">
-                        <div class="item-name">SMM продвижение</div>
-                        <div class="item-stats">
-                            <span class="budget-badge budget-warning">8 000 ₽</span>
-                        </div>
-                    </div>
-                    <div class="expense-item">
-                        <div class="item-name">Полиграфия</div>
-                        <div class="item-stats">
-                            <span class="budget-badge budget-normal">5 000 ₽</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Налоги и сборы -->
-            <div class="category-card">
-                <div class="category-header">
-                    <div class="category-icon">📊</div>
-                    <div class="category-title">Налоги и сборы</div>
-                </div>
-                <div class="expense-items">
-                    <div class="expense-item">
-                        <div class="item-name">НДС</div>
-                        <div class="item-stats">
-                            <span class="budget-badge budget-danger">45 000 ₽</span>
-                        </div>
-                    </div>
-                    <div class="expense-item">
-                        <div class="item-name">Налог на прибыль</div>
-                        <div class="item-stats">
-                            <span class="budget-badge budget-normal">30 000 ₽</span>
-                        </div>
-                    </div>
-                    <div class="expense-item">
-                        <div class="item-name">Страховые взносы</div>
-                        <div class="item-stats">
-                            <span class="budget-badge budget-warning">25 000 ₽</span>
-                        </div>
-                    </div>
-                </div>
+            <!-- 📊 ТАБЛИЦА СТАТЕЙ РАСХОДОВ -->
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Статья расходов</th>
+                            <th>Ответственный</th>
+                            <th>Кол-во задач</th>
+                            ${isAdmin() ? '<th>Действия</th>' : ''}
+                        </tr>
+                    </thead>
+                    <tbody id="expenseItemsTable">
+                        <!-- Заполняется через JavaScript -->
+                    </tbody>
+                </table>
             </div>
         </div>
-    </div>
+
+        <!-- ✨ ФОРМА ДОБАВЛЕНИЯ/РЕДАКТИРОВАНИЯ (только для админов) -->
+        ${isAdmin() ? `
+        <div class="glass-card mt-6 animate-fade-in" id="expenseForm" style="display: none;">
+            <h3 style="margin-bottom: 20px;" id="formTitle">➕ Добавить новую статью расходов</h3>
+            
+            <form id="expenseItemForm">
+                <div class="flex gap-4 mb-6" style="flex-wrap: wrap;">
+                    <div class="form-group" style="flex: 1; min-width: 200px;">
+                        <label class="form-label">🏷️ Название статьи *</label>
+                        <input type="text" class="form-input" id="expenseItemName" required 
+                               placeholder="Например: 🛒 Продукты">
+                    </div>
+                    
+                    <div class="form-group" style="flex: 1; min-width: 200px;">
+                        <label class="form-label">👤 Ответственный *</label>
+                        <select class="form-select" id="expenseItemManager" required>
+                            <option value="">Выберите ответственного...</option>
+                            <option value="Ксения Б.">Ксения Б.</option>
+                            <option value="Полина М.">Полина М.</option>
+                            <option value="Иван В.">Иван В.</option>
+                            <option value="Инна Б.">Инна Б.</option>
+                            <option value="Алеся Б.">Алеся Б.</option>
+                            <option value="Евгения Г.">Евгения Г.</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="flex gap-4">
+                    <button type="submit" class="btn btn-primary" id="submitButton">
+                        💾 Сохранить
+                    </button>
+                    <button type="button" class="btn btn-outline" onclick="hideForm()">
+                        ❌ Отмена
+                    </button>
+                </div>
+            </form>
+        </div>
+        ` : ''}
+    </main>
+
+    <script>
+        let editingItemId = null;
+
+        function logout() {
+            localStorage.removeItem('currentUser');
+            appData.currentUser = null;
+            showNotification('👋 До свидания!', 'info');
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 1000);
+        }
+
+        function loadExpenseItems() {
+            const tableBody = document.getElementById('expenseItemsTable');
+            
+            const itemsWithStats = appData.expenseItems.map(item => {
+                return {
+                    name: item,
+                    manager: appData.managers[item] || 'Не назначен',
+                    taskCount: Math.floor(Math.random() * 10) // Заглушка для демонстрации
+                };
+            });
+            
+            tableBody.innerHTML = itemsWithStats.map((item, index) => `
+                <tr>
+                    <td>
+                        <div style="font-weight: 600;">${item.name}</div>
+                    </td>
+                    <td>
+                        <span class="badge badge-info">${item.manager}</span>
+                    </td>
+                    <td>
+                        <span style="font-weight: 600; color: var(--primary);">${item.taskCount}</span>
+                    </td>
+                    ${isAdmin() ? `
+                    <td>
+                        <div class="flex gap-2">
+                            <button class="btn btn-outline" style="padding: 6px 10px;" 
+                                    onclick="editExpenseItem(${index}, '${item.name}', '${item.manager}')">
+                                ✏️
+                            </button>
+                            <button class="btn btn-outline" style="padding: 6px 10px; background: rgba(239, 68, 68, 0.1); color: var(--error);" 
+                                    onclick="deleteExpenseItem(${index}, '${item.name}')">
+                                🗑️
+                            </button>
+                        </div>
+                    </td>
+                    ` : ''}
+                </tr>
+            `).join('');
+        }
+
+        function showAddForm() {
+            if (!checkAdminAccess()) return;
+            
+            document.getElementById('expenseForm').style.display = 'block';
+            document.getElementById('formTitle').textContent = '➕ Добавить новую статью расходов';
+            document.getElementById('submitButton').textContent = '💾 Сохранить';
+            editingItemId = null;
+            clearForm('expenseItemForm');
+        }
+
+        function hideForm() {
+            document.getElementById('expenseForm').style.display = 'none';
+            editingItemId = null;
+        }
+
+        function editExpenseItem(id, name, manager) {
+            if (!checkAdminAccess()) return;
+            
+            document.getElementById('expenseForm').style.display = 'block';
+            document.getElementById('formTitle').textContent = '✏️ Редактировать статью расходов';
+            document.getElementById('submitButton').textContent = '💾 Обновить';
+            
+            document.getElementById('expenseItemName').value = name;
+            document.getElementById('expenseItemManager').value = manager;
+            editingItemId = id;
+        }
+
+        function deleteExpenseItem(id, name) {
+            if (!checkAdminAccess()) return;
+            
+            if (confirm(`Вы уверены, что хотите удалить статью расходов "${name}"?`)) {
+                // Здесь будет удаление из бэкенда
+                showNotification(`🗑️ Статья "${name}" удалена`, 'success');
+                loadExpenseItems(); // Перезагружаем таблицу
+            }
+        }
+
+        // Обработка формы
+        document.getElementById('expenseItemForm')?.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (!checkAdminAccess()) return;
+            
+            const formData = {
+                name: document.getElementById('expenseItemName').value,
+                manager: document.getElementById('expenseItemManager').value
+            };
+            
+            // Валидация
+            const errors = validateForm(formData, ['name', 'manager']);
+            if (errors.length > 0) {
+                errors.forEach(error => showNotification(error, 'error'));
+                return;
+            }
+            
+            if (editingItemId === null) {
+                // Добавление новой статьи
+                showNotification(`✅ Статья "${formData.name}" добавлена`, 'success');
+            } else {
+                // Редактирование существующей
+                showNotification(`✅ Статья "${formData.name}" обновлена`, 'success');
+            }
+            
+            hideForm();
+            loadExpenseItems();
+        });
+
+        // 🔧 ИНИЦИАЛИЗИРУЕМ ПРИЛОЖЕНИЕ ПРИ ЗАГРУЗКЕ СТРАНИЦЫ
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+            
+            // Проверяем авторизацию
+            if (!appData.currentUser) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Загружаем статьи расходов
+            loadExpenseItems();
+        });
+    </script>
 </body>
 </html>

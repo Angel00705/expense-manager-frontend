@@ -3,296 +3,374 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Банковские карты - IP Expense Manager</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            font-family: 'Segoe UI', system-ui, sans-serif; 
-            background: #f8fafc;
-            min-height: 100vh;
-        }
-        .header { 
-            background: white; 
-            padding: 1rem 2rem; 
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            border-bottom: 3px solid #667eea;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .main { 
-            padding: 2rem; 
-            max-width: 1200px; 
-            margin: 0 auto; 
-        }
-        .btn { 
-            padding: 10px 20px; 
-            background: #667eea; 
-            color: white; 
-            text-decoration: none; 
-            border-radius: 8px; 
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-        .btn:hover {
-            background: #5a6fd8;
-            transform: translateY(-2px);
-        }
-        .back-btn { 
-            background: #6b7280; 
-        }
-        .back-btn:hover {
-            background: #4b5563;
-        }
-        .cards-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 1.5rem;
-            margin-top: 2rem;
-        }
-        .card-item {
-            background: white;
-            padding: 2rem;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        .card-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-        }
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-        .bank-logo {
-            font-size: 2rem;
-        }
-        .card-status {
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
-        .status-active { background: #dcfce7; color: #166534; }
-        .status-inactive { background: #f3f4f6; color: #6b7280; }
-        .card-number {
-            font-size: 1.5rem;
-            font-weight: 600;
-            letter-spacing: 2px;
-            margin-bottom: 1rem;
-            color: #1f2937;
-        }
-        .card-details {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-        .detail-item {
-            display: flex;
-            flex-direction: column;
-            gap: 0.3rem;
-        }
-        .detail-label {
-            font-size: 0.8rem;
-            color: #6b7280;
-            text-transform: uppercase;
-        }
-        .detail-value {
-            font-weight: 600;
-            color: #1f2937;
-        }
-        .card-balance {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            padding: 1rem;
-            border-radius: 10px;
-            text-align: center;
-            margin-bottom: 1.5rem;
-        }
-        .balance-amount {
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-        .balance-label {
-            font-size: 0.9rem;
-            opacity: 0.9;
-        }
-        .card-actions {
-            display: flex;
-            gap: 0.5rem;
-        }
-        .card-btn {
-            flex: 1;
-            padding: 8px 16px;
-            border: 1px solid #e5e7eb;
-            border-radius: 6px;
-            background: white;
-            cursor: pointer;
-            font-size: 0.8rem;
-            transition: all 0.3s ease;
-        }
-        .card-btn:hover {
-            background: #f8fafc;
-            border-color: #667eea;
-        }
-        .card-btn.primary {
-            background: #667eea;
-            color: white;
-            border-color: #667eea;
-        }
-        .card-btn.primary:hover {
-            background: #5a6fd8;
-        }
-    </style>
+    <title>💳 Карты - IP Expense Manager</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- 🎨 FAVICON -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><defs><linearGradient id='borderGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%238b5cf6'/><stop offset='50%' stop-color='%236d28d9'/><stop offset='100%' stop-color='%231e40af'/></linearGradient><linearGradient id='checkGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%23a78bfa'/><stop offset='100%' stop-color='%234f46e5'/></linearGradient><filter id='glow' x='-50%' y='-50%' width='200%' height='200%'><feGaussianBlur in='SourceGraphic' stdDeviation='1' result='blur'/><feMerge><feMergeNode in='blur'/><feMergeNode in='SourceGraphic'/></feMerge></filter></defs><circle cx='10' cy='10' r='9' fill='none' stroke='url(%23borderGrad)' stroke-width='1.5' opacity='0.9'/><path d='M6,10 L8.5,12.5 L14,7' stroke='url(%23checkGrad)' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round' filter='url(%23glow)'/></svg>">
+    <!-- 🔧 ПОДКЛЮЧАЕМ УТИЛИТЫ -->
+    <script src="js/data.js"></script>
+    <script src="js/utils.js"></script>
 </head>
 <body>
-    <div class="header">
-        <h1>💳 Банковские карты</h1>
-        <div>
-            <a href="dashboard.html" class="btn back-btn">← Назад</a>
-        </div>
-    </div>
-    
-    <div class="main">
-        <div class="cards-grid">
-            <!-- Карта 1 -->
-            <div class="card-item">
-                <div class="card-header">
-                    <div class="bank-logo">🏦</div>
-                    <div class="card-status status-active">Активна</div>
+    <!-- 🎯 ХЕДЕР -->
+    <header class="header">
+        <nav class="nav">
+            <div class="logo">
+                <span>💰</span>
+                IP Expense Manager
+            </div>
+            <div class="nav-links">
+                <a href="dashboard.html" class="nav-link">📊 Дашборд</a>
+                <a href="create-task.html" class="nav-link">➕ Создать задачу</a>
+                <a href="tasks.html" class="nav-link">📋 Задачи</a>
+                <a href="expense-items.html" class="nav-link">🗂️ Статьи расходов</a>
+                <a href="cards.html" class="nav-link active">💳 Карты</a>
+                <div class="user-info">
+                    <!-- Будет заполнено через JavaScript -->
                 </div>
-                
-                <div class="card-number">**** 1234</div>
-                
-                <div class="card-details">
-                    <div class="detail-item">
-                        <div class="detail-label">Держатель</div>
-                        <div class="detail-value">Иванов И.И.</div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-label">Срок действия</div>
-                        <div class="detail-value">12/2026</div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-label">Банк</div>
-                        <div class="detail-value">Тинькофф</div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-label">Валюта</div>
-                        <div class="detail-value">RUB</div>
-                    </div>
+                <button class="btn btn-outline" onclick="logout()">🚪 Выйти</button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <div class="glass-card animate-slide-in">
+            <div class="flex items-center justify-between mb-6" style="flex-wrap: wrap; gap: 16px;">
+                <div>
+                    <h1 style="margin-bottom: 8px;">💳 Банковские карты</h1>
+                    <p class="text-muted">Управление банковскими картами по регионам и ИП</p>
                 </div>
-                
-                <div class="card-balance">
-                    <div class="balance-amount">156 789 ₽</div>
-                    <div class="balance-label">Текущий баланс</div>
+                ${isAdmin() ? `
+                    <button class="btn btn-primary" onclick="showAddCardForm()">➕ Добавить карту</button>
+                ` : ''}
+            </div>
+
+            <!-- 🔍 ФИЛЬТРЫ -->
+            <div class="flex gap-4 mb-6" style="flex-wrap: wrap;">
+                <div class="form-group" style="flex: 1; min-width: 150px;">
+                    <select class="form-select" id="regionFilter" onchange="filterCards()">
+                        <option value="">Все регионы</option>
+                        ${appData.regions.map(region => 
+                            `<option value="${region}">${region}</option>`
+                        ).join('')}
+                    </select>
                 </div>
-                
-                <div class="card-actions">
-                    <button class="card-btn">📊 Статистика</button>
-                    <button class="card-btn primary">💸 Оплатить</button>
+                <div class="form-group" style="flex: 1; min-width: 200px;">
+                    <input type="text" class="form-input" id="searchInput" placeholder="🔍 Поиск по ИП или карте..." onkeyup="filterCards()">
                 </div>
             </div>
 
-            <!-- Карта 2 -->
-            <div class="card-item">
-                <div class="card-header">
-                    <div class="bank-logo">🏛️</div>
-                    <div class="card-status status-active">Активна</div>
-                </div>
-                
-                <div class="card-number">**** 5678</div>
-                
-                <div class="card-details">
-                    <div class="detail-item">
-                        <div class="detail-label">Держатель</div>
-                        <div class="detail-value">Петров П.П.</div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-label">Срок действия</div>
-                        <div class="detail-value">09/2027</div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-label">Банк</div>
-                        <div class="detail-value">Сбербанк</div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-label">Валюта</div>
-                        <div class="detail-value">RUB</div>
-                    </div>
-                </div>
-                
-                <div class="card-balance">
-                    <div class="balance-amount">89 432 ₽</div>
-                    <div class="balance-label">Текущий баланс</div>
-                </div>
-                
-                <div class="card-actions">
-                    <button class="card-btn">📊 Статистика</button>
-                    <button class="card-btn primary">💸 Оплатить</button>
-                </div>
-            </div>
-
-            <!-- Карта 3 -->
-            <div class="card-item">
-                <div class="card-header">
-                    <div class="bank-logo">💎</div>
-                    <div class="card-status status-inactive">Неактивна</div>
-                </div>
-                
-                <div class="card-number">**** 9012</div>
-                
-                <div class="card-details">
-                    <div class="detail-item">
-                        <div class="detail-label">Держатель</div>
-                        <div class="detail-value">Сидоров С.С.</div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-label">Срок действия</div>
-                        <div class="detail-value">03/2025</div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-label">Банк</div>
-                        <div class="detail-value">Альфа-Банк</div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-label">Валюта</div>
-                        <div class="detail-value">RUB</div>
-                    </div>
-                </div>
-                
-                <div class="card-balance">
-                    <div class="balance-amount">0 ₽</div>
-                    <div class="balance-label">Карта заблокирована</div>
-                </div>
-                
-                <div class="card-actions">
-                    <button class="card-btn">🔄 Активировать</button>
-                    <button class="card-btn">🗑️ Удалить</button>
-                </div>
+            <!-- 📊 КАРТОЧКИ КАРТ -->
+            <div id="cardsContainer">
+                <!-- Заполняется через JavaScript -->
             </div>
         </div>
-    </div>
+
+        <!-- ✨ ФОРМА ДОБАВЛЕНИЯ/РЕДАКТИРОВАНИЯ КАРТЫ (только для админов) -->
+        ${isAdmin() ? `
+        <div class="glass-card mt-6 animate-fade-in" id="cardForm" style="display: none;">
+            <h3 style="margin-bottom: 20px;" id="formTitle">➕ Добавить новую карту</h3>
+            
+            <form id="cardFormElement">
+                <div class="flex gap-4 mb-6" style="flex-wrap: wrap;">
+                    <div class="form-group" style="flex: 1; min-width: 200px;">
+                        <label class="form-label">🏙️ Регион *</label>
+                        <select class="form-select" id="cardRegion" required onchange="onCardRegionChange()">
+                            <option value="">Выберите регион...</option>
+                            ${appData.regions.map(region => 
+                                `<option value="${region}">${region}</option>`
+                            ).join('')}
+                        </select>
+                    </div>
+                    
+                    <div class="form-group" style="flex: 1; min-width: 200px;">
+                        <label class="form-label">💼 Индивидуальный предприниматель *</label>
+                        <select class="form-select" id="cardIP" required disabled>
+                            <option value="">Сначала выберите регион</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="flex gap-4 mb-6" style="flex-wrap: wrap;">
+                    <div class="form-group" style="flex: 1; min-width: 200px;">
+                        <label class="form-label">💳 Корпоративная карта</label>
+                        <input type="text" class="form-input" id="corpCard" 
+                               placeholder="Например: *1234" maxlength="5">
+                    </div>
+                    
+                    <div class="form-group" style="flex: 1; min-width: 200px;">
+                        <label class="form-label">👤 Карта ФЛ</label>
+                        <input type="text" class="form-input" id="flCard" 
+                               placeholder="Например: *5678" maxlength="5">
+                    </div>
+                </div>
+                
+                <div class="form-group mb-6">
+                    <label class="form-label">📍 Статус карты *</label>
+                    <select class="form-select" id="cardStatus" required>
+                        <option value="в регионе">✅ В регионе</option>
+                        <option value="В ПВЗ">📦 В ПВЗ</option>
+                        <option value="Перевыпустить">🔄 Перевыпустить</option>
+                        <option value="Заблокирована">🚫 Заблокирована</option>
+                    </select>
+                </div>
+                
+                <div class="flex gap-4">
+                    <button type="submit" class="btn btn-primary" id="submitButton">
+                        💾 Сохранить
+                    </button>
+                    <button type="button" class="btn btn-outline" onclick="hideCardForm()">
+                        ❌ Отмена
+                    </button>
+                </div>
+            </form>
+        </div>
+        ` : ''}
+    </main>
 
     <script>
-        // Простая логика для кнопок карт
-        document.querySelectorAll('.card-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const cardNumber = this.closest('.card-item').querySelector('.card-number').textContent;
+        let editingCardIP = null;
+
+        function logout() {
+            localStorage.removeItem('currentUser');
+            appData.currentUser = null;
+            showNotification('👋 До свидания!', 'info');
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 1000);
+        }
+
+        function loadCards() {
+            const container = document.getElementById('cardsContainer');
+            const regionFilter = document.getElementById('regionFilter').value;
+            const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+            
+            let cardsHtml = '';
+            
+            appData.regions.forEach(region => {
+                if (regionFilter && regionFilter !== region) return;
                 
-                if (this.textContent.includes('Оплатить')) {
-                    alert(`💳 Оплата с карты ${cardNumber}\nФункция оплаты будет реализована в следующем обновлении!`);
-                } else if (this.textContent.includes('Статистика')) {
-                    alert(`📊 Статистика по карте ${cardNumber}\nГрафики и аналитика будут доступны скоро!`);
+                const regionIPs = appData.individualEntrepreneurs[region];
+                let regionCardsHtml = '';
+                
+                regionIPs.forEach(ip => {
+                    if (searchQuery && !ip.toLowerCase().includes(searchQuery)) return;
+                    
+                    const cards = appData.bankCards[ip];
+                    if (!cards) return;
+                    
+                    // Проверяем поиск по номеру карты
+                    const hasMatchingCard = searchQuery && (
+                        (cards.corpCard && cards.corpCard.includes(searchQuery)) ||
+                        (cards.flCard && cards.flCard.includes(searchQuery))
+                    );
+                    
+                    if (searchQuery && !hasMatchingCard && !ip.toLowerCase().includes(searchQuery)) return;
+                    
+                    regionCardsHtml += `
+                        <div class="glass-card mb-4">
+                            <div class="flex items-start justify-between" style="flex-wrap: wrap; gap: 16px;">
+                                <div style="flex: 1; min-width: 300px;">
+                                    <h3 style="margin-bottom: 8px; color: var(--primary);">${ip}</h3>
+                                    <div class="text-muted mb-3">${region}</div>
+                                    
+                                    <div class="flex gap-4" style="flex-wrap: wrap;">
+                                        ${cards.corpCard ? `
+                                            <div class="card-item">
+                                                <div style="font-weight: 600; color: var(--success);">💳 Корп. карта</div>
+                                                <div style="font-family: monospace; font-size: 1.1rem;">${cards.corpCard}</div>
+                                            </div>
+                                        ` : ''}
+                                        
+                                        ${cards.flCard ? `
+                                            <div class="card-item">
+                                                <div style="font-weight: 600; color: var(--warning);">👤 Карта ФЛ</div>
+                                                <div style="font-family: monospace; font-size: 1.1rem;">${cards.flCard}</div>
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                    
+                                    <div class="mt-3">
+                                        <span class="badge ${getStatusBadgeClass(cards.status)}">
+                                            ${cards.status}
+                                        </span>
+                                    </div>
+                                </div>
+                                
+                                ${isAdmin() ? `
+                                <div class="flex gap-2">
+                                    <button class="btn btn-outline" style="padding: 8px 12px;" 
+                                            onclick="editCard('${ip}')">
+                                        ✏️
+                                    </button>
+                                    <button class="btn btn-outline" style="padding: 8px 12px; background: rgba(239, 68, 68, 0.1); color: var(--error);" 
+                                            onclick="deleteCard('${ip}')">
+                                        🗑️
+                                    </button>
+                                </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                if (regionCardsHtml) {
+                    cardsHtml += `
+                        <div class="mb-6">
+                            <h2 style="margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid var(--primary);">
+                                🏙️ ${region}
+                            </h2>
+                            ${regionCardsHtml}
+                        </div>
+                    `;
                 }
             });
+            
+            container.innerHTML = cardsHtml || `
+                <div class="text-center text-muted" style="padding: 60px;">
+                    <div style="font-size: 4rem; margin-bottom: 16px;">💳</div>
+                    <h3 style="margin-bottom: 8px;">Карты не найдены</h3>
+                    <p>Попробуйте изменить параметры фильтрации</p>
+                </div>
+            `;
+        }
+
+        function getStatusBadgeClass(status) {
+            switch (status) {
+                case 'в регионе': return 'badge-success';
+                case 'В ПВЗ': return 'badge-warning';
+                case 'Перевыпустить': return 'badge-error';
+                default: return 'badge-info';
+            }
+        }
+
+        function filterCards() {
+            loadCards();
+        }
+
+        function onCardRegionChange() {
+            const region = document.getElementById('cardRegion').value;
+            const ipSelect = document.getElementById('cardIP');
+            
+            if (region) {
+                const ips = getIPsByRegion(region);
+                ipSelect.innerHTML = '<option value="">Выберите ИП...</option>' +
+                    ips.map(ip => `<option value="${ip}">${ip}</option>`).join('');
+                ipSelect.disabled = false;
+            } else {
+                ipSelect.innerHTML = '<option value="">Сначала выберите регион</option>';
+                ipSelect.disabled = true;
+            }
+        }
+
+        function showAddCardForm() {
+            if (!checkAdminAccess()) return;
+            
+            document.getElementById('cardForm').style.display = 'block';
+            document.getElementById('formTitle').textContent = '➕ Добавить новую карту';
+            document.getElementById('submitButton').textContent = '💾 Сохранить';
+            editingCardIP = null;
+            clearForm('cardFormElement');
+        }
+
+        function hideCardForm() {
+            document.getElementById('cardForm').style.display = 'none';
+            editingCardIP = null;
+        }
+
+        function editCard(ip) {
+            if (!checkAdminAccess()) return;
+            
+            const cards = appData.bankCards[ip];
+            if (!cards) return;
+            
+            // Находим регион ИП
+            let region = '';
+            for (const [reg, ips] of Object.entries(appData.individualEntrepreneurs)) {
+                if (ips.includes(ip)) {
+                    region = reg;
+                    break;
+                }
+            }
+            
+            document.getElementById('cardForm').style.display = 'block';
+            document.getElementById('formTitle').textContent = `✏️ Редактировать карты: ${ip}`;
+            document.getElementById('submitButton').textContent = '💾 Обновить';
+            
+            document.getElementById('cardRegion').value = region;
+            onCardRegionChange(); // Загружаем ИП для региона
+            setTimeout(() => {
+                document.getElementById('cardIP').value = ip;
+            }, 100);
+            
+            document.getElementById('corpCard').value = cards.corpCard || '';
+            document.getElementById('flCard').value = cards.flCard || '';
+            document.getElementById('cardStatus').value = cards.status || 'в регионе';
+            
+            editingCardIP = ip;
+        }
+
+        function deleteCard(ip) {
+            if (!checkAdminAccess()) return;
+            
+            if (confirm(`Вы уверены, что хотите удалить карты для ИП "${ip}"?`)) {
+                // Здесь будет удаление из бэкенда
+                showNotification(`🗑️ Карты для "${ip}" удалены`, 'success');
+                loadCards(); // Перезагружаем список
+            }
+        }
+
+        // Обработка формы карты
+        document.getElementById('cardFormElement')?.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (!checkAdminAccess()) return;
+            
+            const formData = {
+                region: document.getElementById('cardRegion').value,
+                ip: document.getElementById('cardIP').value,
+                corpCard: document.getElementById('corpCard').value,
+                flCard: document.getElementById('flCard').value,
+                status: document.getElementById('cardStatus').value
+            };
+            
+            // Валидация
+            const errors = validateForm(formData, ['region', 'ip', 'status']);
+            if (errors.length > 0) {
+                errors.forEach(error => showNotification(error, 'error'));
+                return;
+            }
+            
+            // Проверяем, что указана хотя бы одна карта
+            if (!formData.corpCard && !formData.flCard) {
+                showNotification('❌ Укажите хотя бы одну карту (корпоративную или ФЛ)', 'error');
+                return;
+            }
+            
+            if (editingCardIP === null) {
+                // Добавление новой карты
+                showNotification(`✅ Карты для "${formData.ip}" добавлены`, 'success');
+            } else {
+                // Редактирование существующей
+                showNotification(`✅ Карты для "${formData.ip}" обновлены`, 'success');
+            }
+            
+            hideCardForm();
+            loadCards();
+        });
+
+        // 🔧 ИНИЦИАЛИЗИРУЕМ ПРИЛОЖЕНИЕ ПРИ ЗАГРУЗКЕ СТРАНИЦЫ
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+            
+            // Проверяем авторизацию
+            if (!appData.currentUser) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Загружаем карты
+            loadCards();
         });
     </script>
 </body>

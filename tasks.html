@@ -3,194 +3,268 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Мои задачи - IP Expense Manager</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            font-family: 'Segoe UI', system-ui, sans-serif; 
-            background: #f8fafc;
-            min-height: 100vh;
-        }
-        .header { 
-            background: white; 
-            padding: 1rem 2rem; 
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            border-bottom: 3px solid #667eea;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .main { 
-            padding: 2rem; 
-            max-width: 1200px; 
-            margin: 0 auto; 
-        }
-        .btn { 
-            padding: 10px 20px; 
-            background: #667eea; 
-            color: white; 
-            text-decoration: none; 
-            border-radius: 8px; 
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-        .btn:hover {
-            background: #5a6fd8;
-            transform: translateY(-2px);
-        }
-        .back-btn { 
-            background: #6b7280; 
-        }
-        .back-btn:hover {
-            background: #4b5563;
-        }
-        .tasks-grid {
-            display: grid;
-            gap: 1.5rem;
-            margin-top: 2rem;
-        }
-        .task-card {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            border-left: 4px solid #667eea;
-            transition: all 0.3s ease;
-        }
-        .task-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-        }
-        .task-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: start;
-            margin-bottom: 1rem;
-        }
-        .task-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #1f2937;
-            margin-bottom: 0.5rem;
-        }
-        .task-meta {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-            margin-bottom: 1rem;
-        }
-        .task-badge {
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
-        .status-pending { background: #fef3c7; color: #d97706; }
-        .status-in-progress { background: #dbeafe; color: #1e40af; }
-        .status-completed { background: #dcfce7; color: #166534; }
-        .task-amount {
-            font-weight: 600;
-            color: #1f2937;
-        }
-        .task-actions {
-            display: flex;
-            gap: 0.5rem;
-            margin-top: 1rem;
-        }
-        .action-btn {
-            padding: 6px 12px;
-            border: 1px solid #e5e7eb;
-            border-radius: 6px;
-            background: white;
-            cursor: pointer;
-            font-size: 0.8rem;
-            transition: all 0.3s ease;
-        }
-        .action-btn:hover {
-            background: #f8fafc;
-            border-color: #667eea;
-        }
-    </style>
+    <title>📋 Задачи - IP Expense Manager</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- 🎨 FAVICON -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><defs><linearGradient id='borderGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%238b5cf6'/><stop offset='50%' stop-color='%236d28d9'/><stop offset='100%' stop-color='%231e40af'/></linearGradient><linearGradient id='checkGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%23a78bfa'/><stop offset='100%' stop-color='%234f46e5'/></linearGradient><filter id='glow' x='-50%' y='-50%' width='200%' height='200%'><feGaussianBlur in='SourceGraphic' stdDeviation='1' result='blur'/><feMerge><feMergeNode in='blur'/><feMergeNode in='SourceGraphic'/></feMerge></filter></defs><circle cx='10' cy='10' r='9' fill='none' stroke='url(%23borderGrad)' stroke-width='1.5' opacity='0.9'/><path d='M6,10 L8.5,12.5 L14,7' stroke='url(%23checkGrad)' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round' filter='url(%23glow)'/></svg>">
+    <!-- 🔧 ПОДКЛЮЧАЕМ УТИЛИТЫ -->
+    <script src="js/data.js"></script>
+    <script src="js/utils.js"></script>
 </head>
 <body>
-    <div class="header">
-        <h1>📊 Мои задачи</h1>
-        <div>
-            <a href="create-task.html" class="btn">➕ Новая задача</a>
-            <a href="dashboard.html" class="btn back-btn">← Назад</a>
-        </div>
-    </div>
-    
-    <div class="main">
-        <div class="tasks-grid">
-            <!-- Задача 1 -->
-            <div class="task-card">
-                <div class="task-header">
-                    <div>
-                        <div class="task-title">Оплата аренды офиса</div>
-                        <div class="task-meta">
-                            <span class="task-badge status-pending">Ожидает выполнения</span>
-                            <span class="task-amount">25 000 ₽</span>
-                            <span>Срок: 15.11.2025</span>
-                        </div>
-                    </div>
+    <!-- 🎯 ХЕДЕР -->
+    <header class="header">
+        <nav class="nav">
+            <div class="logo">
+                <span>💰</span>
+                IP Expense Manager
+            </div>
+            <div class="nav-links">
+                <a href="dashboard.html" class="nav-link">📊 Дашборд</a>
+                <a href="create-task.html" class="nav-link">➕ Создать задачу</a>
+                <a href="tasks.html" class="nav-link active">📋 Задачи</a>
+                <a href="expense-items.html" class="nav-link">🗂️ Статьи расходов</a>
+                <a href="cards.html" class="nav-link">💳 Карты</a>
+                <div class="user-info">
+                    <!-- Будет заполнено через JavaScript -->
                 </div>
-                <p>Ежемесячная оплата аренды офисного помещения в бизнес-центре</p>
-                <div class="task-actions">
-                    <button class="action-btn">✏️ Редактировать</button>
-                    <button class="action-btn">✅ Выполнить</button>
+                <button class="btn btn-outline" onclick="logout()">🚪 Выйти</button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <!-- 🎪 ЗАГОЛОВОК И ФИЛЬТРЫ -->
+        <div class="glass-card">
+            <div class="flex items-center justify-between mb-6" style="flex-wrap: wrap; gap: 16px;">
+                <div>
+                    <h1 style="margin-bottom: 8px;">📋 Все задачи</h1>
+                    <p class="text-muted">Управление и отслеживание выполнения задач</p>
+                </div>
+                <div class="flex gap-4" style="flex-wrap: wrap;">
+                    <a href="create-task.html" class="btn btn-primary">➕ Новая задача</a>
                 </div>
             </div>
 
-            <!-- Задача 2 -->
-            <div class="task-card">
-                <div class="task-header">
-                    <div>
-                        <div class="task-title">Закупка канцелярии</div>
-                        <div class="task-meta">
-                            <span class="task-badge status-in-progress">В работе</span>
-                            <span class="task-amount">8 500 ₽</span>
-                            <span>Срок: 12.11.2025</span>
-                        </div>
-                    </div>
+            <!-- 🔍 ФИЛЬТРЫ -->
+            <div class="flex gap-4 mb-6" style="flex-wrap: wrap;">
+                <div class="form-group" style="flex: 1; min-width: 150px;">
+                    <select class="form-select" id="statusFilter" onchange="filterTasks()">
+                        <option value="">Все статусы</option>
+                        ${Object.entries(appData.taskStatuses).map(([key, value]) => 
+                            `<option value="${key}">${value}</option>`
+                        ).join('')}
+                    </select>
                 </div>
-                <p>Закупка канцелярских товаров для офиса на следующий квартал</p>
-                <div class="task-actions">
-                    <button class="action-btn">✏️ Редактировать</button>
-                    <button class="action-btn">✅ Выполнить</button>
+                <div class="form-group" style="flex: 1; min-width: 150px;">
+                    <select class="form-select" id="regionFilter" onchange="filterTasks()">
+                        <option value="">Все регионы</option>
+                        ${appData.regions.map(region => 
+                            `<option value="${region}">${region}</option>`
+                        ).join('')}
+                    </select>
                 </div>
-            </div>
-
-            <!-- Задача 3 -->
-            <div class="task-card">
-                <div class="task-header">
-                    <div>
-                        <div class="task-title">Оплата рекламы</div>
-                        <div class="task-meta">
-                            <span class="task-badge status-completed">Выполнено</span>
-                            <span class="task-amount">15 000 ₽</span>
-                            <span>Выполнено: 05.11.2025</span>
-                        </div>
-                    </div>
-                </div>
-                <p>Оплата контекстной рекламы за октябрь 2025 года</p>
-                <div class="task-actions">
-                    <button class="action-btn">📊 Детали</button>
+                <div class="form-group" style="flex: 1; min-width: 200px;">
+                    <input type="text" class="form-input" id="searchInput" placeholder="🔍 Поиск по названию..." onkeyup="filterTasks()">
                 </div>
             </div>
         </div>
-    </div>
+
+        <!-- 📊 СПИСОК ЗАДАЧ -->
+        <div class="glass-card animate-fade-in">
+            <div id="tasksList">
+                <div class="text-center text-muted" style="padding: 60px;">
+                    <div style="font-size: 4rem; margin-bottom: 16px;">📋</div>
+                    <h3 style="margin-bottom: 8px;">Задачи не найдены</h3>
+                    <p>Создайте первую задачу или измените параметры фильтрации</p>
+                    <a href="create-task.html" class="btn btn-primary mt-4">➕ Создать первую задачу</a>
+                </div>
+            </div>
+        </div>
+    </main>
 
     <script>
-        // Простая логика для кнопок действий
-        document.querySelectorAll('.action-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                if (this.textContent.includes('Выполнить')) {
-                    this.closest('.task-card').querySelector('.task-badge').className = 'task-badge status-completed';
-                    this.closest('.task-card').querySelector('.task-badge').textContent = 'Выполнено';
-                    alert('✅ Задача отмечена как выполненная!');
+        let allTasks = [];
+
+        function logout() {
+            localStorage.removeItem('currentUser');
+            appData.currentUser = null;
+            showNotification('👋 До свидания!', 'info');
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 1000);
+        }
+
+        function loadTasks() {
+            // Заглушка для демонстрации
+            allTasks = [
+                {
+                    id: 1,
+                    title: 'Закупка продуктов для офиса',
+                    region: 'Астрахань',
+                    ip: 'ИП Крутоусов',
+                    expenseItem: '🛒 Продукты',
+                    responsibleManager: 'Ксения Б.',
+                    plannedAmount: 5000,
+                    status: 'pending',
+                    plannedDate: '2024-01-20',
+                    bankCard: '*3420',
+                    description: 'Кофе, чай, сахар, печенье, вода'
+                },
+                {
+                    id: 2,
+                    title: 'Оплата аренды офиса',
+                    region: 'Курган',
+                    ip: 'ИП Бондаренко Л.И.',
+                    expenseItem: '🏢 АРЕНДА ОФИСЫ',
+                    responsibleManager: 'Евгения Г.',
+                    plannedAmount: 15000,
+                    status: 'completed',
+                    plannedDate: '2024-01-15',
+                    bankCard: '*7254',
+                    description: 'Аренда за январь 2024 года'
+                },
+                {
+                    id: 3,
+                    title: 'Заправка служебного автомобиля',
+                    region: 'Бурятия',
+                    ip: 'ИП Астанови Араз',
+                    expenseItem: '⛽ АЗС',
+                    responsibleManager: 'Ксения Б.',
+                    plannedAmount: 3000,
+                    status: 'in_progress',
+                    plannedDate: '2024-01-18',
+                    bankCard: '*7651',
+                    description: 'Полный бак 95-й бензин'
                 }
+            ];
+            
+            filterTasks();
+        }
+
+        function filterTasks() {
+            const statusFilter = document.getElementById('statusFilter').value;
+            const regionFilter = document.getElementById('regionFilter').value;
+            const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+            
+            let filteredTasks = allTasks.filter(task => {
+                const matchesStatus = !statusFilter || task.status === statusFilter;
+                const matchesRegion = !regionFilter || task.region === regionFilter;
+                const matchesSearch = !searchQuery || 
+                    task.title.toLowerCase().includes(searchQuery) ||
+                    task.description.toLowerCase().includes(searchQuery);
+                
+                return matchesStatus && matchesRegion && matchesSearch;
             });
+            
+            displayTasks(filteredTasks);
+        }
+
+        function displayTasks(tasks) {
+            const tasksList = document.getElementById('tasksList');
+            
+            if (tasks.length === 0) {
+                tasksList.innerHTML = `
+                    <div class="text-center text-muted" style="padding: 60px;">
+                        <div style="font-size: 4rem; margin-bottom: 16px;">🔍</div>
+                        <h3 style="margin-bottom: 8px;">Задачи не найдены</h3>
+                        <p>Попробуйте изменить параметры фильтрации</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            tasksList.innerHTML = tasks.map(task => `
+                <div class="task-card glass-card mb-4" style="border-left: 4px solid ${
+                    task.status === 'completed' ? '#10b981' : 
+                    task.status === 'in_progress' ? '#f59e0b' : '#8b5cf6'
+                };">
+                    <div class="flex items-start justify-between mb-4" style="flex-wrap: wrap; gap: 16px;">
+                        <div style="flex: 1; min-width: 300px;">
+                            <h3 style="margin-bottom: 8px; color: var(--text-dark);">${task.title}</h3>
+                            <div class="flex gap-4 mb-2" style="flex-wrap: wrap;">
+                                <span class="badge ${task.status === 'completed' ? 'badge-success' : task.status === 'in_progress' ? 'badge-warning' : 'badge-info'}">
+                                    ${appData.taskStatuses[task.status]}
+                                </span>
+                                <span class="badge badge-info">${task.region}</span>
+                                <span class="badge" style="background: rgba(139, 92, 246, 0.1); color: var(--primary);">
+                                    ${task.expenseItem}
+                                </span>
+                            </div>
+                            <div class="text-muted" style="font-size: 0.9rem;">
+                                <div>💼 ${task.ip} • 👤 ${task.responsibleManager}</div>
+                                <div>💳 Карта: ${task.bankCard} • 📅 ${formatDate(task.plannedDate)}</div>
+                                ${task.description ? `<div style="margin-top: 8px;">📝 ${task.description}</div>` : ''}
+                            </div>
+                        </div>
+                        
+                        <div class="text-right">
+                            <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary); margin-bottom: 8px;">
+                                ${formatCurrency(task.plannedAmount)}
+                            </div>
+                            <div class="flex gap-2" style="flex-wrap: wrap;">
+                                ${isAdmin() ? `
+                                    <button class="btn btn-outline" style="padding: 8px 12px;" onclick="editTask(${task.id})">
+                                        ✏️
+                                    </button>
+                                    <button class="btn btn-outline" style="padding: 8px 12px; background: rgba(239, 68, 68, 0.1); color: var(--error);" onclick="deleteTask(${task.id})">
+                                        🗑️
+                                    </button>
+                                ` : ''}
+                                ${isManager() && task.status !== 'completed' ? `
+                                    <button class="btn btn-success" style="padding: 8px 16px;" onclick="completeTask(${task.id})">
+                                        ✅ Выполнить
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function editTask(taskId) {
+            if (!checkAdminAccess()) return;
+            
+            const task = allTasks.find(t => t.id === taskId);
+            if (task) {
+                showNotification(`✏️ Редактирование задачи: ${task.title}`, 'info');
+                // Здесь будет открытие формы редактирования
+            }
+        }
+
+        function deleteTask(taskId) {
+            if (!checkAdminAccess()) return;
+            
+            const task = allTasks.find(t => t.id === taskId);
+            if (task && confirm(`Вы уверены, что хотите удалить задачу "${task.title}"?`)) {
+                allTasks = allTasks.filter(t => t.id !== taskId);
+                filterTasks();
+                showNotification('🗑️ Задача удалена', 'success');
+            }
+        }
+
+        function completeTask(taskId) {
+            const task = allTasks.find(t => t.id === taskId);
+            if (task) {
+                task.status = 'completed';
+                filterTasks();
+                showNotification('✅ Задача отмечена как выполненная', 'success');
+            }
+        }
+
+        // 🔧 ИНИЦИАЛИЗИРУЕМ ПРИЛОЖЕНИЕ ПРИ ЗАГРУЗКЕ СТРАНИЦЫ
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+            
+            // Проверяем авторизацию
+            if (!appData.currentUser) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Загружаем задачи
+            loadTasks();
         });
     </script>
 </body>

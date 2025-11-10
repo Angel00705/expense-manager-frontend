@@ -3,159 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Вход - IP Expense Manager</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        .login-container {
-            background: white;
-            padding: 3rem;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            max-width: 450px;
-            width: 100%;
-        }
-        .logo {
-            text-align: center;
-            font-size: 3rem;
-            margin-bottom: 1rem;
-        }
-        h1 {
-            text-align: center;
-            color: #1f2937;
-            margin-bottom: 0.5rem;
-            font-size: 1.8rem;
-        }
-        .subtitle {
-            text-align: center;
-            color: #6b7280;
-            margin-bottom: 2rem;
-        }
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-        .form-input {
-            width: 100%;
-            padding: 14px;
-            border: 2px solid #e5e7eb;
-            border-radius: 10px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-        .form-input:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-        .login-btn {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .login-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
-        }
-        .back-link {
-            display: block;
-            text-align: center;
-            margin-top: 1.5rem;
-            color: #667eea;
-            text-decoration: none;
-            font-weight: 500;
-        }
-        .demo {
-            background: #f8fafc;
-            padding: 1.5rem;
-            border-radius: 10px;
-            margin-top: 2rem;
-            border-left: 4px solid #667eea;
-        }
-        .demo-title {
-            font-weight: 600;
-            margin-bottom: 1rem;
-            color: #374151;
-            text-align: center;
-        }
-        .demo-account {
-            background: white;
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            border: 1px solid #e5e7eb;
-        }
-        .account-role {
-            font-weight: 600;
-            color: #1f2937;
-            margin-bottom: 0.5rem;
-        }
-        .account-info {
-            color: #6b7280;
-            font-family: monospace;
-            font-size: 0.9rem;
-        }
-    </style>
+    <title>🔐 Вход - IP Expense Manager</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- 🎨 FAVICON -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><defs><linearGradient id='borderGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%238b5cf6'/><stop offset='50%' stop-color='%236d28d9'/><stop offset='100%' stop-color='%231e40af'/></linearGradient><linearGradient id='checkGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%23a78bfa'/><stop offset='100%' stop-color='%234f46e5'/></linearGradient><filter id='glow' x='-50%' y='-50%' width='200%' height='200%'><feGaussianBlur in='SourceGraphic' stdDeviation='1' result='blur'/><feMerge><feMergeNode in='blur'/><feMergeNode in='SourceGraphic'/></feMerge></filter></defs><circle cx='10' cy='10' r='9' fill='none' stroke='url(%23borderGrad)' stroke-width='1.5' opacity='0.9'/><path d='M6,10 L8.5,12.5 L14,7' stroke='url(%23checkGrad)' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round' filter='url(%23glow)'/></svg>">
+    <!-- 🔧 ПОДКЛЮЧАЕМ УТИЛИТЫ -->
+    <script src="js/data.js"></script>
+    <script src="js/utils.js"></script>
 </head>
 <body>
-    <div class="login-container">
-        <div class="logo">💼</div>
-        <h1>IP Expense Manager</h1>
-        <p class="subtitle">Войдите в систему управления расходами</p>
-        
-        <form id="loginForm">
-            <div class="form-group">
-                <input type="email" class="form-input" placeholder="Ваш email" required value="admin@test.ru">
+    <div class="container">
+        <div class="glass-card" style="max-width: 400px; margin: 100px auto;">
+            <div style="text-align: center; margin-bottom: 30px;">
+                <div style="font-size: 4rem; margin-bottom: 10px;">🔐</div>
+                <h1 style="background: linear-gradient(135deg, #8b5cf6, #6366f1); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                    Вход в систему
+                </h1>
+                <p class="text-muted">Выберите вашу роль для входа</p>
             </div>
-            <div class="form-group">
-                <input type="password" class="form-input" placeholder="Ваш пароль" required value="123456">
+
+            <div class="login-buttons" style="display: flex; flex-direction: column; gap: 16px;">
+                <button class="btn btn-primary" onclick="login('admin')" style="padding: 16px; font-size: 1.1rem;">
+                    👨‍💼 Войти как Бухгалтер
+                </button>
+                <button class="btn btn-success" onclick="login('manager')" style="padding: 16px; font-size: 1.1rem;">
+                    👨‍💻 Войти как Управляющий
+                </button>
             </div>
-            <button type="submit" class="login-btn">🔐 Войти в систему</button>
-        </form>
-        
-        <div class="demo">
-            <div class="demo-title">Тестовые аккаунты:</div>
-            <div class="demo-account">
-                <div class="account-role">👨‍💼 Бухгалтер (полный доступ)</div>
-                <div class="account-info">admin@test.ru / 123456</div>
-            </div>
-            <div class="demo-account">
-                <div class="account-role">👨‍💻 Управляющий (только задачи)</div>
-                <div class="account-info">astrakhan@test.ru / 123456</div>
+
+            <div style="margin-top: 30px; padding: 20px; background: rgba(139, 92, 246, 0.1); border-radius: 12px;">
+                <h3 style="margin-bottom: 12px; color: var(--primary);">📋 Тестовые доступы:</h3>
+                <div style="font-size: 0.9rem; line-height: 1.6;">
+                    <div><strong>Бухгалтер:</strong> admin@test.ru</div>
+                    <div><strong>Управляющий:</strong> astrakhan@test.ru</div>
+                    <div><strong>Пароль:</strong> любой</div>
+                </div>
             </div>
         </div>
-        
-        <a href="index.html" class="back-link">← На главную страницу</a>
     </div>
 
     <script>
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const email = this.querySelector('input[type="email"]').value;
-            const password = this.querySelector('input[type="password"]').value;
-            
-            if ((email === 'admin@test.ru' && password === '123456') || 
-                (email === 'astrakhan@test.ru' && password === '123456')) {
-                alert('✅ Вход выполнен! Переход в систему...');
-                window.location.href = 'dashboard.html';
-            } else {
-                alert('❌ Неверный email или пароль!');
+        function login(role) {
+            const users = {
+                'admin': { email: 'admin@test.ru', name: 'Главный Бухгалтер', role: 'admin' },
+                'manager': { email: 'astrakhan@test.ru', name: 'Управляющий Астрахань', role: 'manager' }
+            };
+
+            const user = users[role];
+            if (user) {
+                // Сохраняем пользователя в data.js
+                appData.currentUser = user;
+                // Сохраняем в localStorage
+                localStorage.setItem('currentUser', JSON.stringify(user));
+                
+                showNotification(`👋 Добро пожаловать, ${user.name}!`, 'success');
+                
+                // Перенаправляем на дашборд
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 1000);
             }
+        }
+
+        // 🔧 ИНИЦИАЛИЗИРУЕМ ПРИЛОЖЕНИЕ ПРИ ЗАГРУЗКЕ СТРАНИЦЫ
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
         });
     </script>
 </body>
