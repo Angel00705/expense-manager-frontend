@@ -4,104 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Вход - Expense Manager</title>
-    
-    <!-- 🎨 FAVICON -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><defs><linearGradient id='borderGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%238b5cf6'/><stop offset='50%' stop-color='%236d28d9'/><stop offset='100%' stop-color='%231e40af'/></linearGradient><linearGradient id='checkGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%23a78bfa'/><stop offset='100%' stop-color='%234f46e5'/></linearGradient><filter id='glow' x='-50%' y='-50%' width='200%' height='200%'><feGaussianBlur in='SourceGraphic' stdDeviation='1' result='blur'/><feMerge><feMergeNode in='blur'/><feMergeNode in='SourceGraphic'/></feMerge></filter></defs><circle cx='10' cy='10' r='9' fill='none' stroke='url(%23borderGrad)' stroke-width='1.5' opacity='0.9'/><path d='M6,10 L8.5,12.5 L14,7' stroke='url(%23checkGrad)' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round' filter='url(%23glow)'/></svg>">
-    
     <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" href="./css/login.css">
 </head>
 <body>
-    <div class="login-wrapper">
-        <div class="login-container">
-            <div class="login-header">
-                <div class="logo">💰</div>
-                <h1>Expense Manager</h1>
-                <p>Войдите в свою учетную запись</p>
-            </div>
-            
-            <form id="loginForm" class="login-form">
-                <div class="input-group">
-                    <label for="email">Email адрес</label>
-                    <input type="email" id="email" placeholder="your@email.com" required>
-                </div>
-                
-                <div class="input-group">
-                    <label for="password">Пароль</label>
-                    <input type="password" id="password" placeholder="Введите ваш пароль" required>
-                </div>
-                
-                <button type="submit" class="login-btn" id="loginButton">
-                    Войти в систему
-                </button>
-            </form>
-            
-            <div id="error-message" class="error-message" style="display: none;"></div>
-            
-            <div class="login-footer">
-                <h3>Тестовые доступы:</h3>
-                <div class="test-accounts">
-                    <div class="account">
-                        <strong>Бухгалтер:</strong> admin@test.ru / 123456
-                    </div>
-                    <div class="account">
-                        <strong>Управляющий (Астрахань):</strong> astrakhan@test.ru / 123456
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="login-container">
+        <h1>Вход в систему</h1>
+        <form id="loginForm">
+            <input type="email" placeholder="Email" required>
+            <input type="password" placeholder="Пароль" required>
+            <button type="submit">Войти</button>
+        </form>
     </div>
-
-    <!-- ПРОСТОЙ JS ДЛЯ ПРОВЕРКИ РАБОТЫ КНОПОК -->
-    <script>
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const errorDiv = document.getElementById('error-message');
-            
-            // Простая проверка
-            if (!email || !password) {
-                errorDiv.textContent = 'Пожалуйста, заполните все поля';
-                errorDiv.style.display = 'block';
-                return;
-            }
-            
-            // Показываем загрузку
-            const button = document.getElementById('loginButton');
-            button.innerHTML = 'Вход...';
-            button.disabled = true;
-            
-            // Тестовые учетки
-            const testAccounts = {
-                'admin@test.ru': '123456',
-                'astrakhan@test.ru': '123456'
-            };
-            
-            // Имитация проверки
-            setTimeout(() => {
-                if (testAccounts[email] && testAccounts[email] === password) {
-                    // Успешный вход
-                    alert('Успешный вход! Перенаправление на дашборд...');
-                    window.location.href = 'dashboard.html';
-                } else {
-                    errorDiv.textContent = 'Неверный email или пароль';
-                    errorDiv.style.display = 'block';
-                    button.innerHTML = 'Войти в систему';
-                    button.disabled = false;
-                }
-            }, 1000);
-        });
-        
-        // Очистка ошибки при вводе
-        document.getElementById('email').addEventListener('input', function() {
-            document.getElementById('error-message').style.display = 'none';
-        });
-        
-        document.getElementById('password').addEventListener('input', function() {
-            document.getElementById('error-message').style.display = 'none';
-        });
-    </script>
+    <script src="./js/login.js"></script>
 </body>
 </html>
