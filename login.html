@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Expense Manager - Вход в систему</title>
+    <title>Expense Manager - Вход</title>
     <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" href="./css/login.css">
 </head>
@@ -28,12 +28,13 @@
                 
                 <button type="submit" class="login-btn">
                     <span class="btn-text">Войти в систему</span>
-                    <div class="btn-loader" style="display: none;">⏳</div>
                 </button>
             </form>
             
+            <div id="error-message" class="error-message" style="display: none;"></div>
+            
             <div class="login-footer">
-                <p>Тестовые доступы:</p>
+                <p><strong>Тестовые доступы:</strong></p>
                 <p>Бухгалтер: admin@test.ru / 123456</p>
                 <p>Управляющий: astrakhan@test.ru / 123456</p>
             </div>
