@@ -1,20 +1,16 @@
-// js/utils.js - ИСПРАВЛЕННАЯ ВЕРСИЯ АВТОРИЗАЦИИ
+// js/utils.js - ИСПРАВЛЕННАЯ ВЕРСИЯ
 
 const Auth = {
   currentUser: null,
   initialized: false,
   
   init: function() {
-    if (this.initialized) {
-      console.log('🔄 Auth уже инициализирован');
-      return;
-    }
+    if (this.initialized) return;
     
     console.log('🔄 Инициализация Auth...');
     
-    // НЕ очищаем localStorage - это была ошибка!
     const savedUser = localStorage.getItem('currentUser');
-    console.log('💾 Сохраненный пользователь:', savedUser ? 'есть' : 'нет');
+    console.log('💾 Сохраненный пользователь:', savedUser);
     
     if (savedUser && savedUser !== 'null' && savedUser !== 'undefined') {
       try {
@@ -35,7 +31,6 @@ const Auth = {
   login: function(email, password) {
     console.log('🔐 Попытка входа:', email);
     
-    // Тестовые пользователи
     const users = {
       'admin@test.ru': { 
         email: 'admin@test.ru', 
@@ -48,6 +43,13 @@ const Auth = {
         name: 'Управляющий Астрахань', 
         role: 'manager',
         region: 'Астрахань',
+        password: 'manager123'
+      },
+      'buryatia@test.ru': { 
+        email: 'buryatia@test.ru', 
+        name: 'Управляющий Бурятия', 
+        role: 'manager',
+        region: 'Бурятия',
         password: 'manager123'
       }
     };
@@ -100,7 +102,7 @@ const Auth = {
 const Notification = {
   show: function(message, type = 'info') {
     console.log(`🔔 ${type}: ${message}`);
-    alert(message); // Временное решение
+    alert(message);
   },
   
   success: function(message) {
@@ -113,18 +115,6 @@ const Notification = {
   
   info: function(message) {
     this.show('ℹ️ ' + message, 'info');
-  }
-};
-
-// Простые утилиты для форм
-const FormHelper = {
-  validateRequired: function(fields) {
-    for (const field of fields) {
-      if (!field.value.trim()) {
-        return false;
-      }
-    }
-    return true;
   }
 };
 
@@ -185,7 +175,6 @@ const FormatHelper = {
 // Экспорт в глобальную область
 window.Auth = Auth;
 window.Notification = Notification;
-window.FormHelper = FormHelper;
 window.TaskManager = TaskManager;
 window.FormatHelper = FormatHelper;
 

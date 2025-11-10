@@ -1,35 +1,97 @@
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  console.log('🏠 Главная страница загружена');
-  
-  // Простая инициализация
-  Auth.init();
-  
-  // Проверяем авторизацию
-  if (Auth.currentUser) {
-    console.log('🔄 Перенаправляем на дашборд...');
-    setTimeout(() => {
-      window.location.href = 'dashboard.html';
-    }, 1000);
-  }
-  
-  // Обработка формы входа
-  document.getElementById('loginForm').addEventListener('submit', function(e) {
-    e.preventDefault();
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IP Expense Manager</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="glass-card" style="max-width: 400px; margin: 100px auto; padding: 40px; text-align: center;">
+            <h1 style="margin-bottom: 8px; color: var(--primary);">🎯 IP Expense Manager</h1>
+            <p style="color: var(--text-light); margin-bottom: 32px;">Система управления расходами ИП</p>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <input type="email" class="form-control" id="email" placeholder="📧 Email" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" class="form-control" id="password" placeholder="🔒 Пароль" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    🚀 Войти в систему
+                </button>
+            </form>
+            
+            <div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--border-light);">
+                <p style="color: var(--text-light); margin-bottom: 16px;">Быстрый доступ для тестирования:</p>
+                <button type="button" class="btn btn-outline" style="width: 100%; margin-bottom: 8px;" 
+                        onclick="fillCredentials('admin@test.ru', 'admin123')">
+                    👨‍💼 Войти как Админ
+                </button>
+                <button type="button" class="btn btn-outline" style="width: 100%;" 
+                        onclick="fillCredentials('astrakhan@test.ru', 'manager123')">
+                    👩‍💼 Войти как Менеджер
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ПЕРЕНЕСИТЕ СКРИПТЫ СЮДА - В КОНЕЦ BODY -->
+    <script src="js/utils.js"></script>
+    <script src="js/data.js"></script>
     
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    
-    const result = Auth.login(email, password);
-    
-    if (result.success) {
-      Notification.success(`Добро пожаловать, ${result.user.name}!`);
-      setTimeout(() => {
-        window.location.href = 'dashboard.html';
-      }, 1000);
-    } else {
-      Notification.error(result.error);
-    }
-  });
-});
-</script>
+    <script>
+        function fillCredentials(email, password) {
+            document.getElementById('email').value = email;
+            document.getElementById('password').value = password;
+            alert('Данные заполнены! Нажмите "Войти в систему"');
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🏠 Главная страница загружена');
+            
+            // Инициализируем авторизацию
+            Auth.init();
+            
+            // Проверяем авторизацию
+            console.log('🔍 Проверка авторизации...');
+            console.log('Текущий пользователь:', Auth.currentUser);
+            
+            if (Auth.currentUser) {
+                console.log('🔄 Перенаправляем на дашборд...');
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 1000);
+            }
+            
+            // Обработка формы входа
+            document.getElementById('loginForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                
+                console.log('📧 Попытка входа:', email);
+                
+                if (!email || !password) {
+                    alert('❌ Пожалуйста, заполните все поля');
+                    return;
+                }
+                
+                const result = Auth.login(email, password);
+                
+                if (result.success) {
+                    alert('✅ Добро пожаловать, ' + result.user.name + '!');
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 1000);
+                } else {
+                    alert('❌ ' + result.error);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
