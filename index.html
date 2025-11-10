@@ -8,213 +8,55 @@
     <!-- 🎨 FAVICON -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><defs><linearGradient id='borderGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%238b5cf6'/><stop offset='50%' stop-color='%236d28d9'/><stop offset='100%' stop-color='%231e40af'/></linearGradient><linearGradient id='checkGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%23a78bfa'/><stop offset='100%' stop-color='%234f46e5'/></linearGradient><filter id='glow' x='-50%' y='-50%' width='200%' height='200%'><feGaussianBlur in='SourceGraphic' stdDeviation='1' result='blur'/><feMerge><feMergeNode in='blur'/><feMergeNode in='SourceGraphic'/></feMerge></filter></defs><circle cx='10' cy='10' r='9' fill='none' stroke='url(%23borderGrad)' stroke-width='1.5' opacity='0.9'/><path d='M6,10 L8.5,12.5 L14,7' stroke='url(%23checkGrad)' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round' filter='url(%23glow)'/></svg>">
     
-    <link rel="stylesheet" href="./css/style.css">
-    <link rel="stylesheet" href="./css/components.css">
-    <link rel="stylesheet" href="./css/animations.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/animations.css">
+    
+    <style>
+        /* Инлайн стили для гарантии загрузки */
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .loading-container {
+            text-align: center;
+            color: white;
+            padding: 2rem;
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
 </head>
 <body>
-    <div class="main-container">
-        <div class="hero-section">
-            <!-- Анимированный фон -->
-            <div class="background-shapes">
-                <div class="shape shape-1"></div>
-                <div class="shape shape-2"></div>
-                <div class="shape shape-3"></div>
-            </div>
-            
-            <div class="hero-content">
-                <div class="logo">💰</div>
-                <h1 class="main-title">Expense Manager</h1>
-                <p class="subtitle">Инновационная система управления расходами для сети индивидуальных предпринимателей</p>
-                
-                <!-- Улучшенная сетка фич -->
-                <div class="features-grid">
-                    <div class="feature-card card-hover">
-                        <div class="feature-icon">🏢</div>
-                        <h3>Мультирегиональность</h3>
-                        <p>27 ИП в 6 регионах под единым контролем</p>
-                        <div class="feature-badge">6 регионов</div>
-                    </div>
-                    <div class="feature-card card-hover">
-                        <div class="feature-icon">💳</div>
-                        <h3>Контроль платежей</h3>
-                        <p>42 банковские карты с интеллектуальным лимитом</p>
-                        <div class="feature-badge">42 карты</div>
-                    </div>
-                    <div class="feature-card card-hover">
-                        <div class="feature-icon">👥</div>
-                        <h3>Командная синхронизация</h3>
-                        <p>Бухгалтеры и управляющие работают в одной системе</p>
-                        <div class="feature-badge">12 управляющих</div>
-                    </div>
-                    <div class="feature-card card-hover">
-                        <div class="feature-icon">📊</div>
-                        <h3>Умная аналитика</h3>
-                        <p>Автоматические отчеты и прогнозирование расходов</p>
-                        <div class="feature-badge">AI аналитика</div>
-                    </div>
-                </div>
-                
-                <!-- Призыв к действию -->
-                <div class="cta-section">
-                    <button class="btn-primary btn-large btn-float" id="loginBtn">
-                        <span class="btn-text">🚀 Начать работу</span>
-                        <span class="btn-arrow">→</span>
-                    </button>
-                    <p class="demo-info">✨ Тестовый доступ доступен сразу после входа</p>
-                </div>
-
-                <!-- Дополнительная информация -->
-                <div class="info-cards">
-                    <div class="info-card">
-                        <div class="info-icon">⚡</div>
-                        <div class="info-content">
-                            <h4>Мгновенное обновление</h4>
-                            <p>Все изменения отражаются в реальном времени</p>
-                        </div>
-                    </div>
-                    <div class="info-card">
-                        <div class="info-icon">🔒</div>
-                        <div class="info-content">
-                            <h4>Безопасность данных</h4>
-                            <p>Шифрование и защита финансовой информации</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="loading-container">
+        <div class="spinner"></div>
+        <h2>Expense Manager</h2>
+        <p>Загрузка системы...</p>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const loginBtn = document.getElementById('loginBtn');
-            
-            loginBtn.addEventListener('click', function() {
-                // Добавляем анимацию перед переходом
-                loginBtn.style.transform = 'scale(0.95)';
-                setTimeout(() => {
-                    window.location.href = 'login.html';
-                }, 150);
-            });
-
-            // Анимация для фоновых элементов
-            const shapes = document.querySelectorAll('.shape');
-            shapes.forEach((shape, index) => {
-                shape.style.animation = `float ${6 + index * 2}s ease-in-out infinite`;
-            });
-        });
+        // Редирект на главную страницу
+        window.location.href = '/index.html';
     </script>
-
-    <style>
-        /* Дополнительные стили для главной страницы */
-        .background-shapes {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            z-index: -1;
-        }
-
-        .shape {
-            position: absolute;
-            border-radius: 50%;
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.05));
-            animation: float 6s ease-in-out infinite;
-        }
-
-        .shape-1 {
-            width: 200px;
-            height: 200px;
-            top: 10%;
-            left: 5%;
-            animation-delay: 0s;
-        }
-
-        .shape-2 {
-            width: 150px;
-            height: 150px;
-            top: 60%;
-            right: 10%;
-            animation-delay: 2s;
-        }
-
-        .shape-3 {
-            width: 100px;
-            height: 100px;
-            bottom: 20%;
-            left: 15%;
-            animation-delay: 4s;
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 2;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .feature-badge {
-            display: inline-block;
-            background: var(--gradient-primary);
-            color: white;
-            padding: 4px 12px;
-            border-radius: 15px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            margin-top: 1rem;
-        }
-
-        .info-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1rem;
-            margin-top: 3rem;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .info-card {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 1.5rem;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: all 0.3s ease;
-        }
-
-        .info-card:hover {
-            transform: translateY(-3px);
-            background: rgba(255, 255, 255, 0.15);
-        }
-
-        .info-icon {
-            font-size: 2rem;
-            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
-        }
-
-        .info-content h4 {
-            color: white;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-        }
-
-        .info-content p {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 0.9rem;
-        }
-
-        .demo-info {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 0.9rem;
-            margin-top: 1rem;
-            text-align: center;
-        }
-    </style>
 </body>
 </html>
