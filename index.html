@@ -44,55 +44,62 @@
     <script src="js/data.js"></script>
     
     <script>
-        function fillCredentials(email, password) {
-            document.getElementById('email').value = email;
-            document.getElementById('password').value = password;
-            alert('Данные заполнены! Нажмите "Войти в систему"');
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🏠 Главная страница загружена');
+    
+    // Инициализируем авторизацию
+    Auth.init();
+    
+    // Проверяем авторизацию, но НЕ перенаправляем сразу
+    console.log('🔍 Проверка авторизации...');
+    console.log('Текущий пользователь:', Auth.currentUser);
+    
+    // ПОКАЗЫВАЕМ форму входа, даже если пользователь авторизован
+    // Это дает возможность войти под другим аккаунтом
+    
+    // Обработка формы входа
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        
+        console.log('📧 Попытка входа:', email);
+        
+        if (!email || !password) {
+            alert('❌ Пожалуйста, заполните все поля');
+            return;
         }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('🏠 Главная страница загружена');
-            
-            // Инициализируем авторизацию
-            Auth.init();
-            
-            // Проверяем авторизацию
-            console.log('🔍 Проверка авторизации...');
-            console.log('Текущий пользователь:', Auth.currentUser);
-            
-            if (Auth.currentUser) {
-                console.log('🔄 Перенаправляем на дашборд...');
-                setTimeout(() => {
-                    window.location.href = 'dashboard.html';
-                }, 1000);
-            }
-            
-            // Обработка формы входа
-            document.getElementById('loginForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const email = document.getElementById('email').value;
-                const password = document.getElementById('password').value;
-                
-                console.log('📧 Попытка входа:', email);
-                
-                if (!email || !password) {
-                    alert('❌ Пожалуйста, заполните все поля');
-                    return;
-                }
-                
-                const result = Auth.login(email, password);
-                
-                if (result.success) {
-                    alert('✅ Добро пожаловать, ' + result.user.name + '!');
-                    setTimeout(() => {
-                        window.location.href = 'dashboard.html';
-                    }, 1000);
-                } else {
-                    alert('❌ ' + result.error);
-                }
-            });
-        });
-    </script>
+        
+        const result = Auth.login(email, password);
+        
+        if (result.success) {
+            alert('✅ Добро пожаловать, ' + result.user.name + '!');
+            setTimeout(() => {
+                window.location.href = 'dashboard.html';
+            }, 1000);
+        } else {
+            alert('❌ ' + result.error);
+        }
+    });
+    
+    // Если пользователь уже авторизован, показываем кнопку "Продолжить"
+    if (Auth.currentUser) {
+        const quickAccessDiv = document.querySelector('.quick-access');
+        if (quickAccessDiv) {
+            const continueBtn = document.createElement('button');
+            continueBtn.type = 'button';
+            continueBtn.className = 'btn btn-success';
+            continueBtn.style.width = '100%';
+            continueBtn.style.marginBottom = '8px';
+            continueBtn.innerHTML = '🚀 Продолжить как ' + Auth.currentUser.name;
+            continueBtn.onclick = function() {
+                window.location.href = 'dashboard.html';
+            };
+            quickAccessDiv.parentNode.insertBefore(continueBtn, quickAccessDiv);
+        }
+    }
+});
+</script>
 </body>
 </html>
