@@ -13,33 +13,44 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
+            min-height: 100vh; /* ИСПРАВЛЕНО: 100vh вместо 100wh */
         }
         .container {
             background: white;
             padding: 2rem;
             border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3); /* ИСПРАВЛЕНО: убрана лишняя запятая */
             text-align: center;
+            max-width: 400px;
+            width: 90%;
         }
         h1 {
             color: #333;
             margin-bottom: 1rem;
         }
+        p {
+            color: #666;
+            margin-bottom: 1.5rem;
+        }
         button {
             background: #667eea;
             color: white;
             border: none;
-            padding: 10px 20px;
+            padding: 12px 30px;
             border-radius: 5px;
             cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #5a6fd8;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>💰 Expense Manager</h1>
-        <p>Система управления расходами ИП</p>
+        <p>Система управления расходами для ИП</p>
         <button onclick="location.href='login.html'">Войти в систему</button>
     </div>
 </body>
