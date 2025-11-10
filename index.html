@@ -1,419 +1,95 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IP Expense Manager - Управление расходами ИП</title>
-    <link rel="stylesheet" href="css/style.css">
-    <!-- ИСПРАВЛЕННЫЙ ФАВИКОН -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><circle cx='10' cy='10' r='9' fill='none' stroke='%238b5cf6' stroke-width='1.5'/><path d='M6,10 L8.5,12.5 L14,7' stroke='%238b5cf6' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>">
-    <style>
-        .hero {
-            background: var(--gradient-primary);
-            color: white;
-            padding: 60px 0;
-            text-align: center;
-        }
+<script src="js/utils.js"></script>
+<script>
+  function clearAuth() {
+    Auth.clearAuth();
+    Notification.success('Авторизация очищена! Обновите страницу');
+    setTimeout(() => {
+      location.reload();
+    }, 1000);
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    console.log('🏠 Главная страница загружена');
+    
+    // Инициализируем авторизацию
+    Auth.init();
+    
+    // Проверяем авторизацию с задержкой
+    setTimeout(() => {
+      console.log('🔍 Проверка авторизации...');
+      console.log('Текущий пользователь:', Auth.currentUser);
+      
+      if (Auth.currentUser) {
+        console.log('🔄 Пользователь авторизован, перенаправляем на дашборд...');
+        Notification.info('Автоматический вход...');
+        setTimeout(() => {
+          window.location.href = 'dashboard.html';
+        }, 1500);
+      } else {
+        console.log('👋 Пользователь не авторизован, показываем форму входа');
+      }
+    }, 500);
+
+    // Обработка формы входа - УБИРАЕМ ASYNC/AWAIT
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      
+      console.log('📧 Попытка входа:', email);
+      
+      if (!email || !password) {
+        Notification.error('Пожалуйста, заполните все поля');
+        return;
+      }
+      
+      // Показываем загрузку
+      const submitBtn = this.querySelector('button[type="submit"]');
+      const originalText = submitBtn.innerHTML;
+      submitBtn.innerHTML = '⏳ Вход...';
+      submitBtn.disabled = true;
+      
+      // СИНХРОННЫЙ ВХОД
+      const result = Auth.login(email, password);
+      
+      if (result.success) {
+        Notification.success(`Добро пожаловать, ${result.user.name}!`);
+        console.log('✅ Вход успешен, перенаправляем...');
         
-        .hero h1 {
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-            font-weight: 700;
-        }
-        
-        .hero p {
-            font-size: 1.1rem;
-            margin-bottom: 30px;
-            opacity: 0.9;
-        }
-        
-        .login-section {
-            background: white;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: var(--shadow-lg);
-            max-width: 450px;
-            margin: -50px auto 0;
-            position: relative;
-            z-index: 10;
-        }
-        
-        .features {
-            padding: 100px 0 60px;
-        }
-        
-        .feature-card {
-            text-align: center;
-            padding: 30px 20px;
-            height: 100%;
-        }
-        
-        .feature-icon {
-            font-size: 2.5rem;
-            margin-bottom: 15px;
-        }
-        
-        .test-accounts {
-            background: var(--bg-light);
-            padding: 20px;
-            border-radius: 12px;
-            margin-top: 25px;
-        }
-        
-        .test-account {
-            padding: 12px;
-            margin: 8px 0;
-            background: white;
-            border-radius: 8px;
-            cursor: pointer;
-            border: 2px solid transparent;
-            transition: var(--transition);
-        }
-        
-        .test-account:hover {
-            border-color: var(--primary);
-            transform: translateY(-2px);
-        }
-        
-        .role-badge {
-            display: inline-block;
-            padding: 4px 8px;
-            background: var(--primary);
-            color: white;
-            border-radius: 6px;
-            font-size: 12px;
-            margin-left: 8px;
-        }
-        
-        .stats {
-            background: var(--bg-light);
-            padding: 60px 0;
-        }
-        
-        .stat-item {
-            text-align: center;
-        }
-        
-        .stat-number {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 8px;
-        }
-        
-        .regions {
-            padding: 60px 0;
-            background: var(--gradient-primary);
-            color: white;
-        }
+        // Перенаправляем на дашборд
+        setTimeout(() => {
+          window.location.href = 'dashboard.html';
+        }, 1000);
+      } else {
+        Notification.error(result.error);
+        console.log('❌ Ошибка входа:', result.error);
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+      }
+    });
 
-        @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 2rem;
-            }
-            
-            .login-section {
-                margin: -30px 20px 0;
-                padding: 30px 20px;
-            }
-            
-            .features {
-                padding: 80px 0 40px;
-            }
+    // Анимации для карточек
+    const observer = new IntersectionObserver(function(entries) {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
         }
-    </style>
-</head>
-<body>
-    <nav class="navbar">
-        <div class="container">
-            <div style="display: flex; justify-content: center; align-items: center;">
-                <a href="index.html" class="navbar-brand">
-                    🎯 IP Expense Manager
-                </a>
-            </div>
-        </div>
-    </nav>
+      });
+    }, { threshold: 0.1 });
+    
+    document.querySelectorAll('.feature-card').forEach(card => {
+      card.style.opacity = '0';
+      card.style.transform = 'translateY(20px)';
+      card.style.transition = 'all 0.6s ease';
+      observer.observe(card);
+    });
+  });
 
-    <section class="hero">
-        <div class="container">
-            <h1>🎯 Управление расходами для ИП</h1>
-            <p>Автоматизируйте финансовые операции для 28 ИП в 6 регионах России</p>
-        </div>
-    </section>
-
-    <section class="container">
-        <div class="login-section">
-            <div style="text-align: center; margin-bottom: 30px;">
-                <h2 style="color: var(--primary); margin-bottom: 10px;">🔐 Вход в систему</h2>
-                <p style="color: var(--text-light);">Введите ваши учетные данные</p>
-            </div>
-
-            <form id="loginForm">
-                <div class="form-group">
-                    <label class="form-label">📧 Email</label>
-                    <input type="email" class="form-control" id="email" 
-                           placeholder="your@email.com" required>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">🔒 Пароль</label>
-                    <input type="password" class="form-control" id="password" 
-                           placeholder="Введите пароль" required>
-                </div>
-
-                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">
-                    🚀 Войти в систему
-                </button>
-            </form>
-
-            <div class="test-accounts">
-                <h4 style="margin-bottom: 15px; text-align: center; color: var(--text-dark);">🧪 Быстрый вход</h4>
-                
-                <div class="test-account" onclick="fillCredentials('admin@test.ru', 'admin123')">
-                    <strong>👨‍💼 Бухгалтер (Админ)</strong>
-                    <span class="role-badge">Полный доступ</span>
-                    <div style="font-size: 12px; color: var(--text-light); margin-top: 4px;">
-                        Все функции управления
-                    </div>
-                </div>
-                
-                <div class="test-account" onclick="fillCredentials('astrakhan@test.ru', 'manager123')">
-                    <strong>👥 Управляющий Астрахань</strong>
-                    <span class="role-badge">Регион: Астрахань</span>
-                    <div style="font-size: 12px; color: var(--text-light); margin-top: 4px;">
-                        Просмотр и выполнение задач
-                    </div>
-                </div>
-
-                <!-- КНОПКА ОЧИСТКИ ДЛЯ ОТЛАДКИ -->
-                <div style="text-align: center; margin-top: 15px;">
-                    <button type="button" class="btn btn-outline" onclick="clearAuth()" style="font-size: 12px; padding: 8px 16px;">
-                        🧹 Очистить авторизацию
-                    </button>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Остальная часть страницы без изменений -->
-    <section class="stats">
-        <div class="container">
-            <div class="row">
-                <div class="col-3">
-                    <div class="stat-item">
-                        <div class="stat-number">6</div>
-                        <div class="stat-label">🏢 Регионов</div>
-                    </div>
-                </div>
-                <div class="col-3">
-                    <div class="stat-item">
-                        <div class="stat-number">28</div>
-                        <div class="stat-label">👤 ИП</div>
-                    </div>
-                </div>
-                <div class="col-3">
-                    <div class="stat-item">
-                        <div class="stat-number">40+</div>
-                        <div class="stat-label">💳 Карт</div>
-                    </div>
-                </div>
-                <div class="col-3">
-                    <div class="stat-item">
-                        <div class="stat-number">23</div>
-                        <div class="stat-label">📊 Статьи</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="features">
-        <div class="container">
-            <h2 style="text-align: center; margin-bottom: 50px; color: var(--text-dark);">
-                ✨ Ключевые возможности
-            </h2>
-            
-            <div class="row">
-                <div class="col-4">
-                    <div class="feature-card glass-card">
-                        <div class="feature-icon">📋</div>
-                        <h3>Умное создание задач</h3>
-                        <p>Автоматическое назначение ответственных по цепочке: Регион → ИП → Карта</p>
-                    </div>
-                </div>
-                
-                <div class="col-4">
-                    <div class="feature-card glass-card">
-                        <div class="feature-icon">📊</div>
-                        <h3>Аналитика и отчеты</h3>
-                        <p>Визуализация расходов, KPI управляющих, план vs факт по регионам</p>
-                    </div>
-                </div>
-                
-                <div class="col-4">
-                    <div class="feature-card glass-card">
-                        <div class="feature-icon">👥</div>
-                        <h3>Ролевая модель</h3>
-                        <p>Разделение прав: бухгалтеры создают задачи, управляющие выполняют</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="regions">
-        <div class="container">
-            <h2 style="text-align: center; margin-bottom: 40px;">🏢 Поддерживаемые регионы</h2>
-            
-            <div class="row">
-                <div class="col-4">
-                    <div style="text-align: center; padding: 15px;">
-                        <h4>Астрахань</h4>
-                        <p>5 ИП</p>
-                    </div>
-                </div>
-                <div class="col-4">
-                    <div style="text-align: center; padding: 15px;">
-                        <h4>Бурятия</h4>
-                        <p>4 ИП</p>
-                    </div>
-                </div>
-                <div class="col-4">
-                    <div style="text-align: center; padding: 15px;">
-                        <h4>Курган</h4>
-                        <p>7 ИП</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="row">
-                <div class="col-4">
-                    <div style="text-align: center; padding: 15px;">
-                        <h4>Калмыкия</h4>
-                        <p>3 ИП</p>
-                    </div>
-                </div>
-                <div class="col-4">
-                    <div style="text-align: center; padding: 15px;">
-                        <h4>Мордовия</h4>
-                        <p>3 ИП</p>
-                    </div>
-                </div>
-                <div class="col-4">
-                    <div style="text-align: center; padding: 15px;">
-                        <h4>Удмуртия</h4>
-                        <p>6 ИП</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <footer style="background: var(--text-dark); color: white; padding: 30px 0; text-align: center;">
-        <div class="container">
-            <p>🎯 IP Expense Manager - Система управления расходами для индивидуальных предпринимателей</p>
-        </div>
-    </footer>
-
-    <script src="js/utils.js"></script>
-    <script>
-        // ОЧИСТКА АВТОРИЗАЦИИ ДЛЯ ТЕСТИРОВАНИЯ
-        function clearAuth() {
-            Auth.clearAuth();
-            Notification.success('Авторизация очищена! Обновите страницу');
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('🏠 Главная страница загружена');
-            
-            // Инициализируем авторизацию ТОЛЬКО после полной загрузки DOM
-            Auth.init();
-            
-            // Проверяем авторизацию с задержкой
-            setTimeout(() => {
-                console.log('🔍 Проверка авторизации...');
-                console.log('Текущий пользователь:', Auth.currentUser);
-                
-                if (Auth.currentUser) {
-                    console.log('🔄 Пользователь авторизован, перенаправляем на дашборд...');
-                    Notification.info('Перенаправление в систему...');
-                    setTimeout(() => {
-                        window.location.href = 'dashboard.html';
-                    }, 1000);
-                } else {
-                    console.log('👋 Пользователь не авторизован, показываем форму входа');
-                }
-            }, 100);
-
-            // Обработка формы входа
-            document.getElementById('loginForm').addEventListener('submit', async function(e) {
-                e.preventDefault();
-                
-                const email = document.getElementById('email').value;
-                const password = document.getElementById('password').value;
-                
-                console.log('📧 Попытка входа:', email);
-                
-                if (!email || !password) {
-                    Notification.error('Пожалуйста, заполните все поля');
-                    return;
-                }
-                
-                // Показываем загрузку
-                const submitBtn = this.querySelector('button[type="submit"]');
-                const originalText = submitBtn.innerHTML;
-                submitBtn.innerHTML = '⏳ Вход...';
-                submitBtn.disabled = true;
-                
-                try {
-                    // Используем Promise для входа
-                    const result = await Auth.login(email, password);
-                    
-                    if (result.success) {
-                        Notification.success(`Добро пожаловать, ${result.user.name}!`);
-                        console.log('✅ Вход успешен, перенаправляем...');
-                        
-                        // Перенаправляем на дашборд
-                        setTimeout(() => {
-                            window.location.href = 'dashboard.html';
-                        }, 1000);
-                    } else {
-                        Notification.error(result.error);
-                        console.log('❌ Ошибка входа:', result.error);
-                        submitBtn.innerHTML = originalText;
-                        submitBtn.disabled = false;
-                    }
-                } catch (error) {
-                    Notification.error('Ошибка при входе в систему');
-                    console.error('❌ Ошибка:', error);
-                    submitBtn.innerHTML = originalText;
-                    submitBtn.disabled = false;
-                }
-            });
-
-            // Анимации для карточек
-            const observer = new IntersectionObserver(function(entries) {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.style.opacity = '1';
-                        entry.target.style.transform = 'translateY(0)';
-                    }
-                });
-            }, { threshold: 0.1 });
-            
-            document.querySelectorAll('.feature-card').forEach(card => {
-                card.style.opacity = '0';
-                card.style.transform = 'translateY(20px)';
-                card.style.transition = 'all 0.6s ease';
-                observer.observe(card);
-            });
-        });
-
-        function fillCredentials(email, password) {
-            document.getElementById('email').value = email;
-            document.getElementById('password').value = password;
-            Notification.info('Данные заполнены! Нажмите "Войти в систему"');
-        }
-    </script>
-</body>
-</html>
+  function fillCredentials(email, password) {
+    document.getElementById('email').value = email;
+    document.getElementById('password').value = password;
+    Notification.info('Данные заполнены! Нажмите "Войти в систему"');
+  }
+</script>

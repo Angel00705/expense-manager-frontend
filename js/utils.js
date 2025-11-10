@@ -1,4 +1,4 @@
-// js/utils.js - ИСПРАВЛЕННАЯ СИСТЕМА АВТОРИЗАЦИИ
+// js/utils.js - ОКОНЧАТЕЛЬНО ИСПРАВЛЕННАЯ ВЕРСИЯ
 
 const Auth = {
   currentUser: null,
@@ -12,9 +12,8 @@ const Auth = {
     
     console.log('🔄 Инициализация системы авторизации...');
     
-    // ВРЕМЕННО ВКЛЮЧАЕМ ОЧИСТКУ ДЛЯ ТЕСТИРОВАНИЯ
-    localStorage.removeItem('currentUser');
-    console.log('🧹 LocalStorage очищен для тестирования');
+    // УБИРАЕМ ОЧИСТКУ ДЛЯ ТЕСТИРОВАНИЯ - ЭТО БЫЛА ОШИБКА!
+    // localStorage.removeItem('currentUser');
     
     const savedUser = localStorage.getItem('currentUser');
     console.log('💾 Сохраненный пользователь в localStorage:', savedUser);
@@ -58,31 +57,42 @@ const Auth = {
         role: 'manager',
         region: 'Астрахань',
         password: 'manager123'
+      },
+      'buryatia@test.ru': { 
+        email: 'buryatia@test.ru', 
+        name: 'Управляющий Бурятия', 
+        role: 'manager',
+        region: 'Бурятия',
+        password: 'manager123'
+      },
+      'kurgan@test.ru': { 
+        email: 'kurgan@test.ru', 
+        name: 'Управляющий Курган', 
+        role: 'manager',
+        region: 'Курган',
+        password: 'manager123'
       }
     };
     
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const user = users[email];
-        
-        if (user && user.password === password) {
-          this.currentUser = {
-            email: user.email,
-            name: user.name,
-            role: user.role,
-            region: user.region
-          };
-          
-          localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
-          console.log('✅ Успешный вход:', this.currentUser);
-          
-          resolve({ success: true, user: this.currentUser });
-        } else {
-          console.log('❌ Неудачная попытка входа');
-          resolve({ success: false, error: 'Неверный email или пароль' });
-        }
-      }, 500);
-    });
+    // УБИРАЕМ PROMISE - ДЕЛАЕМ СИНХРОННЫМ
+    const user = users[email];
+    
+    if (user && user.password === password) {
+      this.currentUser = {
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        region: user.region
+      };
+      
+      localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+      console.log('✅ Успешный вход:', this.currentUser);
+      
+      return { success: true, user: this.currentUser };
+    } else {
+      console.log('❌ Неудачная попытка входа');
+      return { success: false, error: 'Неверный email или пароль' };
+    }
   },
   
   logout: function() {
@@ -106,7 +116,7 @@ const Auth = {
     console.log('Текущий пользователь:', this.currentUser);
     
     if (!this.currentUser) {
-      console.log('❌ Доступ запрещен - перенаправляем на главную через 100мс');
+      console.log('❌ Доступ запрещен - перенаправляем на главную');
       setTimeout(() => {
         window.location.href = 'index.html';
       }, 100);
@@ -123,7 +133,6 @@ const Auth = {
     this.initialized = false;
     localStorage.removeItem('currentUser');
     console.log('🧹 Авторизация очищена');
-    // НЕ ПЕРЕНАПРАВЛЯЕМ - пусть пользователь останется на странице
   }
 };
 
