@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Expense Manager - Умное управление расходами ИП</title>
     
-    <!-- 🎨 FAVICON (исправленная версия) -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><circle cx='10' cy='10' r='9' fill='none' stroke='%238b5cf6' stroke-width='1.5'/><path d='M6,10 L8.5,12.5 L14,7' stroke='%238b5cf6' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>">
+    <!-- ПРОСТОЙ FAVICON -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23667eea'/><text x='50' y='60' font-family='Arial' font-size='40' text-anchor='middle' fill='white'>EM</text></svg>">
     
     <style>
         /* ПОЛНОСТЬЮ ВСТРОЕННЫЕ СТИЛИ */
@@ -33,6 +33,7 @@
             max-width: 500px;
             width: 100%;
             padding: 40px 20px;
+            animation: fadeInUp 0.8s ease-out;
         }
         
         h1 {
@@ -73,6 +74,7 @@
         .btn:hover {
             transform: translateY(-3px);
             box-shadow: 0 12px 35px rgba(139, 92, 246, 0.6);
+            background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
         }
         
         .btn:active {
@@ -91,10 +93,6 @@
             }
         }
         
-        .container {
-            animation: fadeInUp 0.8s ease-out;
-        }
-        
         /* АДАПТИВНОСТЬ */
         @media (max-width: 768px) {
             h1 {
@@ -110,16 +108,6 @@
                 font-size: 1.1rem;
             }
         }
-        
-        @media (max-width: 480px) {
-            h1 {
-                font-size: 1.8rem;
-            }
-            
-            .container {
-                padding: 20px 15px;
-            }
-        }
     </style>
 </head>
 <body>
@@ -131,13 +119,20 @@
 
     <script>
         // ПРОСТАЯ ПРОВЕРКА КНОПКИ
-        document.getElementById('loginBtn').addEventListener('click', function(e) {
-            console.log('Кнопка нажата - переход на логин');
-            // Доверяем обычной навигации по ссылке
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Страница загружена');
+            
+            var btn = document.getElementById('loginBtn');
+            if (btn) {
+                console.log('Кнопка найдена');
+                btn.addEventListener('click', function(e) {
+                    console.log('Кнопка нажата! Переход на login.html');
+                    // Доверяем обычной навигации
+                });
+            } else {
+                console.error('Кнопка не найдена!');
+            }
         });
-        
-        // Проверка что страница загружена
-        console.log('Expense Manager loaded successfully');
     </script>
 </body>
 </html>
