@@ -4,27 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Expense Manager</title>
-    
-    <!-- ИСПРАВЛЕННЫЕ ПУТИ -->
-    <link rel="stylesheet" href="./css/style.css">
-    <link rel="stylesheet" href="./css/login.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 1rem;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
-    <div id="app">
-        <!-- Контент страницы входа -->
-        <div class="login-container">
-            <h1>Expense Manager</h1>
-            <form id="loginForm">
-                <input type="email" placeholder="Email" required>
-                <input type="password" placeholder="Пароль" required>
-                <button type="submit">Войти</button>
-            </form>
-        </div>
+    <div class="container">
+        <h1>💰 Expense Manager</h1>
+        <p>Система управления расходами ИП</p>
+        <button onclick="location.href='login.html'">Войти в систему</button>
     </div>
-
-    <!-- ПОДКЛЮЧЕНИЕ JS -->
-    <script src="./js/auth.js"></script>
-    <script src="./js/api.js"></script>
-    <script src="./js/login.js"></script>
 </body>
 </html>
