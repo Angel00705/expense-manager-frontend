@@ -5,11 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>📊 Дашборд - IP Expense Manager</title>
     <link rel="stylesheet" href="css/style.css">
-    <!-- 🎨 FAVICON -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><defs><linearGradient id='borderGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%238b5cf6'/><stop offset='50%' stop-color='%236d28d9'/><stop offset='100%' stop-color='%231e40af'/></linearGradient><linearGradient id='checkGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%23a78bfa'/><stop offset='100%' stop-color='%234f46e5'/></linearGradient><filter id='glow' x='-50%' y='-50%' width='200%' height='200%'><feGaussianBlur in='SourceGraphic' stdDeviation='1' result='blur'/><feMerge><feMergeNode in='blur'/><feMergeNode in='SourceGraphic'/></feMerge></filter></defs><circle cx='10' cy='10' r='9' fill='none' stroke='url(%23borderGrad)' stroke-width='1.5' opacity='0.9'/><path d='M6,10 L8.5,12.5 L14,7' stroke='url(%23checkGrad)' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round' filter='url(%23glow)'/></svg>">
 </head>
 <body>
-    <!-- Навигация -->
     <nav class="navbar">
         <div class="container">
             <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -29,13 +26,11 @@
     </nav>
 
     <main class="container" style="padding: 40px 20px;">
-        <!-- 🎪 ПРИВЕТСТВИЕ -->
         <div class="glass-card animate-bounce-in" style="padding: 30px; margin-bottom: 30px;">
             <h1 style="margin-bottom: 8px; color: var(--primary);">📊 Обзор системы</h1>
             <p style="color: var(--text-light); margin: 0;">Добро пожаловать в панель управления расходами ИП</p>
         </div>
 
-        <!-- 📈 СТАТИСТИКА -->
         <div class="row" style="margin-bottom: 30px;">
             <div class="col-3">
                 <div class="glass-card" style="padding: 24px; text-align: center;">
@@ -86,18 +81,17 @@
             </div>
         </div>
 
-        <!-- 🚀 БЫСТРЫЕ ДЕЙСТВИЯ -->
         <div class="glass-card" style="padding: 30px; margin-bottom: 30px;">
             <h2 style="margin-bottom: 20px; color: var(--primary);">🚀 Быстрые действия</h2>
             <div style="display: flex; gap: 16px; flex-wrap: wrap;">
-                <a href="create-task.html" class="btn btn-primary">➕ Создать задачу</a>
+                <a href="create-task.html" class="btn btn-primary" id="createTaskBtn">➕ Создать задачу</a>
                 <a href="tasks.html" class="btn btn-success">📋 Все задачи</a>
-                <a href="expense-items.html" class="btn btn-warning">🗂️ Статьи расходов</a>
+                <a href="analytics.html" class="btn btn-warning">📊 Аналитика</a>
+                <a href="expense-items.html" class="btn btn-outline">🗂️ Статьи расходов</a>
                 <a href="cards.html" class="btn btn-outline">💳 Управление картами</a>
             </div>
         </div>
 
-        <!-- 📊 ПОСЛЕДНИЕ ЗАДАЧИ -->
         <div class="glass-card" style="padding: 30px;">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
                 <h2 style="color: var(--primary); margin: 0;">📝 Последние задачи</h2>
@@ -106,20 +100,26 @@
             <div id="recentTasks">
                 <div style="text-align: center; color: var(--text-light); padding: 40px;">
                     <div style="font-size: 3rem; margin-bottom: 16px;">📋</div>
-                    <p>Задачи будут загружены здесь</p>
+                    <p>Загрузка задач...</p>
                 </div>
             </div>
         </div>
     </main>
 
-    <!-- Подключаем скрипты -->
     <script src="js/data.js"></script>
     <script src="js/utils.js"></script>
     <script>
-        // 🔧 ИНИЦИАЛИЗАЦИЯ ПРИ ЗАГРУЗКЕ СТРАНИЦЫ
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('📊 Дашборд загружается...');
+            
+            // Инициализируем авторизацию
+            Auth.init();
+            
             // Проверяем авторизацию
             if (!Auth.requireAuth()) return;
+            
+            // Настраиваем интерфейс по ролям
+            setupRoleBasedUI();
             
             // Обновляем информацию о пользователе
             updateUserInfo();
@@ -136,11 +136,16 @@
             }
         }
 
+        function setupRoleBasedUI() {
+            const createTaskBtn = document.getElementById('createTaskBtn');
+            if (createTaskBtn) {
+                createTaskBtn.style.display = Auth.isAdmin() ? 'block' : 'none';
+            }
+        }
+
         function loadDashboardData() {
-            // Получаем задачи из TaskManager
             const tasks = TaskManager.getUserTasks();
             
-            // Статистика по задачам
             const activeTasks = tasks.filter(task => task.status === 'pending' || task.status === 'in_progress').length;
             const completedToday = tasks.filter(task => {
                 if (task.status === 'completed') {
@@ -154,7 +159,6 @@
             document.getElementById('activeTasks').textContent = activeTasks;
             document.getElementById('completedToday').textContent = completedToday;
             
-            // Показываем последние 3 задачи
             const recentTasks = tasks.slice(0, 3);
             displayRecentTasks(recentTasks);
         }
@@ -167,7 +171,7 @@
                     <div style="text-align: center; color: var(--text-light); padding: 40px;">
                         <div style="font-size: 3rem; margin-bottom: 16px;">📋</div>
                         <p>Нет задач для отображения</p>
-                        <a href="create-task.html" class="btn btn-primary" style="margin-top: 16px;">➕ Создать первую задачу</a>
+                        ${Auth.isAdmin() ? '<a href="create-task.html" class="btn btn-primary" style="margin-top: 16px;">➕ Создать первую задачу</a>' : ''}
                     </div>
                 `;
                 return;

@@ -1,57 +1,30 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<!-- ПОДКЛЮЧАЕМ УТИЛИТЫ И ПРОВЕРЯЕМ АВТОРИЗАЦИЮ -->
-<script src="js/utils.js"></script>
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    // Проверяем авторизацию - если не авторизован, перенаправляем на главную
-    if (!Auth.requireAuth()) return;
-    
-    console.log('Пользователь авторизован:', Auth.currentUser);
-    
-    // Можно добавить логику для скрытия/показа элементов по ролям
-    if (Auth.isAdmin()) {
-      console.log('Режим администратора');
-      // Показываем элементы только для админов
-      const adminElements = document.querySelectorAll('.admin-only');
-      adminElements.forEach(el => el.style.display = 'block');
-    } else if (Auth.isManager()) {
-      console.log('Режим управляющего');
-      // Скрываем элементы для админов
-      const adminElements = document.querySelectorAll('.admin-only');
-      adminElements.forEach(el => el.style.display = 'none');
-    }
-  });
-</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Создание задачи - IP Expense Manager</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <!-- Навигация -->
-    <!-- Навигация -->
-<nav class="navbar">
-    <div class="container">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <a href="dashboard.html" class="navbar-brand">
-                🎯 IP Expense Manager
-            </a>
-            <div style="display: flex; align-items: center; gap: 20px;">
-                <span style="color: white; font-size: 14px;">
-                    👋 ${Auth.currentUser?.name} 
-                    <span style="opacity: 0.8;">(${Auth.currentUser?.role === 'admin' ? 'Бухгалтер' : 'Управляющий'})</span>
-                </span>
-                <button onclick="Auth.logout()" class="btn" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); font-size: 14px;">
-                    🚪 Выйти
-                </button>
+    <nav class="navbar">
+        <div class="container">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <a href="dashboard.html" class="navbar-brand">
+                    🎯 IP Expense Manager
+                </a>
+                <div style="display: flex; align-items: center; gap: 20px;">
+                    <span style="color: white; font-size: 14px;" id="userInfo">
+                        <!-- Заполнится через JavaScript -->
+                    </span>
+                    <button onclick="Auth.logout()" class="btn" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); font-size: 14px;">
+                        🚪 Выйти
+                    </button>
+                </div>
             </div>
         </div>
-    </div>
-</nav>
+    </nav>
 
-    <!-- Основной контент -->
     <div class="container" style="padding: 40px 20px;">
         <div class="glass-card" style="max-width: 800px; margin: 0 auto; padding: 40px;">
             <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 32px;">
@@ -60,7 +33,6 @@
             </div>
 
             <form id="createTaskForm">
-                <!-- Основная информация -->
                 <div class="glass-card" style="padding: 24px; margin-bottom: 24px;">
                     <h3 style="margin-bottom: 20px; color: var(--primary);">📝 Основная информация</h3>
                     
@@ -78,7 +50,6 @@
                     </div>
                 </div>
 
-                <!-- Цепочка выбора: Регион → ИП → Карта -->
                 <div class="glass-card" style="padding: 24px; margin-bottom: 24px;">
                     <h3 style="margin-bottom: 20px; color: var(--primary);">🏢 Выбор объекта</h3>
                     
@@ -88,7 +59,6 @@
                                 <label class="form-label">📍 Регион *</label>
                                 <select class="form-control form-select" id="regionSelect" required>
                                     <option value="">Выберите регион</option>
-                                    <!-- Регионы будут заполнены через JavaScript -->
                                 </select>
                             </div>
                         </div>
@@ -114,7 +84,6 @@
                     </div>
                 </div>
 
-                <!-- Статья расходов и ответственный -->
                 <div class="glass-card" style="padding: 24px; margin-bottom: 24px;">
                     <h3 style="margin-bottom: 20px; color: var(--primary);">💰 Финансовая информация</h3>
                     
@@ -124,7 +93,6 @@
                                 <label class="form-label">📊 Статья расходов *</label>
                                 <select class="form-control form-select" id="expenseSelect" required>
                                     <option value="">Выберите статью расходов</option>
-                                    <!-- Статьи расходов будут заполнены через JavaScript -->
                                 </select>
                             </div>
                         </div>
@@ -156,7 +124,6 @@
                     </div>
                 </div>
 
-                <!-- Дополнительная информация -->
                 <div class="glass-card" style="padding: 24px; margin-bottom: 32px;">
                     <h3 style="margin-bottom: 20px; color: var(--primary);">📎 Дополнительно</h3>
                     
@@ -177,7 +144,6 @@
                     </div>
                 </div>
 
-                <!-- Кнопки действий -->
                 <div style="display: flex; gap: 16px; justify-content: flex-end;">
                     <button type="button" onclick="window.history.back()" class="btn btn-outline">
                         ❌ Отмена
@@ -190,12 +156,15 @@
         </div>
     </div>
 
-    <!-- Подключаем скрипты -->
     <script src="js/data.js"></script>
     <script src="js/utils.js"></script>
     <script>
-        // 🔧 ИНИЦИАЛИЗАЦИЯ ФОРМЫ ПРИ ЗАГРУЗКЕ СТРАНИЦЫ
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('📝 Страница создания задачи загружается...');
+            
+            // Инициализируем авторизацию
+            Auth.init();
+            
             // Проверяем авторизацию
             if (!Auth.requireAuth()) return;
             
@@ -208,11 +177,21 @@
                 return;
             }
             
+            // Обновляем информацию о пользователе
+            updateUserInfo();
+            
             initCreateTaskForm();
             setupFormValidation();
         });
 
-        // 🎯 ИНИЦИАЛИЗАЦИЯ ФОРМЫ СОЗДАНИЯ ЗАДАЧИ
+        function updateUserInfo() {
+            const userInfo = document.getElementById('userInfo');
+            if (userInfo && Auth.currentUser) {
+                userInfo.innerHTML = `👋 ${Auth.currentUser.name} 
+                    <span style="opacity: 0.8;">(${Auth.currentUser.role === 'admin' ? 'Бухгалтер' : 'Управляющий'})</span>`;
+            }
+        }
+
         function initCreateTaskForm() {
             // Заполняем регионы
             const regionSelect = document.getElementById('regionSelect');
@@ -241,7 +220,6 @@
             setupEventListeners();
         }
 
-        // 🎧 НАСТРОЙКА ОБРАБОТЧИКОВ СОБЫТИЙ
         function setupEventListeners() {
             // Изменение региона
             document.getElementById('regionSelect').addEventListener('change', function() {
@@ -262,7 +240,6 @@
             document.getElementById('createTaskForm').addEventListener('submit', handleFormSubmit);
         }
 
-        // 🔄 ОБНОВЛЕНИЕ СПИСКА ИП ПО РЕГИОНУ
         function updateIPsByRegion(region) {
             const ipSelect = document.getElementById('ipSelect');
             const cardSelect = document.getElementById('cardSelect');
@@ -290,7 +267,6 @@
             ipSelect.disabled = false;
         }
 
-        // 🔄 ОБНОВЛЕНИЕ СПИСКА КАРТ ПО ИП
         function updateCardsByIP(ip) {
             const cardSelect = document.getElementById('cardSelect');
             const cardStatus = document.getElementById('cardStatus');
@@ -348,7 +324,6 @@
             cardSelect.disabled = false;
         }
 
-        // 🔄 ОБНОВЛЕНИЕ ОТВЕТСТВЕННОГО ПО СТАТЬЕ РАСХОДОВ
         function updateResponsibleManager(expenseItem) {
             const responsibleInput = document.getElementById('responsibleManager');
             
@@ -361,7 +336,6 @@
             responsibleInput.value = manager;
         }
 
-        // ✅ НАСТРОЙКА ВАЛИДАЦИИ ФОРМЫ
         function setupFormValidation() {
             const form = document.getElementById('createTaskForm');
             
@@ -412,7 +386,6 @@
             });
         }
 
-        // 🚀 ОБРАБОТКА СОЗДАНИЯ ЗАДАЧИ
         function handleCreateTask(taskData) {
             try {
                 const newTask = TaskManager.createTask(taskData);

@@ -1,26 +1,33 @@
-// js/utils.js - УТИЛИТЫ И ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
+// js/utils.js - ИСПРАВЛЕННАЯ СИСТЕМА АВТОРИЗАЦИИ
 
-// 🔐 СИСТЕМА АВТОРИЗАЦИИ
-// 🔐 СИСТЕМА АВТОРИЗАЦИИ (ОБНОВЛЕННАЯ)
 const Auth = {
   currentUser: null,
   
   init: function() {
-    // Проверяем, есть ли сохраненный пользователь
+    // Более строгая проверка сохраненного пользователя
     const savedUser = localStorage.getItem('currentUser');
     if (savedUser) {
       try {
-        this.currentUser = JSON.parse(savedUser);
-        console.log('Авторизованный пользователь:', this.currentUser);
+        const user = JSON.parse(savedUser);
+        // Проверяем, что данные пользователя валидны
+        if (user && user.email && user.name && user.role) {
+          this.currentUser = user;
+          console.log('✅ Авторизованный пользователь загружен:', this.currentUser);
+        } else {
+          console.warn('⚠️ Невалидные данные пользователя, очищаем...');
+          localStorage.removeItem('currentUser');
+        }
       } catch (e) {
-        console.error('Ошибка при загрузке пользователя:', e);
+        console.error('❌ Ошибка при загрузке пользователя:', e);
         localStorage.removeItem('currentUser');
       }
+    } else {
+      console.log('🔐 Пользователь не авторизован');
     }
   },
   
   login: function(email, password) {
-    // Тестовые пользователи
+    // Тестовые пользователи (обновленные)
     const users = {
       'admin@test.ru': { 
         email: 'admin@test.ru', 
@@ -48,10 +55,33 @@ const Auth = {
         role: 'manager',
         region: 'Курган',
         password: 'manager123'
+      },
+      'kalmykia@test.ru': { 
+        email: 'kalmykia@test.ru', 
+        name: 'Управляющий Калмыкия', 
+        role: 'manager',
+        region: 'Калмыкия',
+        password: 'manager123'
+      },
+      'mordovia@test.ru': { 
+        email: 'mordovia@test.ru', 
+        name: 'Управляющий Мордовия', 
+        role: 'manager',
+        region: 'Мордовия',
+        password: 'manager123'
+      },
+      'udmurtia@test.ru': { 
+        email: 'udmurtia@test.ru', 
+        name: 'Управляющий Удмуртия', 
+        role: 'manager',
+        region: 'Удмуртия',
+        password: 'manager123'
       }
     };
     
     const user = users[email];
+    
+    // Детальная проверка авторизации
     if (user && user.password === password) {
       this.currentUser = {
         email: user.email,
@@ -62,18 +92,21 @@ const Auth = {
       
       // Сохраняем в localStorage
       localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
-      console.log('Успешный вход:', this.currentUser);
+      console.log('✅ Успешный вход:', this.currentUser);
       
       return { success: true, user: this.currentUser };
     }
     
+    console.log('❌ Неудачная попытка входа:', email);
     return { success: false, error: 'Неверный email или пароль' };
   },
   
   logout: function() {
+    console.log('🚪 Выход пользователя:', this.currentUser?.email);
     this.currentUser = null;
     localStorage.removeItem('currentUser');
-    window.location.href = 'login.html';
+    localStorage.removeItem('tasks'); // Очищаем и задачи для чистоты
+    window.location.href = 'index.html';
   },
   
   isAdmin: function() {
@@ -84,17 +117,33 @@ const Auth = {
     return this.currentUser && this.currentUser.role === 'manager';
   },
   
-  requireAuth: function(redirectTo = 'index.html') {  // Изменили с login.html на index.html
-  if (!this.currentUser) {
-    window.location.href = redirectTo;
-    return false;
-  }
-  return true;
+  requireAuth: function(redirectTo = 'index.html') {
+    console.log('🔐 Проверка авторизации...');
+    console.log('Текущий пользователь:', this.currentUser);
+    
+    if (!this.currentUser) {
+      console.log('❌ Пользователь не авторизован, перенаправляем на:', redirectTo);
+      // Добавляем небольшую задержку для отладки
+      setTimeout(() => {
+        window.location.href = redirectTo;
+      }, 100);
+      return false;
+    }
+    
+    console.log('✅ Пользователь авторизован:', this.currentUser.email);
+    return true;
   },
   
   // Получить текущего пользователя
   getCurrentUser: function() {
     return this.currentUser;
+  },
+  
+  // Очистка всех данных (для отладки)
+  clearAll: function() {
+    this.currentUser = null;
+    localStorage.clear();
+    console.log('🧹 Все данные очищены');
   }
 };
 

@@ -5,11 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>📋 Задачи - IP Expense Manager</title>
     <link rel="stylesheet" href="css/style.css">
-    <!-- 🎨 FAVICON -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><defs><linearGradient id='borderGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%238b5cf6'/><stop offset='50%' stop-color='%236d28d9'/><stop offset='100%' stop-color='%231e40af'/></linearGradient><linearGradient id='checkGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%23a78bfa'/><stop offset='100%' stop-color='%234f46e5'/></linearGradient><filter id='glow' x='-50%' y='-50%' width='200%' height='200%'><feGaussianBlur in='SourceGraphic' stdDeviation='1' result='blur'/><feMerge><feMergeNode in='blur'/><feMergeNode in='SourceGraphic'/></feMerge></filter></defs><circle cx='10' cy='10' r='9' fill='none' stroke='url(%23borderGrad)' stroke-width='1.5' opacity='0.9'/><path d='M6,10 L8.5,12.5 L14,7' stroke='url(%23checkGrad)' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round' filter='url(%23glow)'/></svg>">
 </head>
 <body>
-    <!-- Навигация -->
     <nav class="navbar">
         <div class="container">
             <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -29,7 +26,6 @@
     </nav>
 
     <main class="container" style="padding: 40px 20px;">
-        <!-- 🎪 ЗАГОЛОВОК И ФИЛЬТРЫ -->
         <div class="glass-card" style="padding: 30px; margin-bottom: 30px;">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
                 <div>
@@ -41,7 +37,6 @@
                 </div>
             </div>
 
-            <!-- 🔍 ФИЛЬТРЫ -->
             <div class="row">
                 <div class="col-4">
                     <div class="form-group">
@@ -60,9 +55,6 @@
                         <label class="form-label">📍 Регион</label>
                         <select class="form-control form-select" id="regionFilter" onchange="filterTasks()">
                             <option value="">Все регионы</option>
-                            ${appData.regions.map(region => 
-                                `<option value="${region}">${region}</option>`
-                            ).join('')}
                         </select>
                     </div>
                 </div>
@@ -75,27 +67,27 @@
             </div>
         </div>
 
-        <!-- 📊 СПИСОК ЗАДАЧ -->
         <div class="glass-card animate-fade-in" style="padding: 30px;">
             <div id="tasksList">
                 <div style="text-align: center; color: var(--text-light); padding: 60px;">
                     <div style="font-size: 4rem; margin-bottom: 16px;">📋</div>
-                    <h3 style="margin-bottom: 8px;">Задачи не найдены</h3>
-                    <p>Создайте первую задачу или измените параметры фильтрации</p>
-                    <a href="create-task.html" class="btn btn-primary" style="margin-top: 16px;">➕ Создать первую задачу</a>
+                    <p>Загрузка задач...</p>
                 </div>
             </div>
         </div>
     </main>
 
-    <!-- Подключаем скрипты -->
     <script src="js/data.js"></script>
     <script src="js/utils.js"></script>
     <script>
         let allTasks = [];
 
-        // 🔧 ИНИЦИАЛИЗАЦИЯ ПРИ ЗАГРУЗКЕ СТРАНИЦЫ
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('📋 Страница задач загружается...');
+            
+            // Инициализируем авторизацию
+            Auth.init();
+            
             // Проверяем авторизацию
             if (!Auth.requireAuth()) return;
             
@@ -104,6 +96,9 @@
             
             // Настраиваем интерфейс по ролям
             setupRoleBasedUI();
+            
+            // Заполняем фильтр регионов
+            populateRegionFilter();
             
             // Загружаем задачи
             loadTasks();
@@ -124,11 +119,19 @@
             }
         }
 
+        function populateRegionFilter() {
+            const regionFilter = document.getElementById('regionFilter');
+            appData.regions.forEach(region => {
+                const option = document.createElement('option');
+                option.value = region;
+                option.textContent = region;
+                regionFilter.appendChild(option);
+            });
+        }
+
         function loadTasks() {
-            // Используем реальные задачи из TaskManager
             allTasks = TaskManager.getUserTasks();
             
-            // Если нет задач, используем демо данные
             if (allTasks.length === 0) {
                 allTasks = [
                     {
@@ -255,8 +258,6 @@
             const task = allTasks.find(t => t.id === taskId);
             if (task) {
                 Notification.info(`✏️ Редактирование задачи: ${task.title}`);
-                // Здесь будет открытие формы редактирования
-                // Пока просто перенаправляем на страницу создания с параметром редактирования
                 window.location.href = `create-task.html?edit=${taskId}`;
             }
         }

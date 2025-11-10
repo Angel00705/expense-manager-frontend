@@ -5,11 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🗂️ Статьи расходов - IP Expense Manager</title>
     <link rel="stylesheet" href="css/style.css">
-    <!-- 🎨 FAVICON -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><defs><linearGradient id='borderGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%238b5cf6'/><stop offset='50%' stop-color='%236d28d9'/><stop offset='100%' stop-color='%231e40af'/></linearGradient><linearGradient id='checkGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%23a78bfa'/><stop offset='100%' stop-color='%234f46e5'/></linearGradient><filter id='glow' x='-50%' y='-50%' width='200%' height='200%'><feGaussianBlur in='SourceGraphic' stdDeviation='1' result='blur'/><feMerge><feMergeNode in='blur'/><feMergeNode in='SourceGraphic'/></feMerge></filter></defs><circle cx='10' cy='10' r='9' fill='none' stroke='url(%23borderGrad)' stroke-width='1.5' opacity='0.9'/><path d='M6,10 L8.5,12.5 L14,7' stroke='url(%23checkGrad)' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round' filter='url(%23glow)'/></svg>">
 </head>
 <body>
-    <!-- Навигация -->
     <nav class="navbar">
         <div class="container">
             <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -38,7 +35,6 @@
                 <button class="btn btn-primary" id="addButton" style="display: none;">➕ Добавить статью</button>
             </div>
 
-            <!-- 📊 ТАБЛИЦА СТАТЕЙ РАСХОДОВ -->
             <div style="overflow-x: auto;">
                 <table style="width: 100%; border-collapse: collapse;">
                     <thead>
@@ -56,7 +52,6 @@
             </div>
         </div>
 
-        <!-- ✨ ФОРМА ДОБАВЛЕНИЯ/РЕДАКТИРОВАНИЯ (только для админов) -->
         <div class="glass-card animate-fade-in" id="expenseForm" style="padding: 30px; margin-top: 30px; display: none;">
             <h3 style="margin-bottom: 20px; color: var(--primary);" id="formTitle">➕ Добавить новую статью расходов</h3>
             
@@ -98,14 +93,17 @@
         </div>
     </main>
 
-    <!-- Подключаем скрипты -->
     <script src="js/data.js"></script>
     <script src="js/utils.js"></script>
     <script>
         let editingItemId = null;
 
-        // 🔧 ИНИЦИАЛИЗАЦИЯ ПРИ ЗАГРУЗКЕ СТРАНИЦЫ
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('🗂️ Страница статей расходов загружается...');
+            
+            // Инициализируем авторизацию
+            Auth.init();
+            
             // Проверяем авторизацию
             if (!Auth.requireAuth()) return;
             

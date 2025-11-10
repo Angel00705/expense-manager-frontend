@@ -6,11 +6,9 @@
     <title>📊 Аналитика - IP Expense Manager</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/analytics.css">
-    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <!-- Навигация -->
     <nav class="navbar">
         <div class="container">
             <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -30,7 +28,6 @@
     </nav>
 
     <main class="container" style="padding: 40px 20px;">
-        <!-- 🎪 ЗАГОЛОВОК И ДЕЙСТВИЯ -->
         <div class="glass-card" style="padding: 30px; margin-bottom: 30px;">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 16px;">
                 <div>
@@ -53,7 +50,6 @@
                 </div>
             </div>
 
-            <!-- 📈 КЛЮЧЕВЫЕ МЕТРИКИ -->
             <div class="metrics-grid">
                 <div class="metric-card">
                     <div class="metric-value" id="kpiTotalTasks">0</div>
@@ -74,9 +70,7 @@
             </div>
         </div>
 
-        <!-- 📊 СЕТКА ГРАФИКОВ -->
         <div class="analytics-grid">
-            <!-- 📈 РАСХОДЫ ПО РЕГИОНАМ -->
             <div class="chart-card analytics-card">
                 <div class="chart-header">
                     <h3 class="chart-title">💰 Расходы по регионам</h3>
@@ -86,7 +80,6 @@
                 </div>
             </div>
 
-            <!-- 👥 ЭФФЕКТИВНОСТЬ УПРАВЛЯЮЩИХ -->
             <div class="chart-card analytics-card">
                 <div class="chart-header">
                     <h3 class="chart-title">👥 Эффективность управляющих</h3>
@@ -96,7 +89,6 @@
                 </div>
             </div>
 
-            <!-- 🎯 СТАТУСЫ ЗАДАЧ -->
             <div class="chart-card analytics-card">
                 <div class="chart-header">
                     <h3 class="chart-title">🎯 Статусы задач</h3>
@@ -106,7 +98,6 @@
                 </div>
             </div>
 
-            <!-- 📊 РАСПРЕДЕЛЕНИЕ РАСХОДОВ -->
             <div class="chart-card analytics-card">
                 <div class="chart-header">
                     <h3 class="chart-title">📊 Распределение расходов</h3>
@@ -116,7 +107,6 @@
                 </div>
             </div>
 
-            <!-- 💰 ПЛАН VS ФАКТ -->
             <div class="chart-card analytics-card-wide">
                 <div class="chart-header">
                     <h3 class="chart-title">💳 План vs Факт (ежемесячно)</h3>
@@ -126,7 +116,6 @@
                 </div>
             </div>
 
-            <!-- 📈 ТРЕНДЫ ПО МЕСЯЦАМ -->
             <div class="chart-card analytics-card-wide">
                 <div class="chart-header">
                     <h3 class="chart-title">📈 Тренды по месяцам</h3>
@@ -137,7 +126,6 @@
             </div>
         </div>
 
-        <!-- 👥 ТАБЛИЦА ЭФФЕКТИВНОСТИ УПРАВЛЯЮЩИХ -->
         <div class="chart-card">
             <div class="chart-header">
                 <h3 class="chart-title">📊 Детальная эффективность управляющих</h3>
@@ -162,13 +150,16 @@
         </div>
     </main>
 
-    <!-- Подключаем скрипты -->
     <script src="js/data.js"></script>
     <script src="js/utils.js"></script>
     <script src="js/analytics.js"></script>
     <script>
-        // 🔧 ИНИЦИАЛИЗАЦИЯ ПРИ ЗАГРУЗКЕ СТРАНИЦЫ
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('📊 Страница аналитики загружается...');
+            
+            // Инициализируем авторизацию
+            Auth.init();
+            
             // Проверяем авторизацию
             if (!Auth.requireAuth()) return;
             

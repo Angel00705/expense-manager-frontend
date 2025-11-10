@@ -6,7 +6,6 @@
     <title>IP Expense Manager - Управление расходами ИП</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
-        /* Специфичные стили для главной страницы */
         .hero {
             background: var(--gradient-primary);
             color: white;
@@ -106,7 +105,6 @@
             color: white;
         }
 
-        /* Адаптивность */
         @media (max-width: 768px) {
             .hero h1 {
                 font-size: 2rem;
@@ -124,7 +122,6 @@
     </style>
 </head>
 <body>
-    <!-- Навигация - ТОЛЬКО БРЕНД -->
     <nav class="navbar">
         <div class="container">
             <div style="display: flex; justify-content: center; align-items: center;">
@@ -135,7 +132,6 @@
         </div>
     </nav>
 
-    <!-- Герой секция -->
     <section class="hero">
         <div class="container">
             <h1>🎯 Управление расходами для ИП</h1>
@@ -143,7 +139,6 @@
         </div>
     </section>
 
-    <!-- ФОРМА АВТОРИЗАЦИИ -->
     <section class="container">
         <div class="login-section">
             <div style="text-align: center; margin-bottom: 30px;">
@@ -169,7 +164,6 @@
                 </button>
             </form>
 
-            <!-- Тестовые аккаунты -->
             <div class="test-accounts">
                 <h4 style="margin-bottom: 15px; text-align: center; color: var(--text-dark);">🧪 Быстрый вход</h4>
                 
@@ -192,7 +186,6 @@
         </div>
     </section>
 
-    <!-- Статистика -->
     <section class="stats">
         <div class="container">
             <div class="row">
@@ -224,7 +217,6 @@
         </div>
     </section>
 
-    <!-- Возможности -->
     <section class="features">
         <div class="container">
             <h2 style="text-align: center; margin-bottom: 50px; color: var(--text-dark);">
@@ -259,7 +251,6 @@
         </div>
     </section>
 
-    <!-- Регионы -->
     <section class="regions">
         <div class="container">
             <h2 style="text-align: center; margin-bottom: 40px;">🏢 Поддерживаемые регионы</h2>
@@ -308,23 +299,29 @@
         </div>
     </section>
 
-    <!-- Футер -->
     <footer style="background: var(--text-dark); color: white; padding: 30px 0; text-align: center;">
         <div class="container">
             <p>🎯 IP Expense Manager - Система управления расходами для индивидуальных предпринимателей</p>
         </div>
     </footer>
 
-    <!-- Подключаем утилиты -->
     <script src="js/utils.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('IP Expense Manager - Объединенная главная страница загружена');
+            console.log('🏠 Главная страница загружена');
+            
+            // Инициализируем авторизацию
+            Auth.init();
             
             // Проверяем, если пользователь уже авторизован - перенаправляем на дашборд
             if (Auth.currentUser) {
-                window.location.href = 'dashboard.html';
+                console.log('🔄 Пользователь уже авторизован, перенаправляем на дашборд...');
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 500);
                 return;
+            } else {
+                console.log('👋 Пользователь не авторизован, показываем форму входа');
             }
 
             // Обработка формы входа
@@ -333,6 +330,8 @@
                 
                 const email = document.getElementById('email').value;
                 const password = document.getElementById('password').value;
+                
+                console.log('📧 Попытка входа:', email);
                 
                 if (!email || !password) {
                     Notification.error('Пожалуйста, заполните все поля');
@@ -350,6 +349,7 @@
                 
                 if (result.success) {
                     Notification.success(`Добро пожаловать, ${result.user.name}!`);
+                    console.log('✅ Вход успешен, перенаправляем...');
                     
                     // Перенаправляем на дашборд
                     setTimeout(() => {
@@ -357,18 +357,14 @@
                     }, 1000);
                 } else {
                     Notification.error(result.error);
+                    console.log('❌ Ошибка входа:', result.error);
                     // Восстанавливаем кнопку
                     submitBtn.innerHTML = originalText;
                     submitBtn.disabled = false;
                 }
             });
 
-            // Добавляем анимации для карточек
-            const observerOptions = {
-                threshold: 0.1,
-                rootMargin: '0px 0px -50px 0px'
-            };
-            
+            // Анимации для карточек
             const observer = new IntersectionObserver(function(entries) {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
@@ -376,9 +372,8 @@
                         entry.target.style.transform = 'translateY(0)';
                     }
                 });
-            }, observerOptions);
+            }, { threshold: 0.1 });
             
-            // Анимируем карточки возможностей
             document.querySelectorAll('.feature-card').forEach(card => {
                 card.style.opacity = '0';
                 card.style.transform = 'translateY(20px)';
@@ -387,18 +382,10 @@
             });
         });
 
-        // Функция для заполнения тестовых учетных данных
         function fillCredentials(email, password) {
             document.getElementById('email').value = email;
             document.getElementById('password').value = password;
-            
-            // Показываем что данные заполнены
             Notification.info('Данные заполнены! Нажмите "Войти в систему"');
-            
-            // Можно раскомментировать для автоматического входа:
-            // setTimeout(() => {
-            //     document.getElementById('loginForm').dispatchEvent(new Event('submit'));
-            // }, 500);
         }
     </script>
 </body>
