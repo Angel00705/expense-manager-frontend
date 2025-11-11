@@ -1,13 +1,13 @@
 /* ===== DASHBOARD STYLES ===== */
 .dashboard-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 1.5rem;
     margin-bottom: 2rem;
 }
 
 .stat-card {
-    background: var(--bg-card);
+    background: rgba(30, 41, 59, 0.7); /* Светлее чем было */
     backdrop-filter: blur(25px) saturate(180%);
     border: 1px solid var(--border-light);
     border-radius: var(--radius-xl);
@@ -31,6 +31,7 @@
 .stat-card:hover {
     transform: translateY(-5px);
     box-shadow: var(--shadow-glow);
+    background: rgba(30, 41, 59, 0.8);
 }
 
 .stat-value {
@@ -51,7 +52,7 @@
 .stat-icon {
     font-size: 2rem;
     margin-bottom: 1rem;
-    opacity: 0.8;
+    opacity: 0.9;
 }
 
 /* Sections */
@@ -61,7 +62,7 @@
 
 .section-header {
     display: flex;
-    justify-content: between;
+    justify-content: space-between;
     align-items: center;
     margin-bottom: 1.5rem;
 }
@@ -80,10 +81,10 @@
 }
 
 .task-item {
-    background: var(--bg-glass);
+    background: rgba(30, 41, 59, 0.6);
     border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 1.25rem;
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
     transition: all 0.3s ease;
     display: flex;
     justify-content: space-between;
@@ -92,7 +93,7 @@
 
 .task-item:hover {
     border-color: var(--border-light);
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(30, 41, 59, 0.8);
     transform: translateX(5px);
 }
 
@@ -100,30 +101,40 @@
     color: var(--text-primary);
     margin-bottom: 0.5rem;
     font-weight: 600;
+    font-size: 1.1rem;
 }
 
 .task-meta {
     display: flex;
-    gap: 1rem;
+    gap: 1.5rem;
     color: var(--text-muted);
     font-size: 0.9rem;
 }
 
+.task-meta span {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
 .task-status {
-    padding: 0.25rem 0.75rem;
+    padding: 0.5rem 1rem;
     border-radius: 20px;
     font-size: 0.8rem;
     font-weight: 600;
+    border: 1px solid;
 }
 
 .status-pending {
-    background: rgba(245, 158, 11, 0.2);
+    background: rgba(245, 158, 11, 0.15);
     color: #f59e0b;
+    border-color: rgba(245, 158, 11, 0.3);
 }
 
 .status-completed {
-    background: rgba(16, 185, 129, 0.2);
+    background: rgba(16, 185, 129, 0.15);
     color: #10b981;
+    border-color: rgba(16, 185, 129, 0.3);
 }
 
 /* Quick Actions */
@@ -134,9 +145,9 @@
 }
 
 .action-btn {
-    background: var(--bg-glass);
+    background: rgba(30, 41, 59, 0.6);
     border: 1px solid var(--border);
-    border-radius: var(--radius);
+    border-radius: var(--radius-lg);
     padding: 1.5rem;
     text-align: center;
     text-decoration: none;
@@ -149,7 +160,7 @@
 }
 
 .action-btn:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(30, 41, 59, 0.8);
     border-color: var(--primary);
     transform: translateY(-3px);
     box-shadow: var(--shadow-glow);
@@ -157,11 +168,26 @@
 
 .action-icon {
     font-size: 2rem;
-    opacity: 0.8;
+    opacity: 0.9;
 }
 
 .action-text {
     font-weight: 600;
+    font-size: 1rem;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: var(--text-muted);
+}
+
+.empty-state .action-btn {
+    margin-top: 1rem;
+    display: inline-flex;
+    flex-direction: row;
+    padding: 1rem 1.5rem;
 }
 
 /* Responsive */
@@ -191,5 +217,12 @@
     
     .task-meta {
         flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+    
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
     }
 }

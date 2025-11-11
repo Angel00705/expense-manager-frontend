@@ -103,6 +103,7 @@
     </div>
 
     <!-- Скрипт авторизации -->
+        <!-- Скрипт авторизации -->
     <script>
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -156,9 +157,7 @@
                 console.log('Успешный вход, перенаправление...');
                 
                 // Перенаправляем на дашборд
-                setTimeout(() => {
-                    window.location.href = 'dashboard.html';
-                }, 100);
+                window.location.href = 'dashboard.html';
             } else {
                 alert('❌ Ошибка: Неверный логин или пароль. Используйте данные из таблицы "Тестовые доступы"');
             }
@@ -167,12 +166,6 @@
         // Фокус на поле логина при загрузке страницы
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('username').focus();
-            
-            // Проверяем, не авторизован ли пользователь
-            const isLoggedIn = localStorage.getItem('isLoggedIn');
-            if (isLoggedIn === 'true') {
-                window.location.href = 'dashboard.html';
-            }
         });
     </script>
 </body>
