@@ -3,111 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IP Expense Manager</title>
+    <title>IP Expense Manager - Вход</title>
     <link rel="stylesheet" href="css/style.css">
+    <!-- Фавикон -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><defs><linearGradient id='borderGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%238b5cf6'/><stop offset='50%' stop-color='%236d28d9'/><stop offset='100%' stop-color='%231e40af'/></linearGradient><linearGradient id='checkGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%23a78bfa'/><stop offset='100%' stop-color='%234f46e5'/></linearGradient><filter id='glow' x='-50%' y='-50%' width='200%' height='200%'><feGaussianBlur in='SourceGraphic' stdDeviation='1' result='blur'/><feMerge><feMergeNode in='blur'/><feMergeNode in='SourceGraphic'/></feMerge></filter></defs><circle cx='10' cy='10' r='9' fill='none' stroke='url(%23borderGrad)' stroke-width='1.5' opacity='0.9'/><path d='M6,10 L8.5,12.5 L14,7' stroke='url(%23checkGrad)' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round' filter='url(%23glow)'/></svg>">
 </head>
 <body>
-    <div class="login-container">
-        <div class="login-card animate-bounce-in">
-            <h1 class="login-title">🎯 IP Expense Manager</h1>
-            <p class="login-subtitle">Система управления расходами ИП</p>
+    <div class="container" style="min-height: 100vh; display: flex; align-items: center; justify-content: center;">
+        <div class="glass-card p-8" style="max-width: 400px; width: 100%;">
+            <div class="text-center mb-6">
+                <h1 style="font-size: 2rem; margin-bottom: var(--spacing-xs);">💼</h1>
+                <h1 style="font-size: 1.5rem; margin-bottom: var(--spacing-xs);">IP Expense Manager</h1>
+                <p class="text-muted">Войдите в систему управления расходами</p>
+            </div>
             
             <form id="loginForm">
                 <div class="form-group">
-                    <input type="email" class="form-control" id="email" placeholder="📧 Email" required>
+                    <label class="form-label" for="username">Логин</label>
+                    <input type="text" class="form-control" id="username" required>
                 </div>
+                
                 <div class="form-group">
-                    <input type="password" class="form-control" id="password" placeholder="🔒 Пароль" required>
+                    <label class="form-label" for="password">Пароль</label>
+                    <input type="password" class="form-control" id="password" required>
                 </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="account">Выберите аккаунт</label>
+                    <select class="form-control" id="account" required>
+                        <option value="">-- Выберите аккаунт --</option>
+                        <option value="admin">Администратор</option>
+                        <option value="manager1">Менеджер 1</option>
+                        <option value="manager2">Менеджер 2</option>
+                    </select>
+                </div>
+                
                 <button type="submit" class="btn btn-primary" style="width: 100%;">
-                    🚀 Войти в систему
+                    Войти в систему
                 </button>
             </form>
-            
-            <div class="quick-access">
-    <p style="color: var(--text-light); margin-bottom: 16px; font-size: 0.9rem;">Быстрый доступ для тестирования:</p>
-    <button type="button" class="btn btn-outline" style="width: 100%; margin-bottom: 8px;" 
-            onclick="fillCredentials('admin@test.ru', 'admin123')">
-        👨‍💼 Администратор
-    </button>
-    <button type="button" class="btn btn-outline" style="width: 100%; margin-bottom: 8px;" 
-            onclick="fillCredentials('astrakhan@test.ru', 'manager123')">
-        👩‍💼 Менеджер Астрахань
-    </button>
-    <button type="button" class="btn btn-outline" style="width: 100%;" 
-            onclick="fillCredentials('buryatia@test.ru', 'manager123')">
-        👩‍💼 Менеджер Бурятия
-    </button>
-</div>
         </div>
     </div>
 
     <script src="js/utils.js"></script>
     <script src="js/data.js"></script>
-    
     <script>
-        // Функция для быстрого заполнения credentials
-        function fillCredentials(email, password) {
-            console.log('🔐 Заполняем данные для:', email);
-            document.getElementById('email').value = email;
-            document.getElementById('password').value = password;
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
             
-            // Автоматически отправляем форму
-            setTimeout(() => {
-                document.getElementById('loginForm').dispatchEvent(new Event('submit'));
-            }, 100);
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('🏠 Главная страница загружена');
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const account = document.getElementById('account').value;
             
-            // Инициализируем авторизацию
-            Auth.init();
-            
-            // Проверяем авторизацию
-            console.log('🔍 Проверка авторизации...');
-            console.log('Текущий пользователь:', Auth.currentUser);
-            
-                      
-            // Обработка формы входа
-            document.getElementById('loginForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const email = document.getElementById('email').value;
-                const password = document.getElementById('password').value;
-                
-                console.log('📧 Попытка входа:', email);
-                
-                if (!email || !password) {
-                    if (typeof Notification !== 'undefined') {
-                        Notification.error('Пожалуйста, заполните все поля');
-                    } else {
-                        alert('❌ Пожалуйста, заполните все поля');
-                    }
-                    return;
-                }
-                
-                const result = Auth.login(email, password);
-                
-                if (result.success) {
-                    if (typeof Notification !== 'undefined') {
-                        Notification.success('Добро пожаловать, ' + result.user.name + '!');
-                    } else {
-                        alert('✅ Добро пожаловать, ' + result.user.name + '!');
-                    }
-                    setTimeout(() => {
-                        window.location.href = 'dashboard.html';
-                    }, 1000);
-                } else {
-                    if (typeof Notification !== 'undefined') {
-                        Notification.error(result.error);
-                    } else {
-                        alert('❌ ' + result.error);
-                    }
-                }
-            });
+            if (auth.login(username, password, account)) {
+                window.location.href = 'dashboard.html';
+            } else {
+                alert('Неверные учетные данные!');
+            }
         });
+
+        // Автозаполнение для тестирования
+        document.getElementById('username').value = 'admin';
+        document.getElementById('password').value = 'admin';
+        document.getElementById('account').value = 'admin';
     </script>
 </body>
 </html>
