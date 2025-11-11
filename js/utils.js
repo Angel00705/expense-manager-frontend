@@ -100,25 +100,103 @@ const Auth = {
 
 // Уведомления
 const Notification = {
-  show: function(message, type = 'info') {
-    console.log(`🔔 ${type}: ${message}`);
-    // Временное решение - alert
-    if (typeof alert !== 'undefined') {
-      alert(message);
+    show: function(message, type = 'info', autoClose = true) {
+        console.log(`🔔 ${type}: ${message}`);
+        this.createToast(message, type, autoClose);
+    },
+    
+    success: function(message) {
+        this.show('✅ ' + message, 'success');
+    },
+    
+    error: function(message) {
+        this.show('❌ ' + message, 'error', false); // Ошибки не закрываются автоматически
+    },
+    
+    info: function(message) {
+        this.show('ℹ️ ' + message, 'info');
+    },
+    
+    createToast: function(message, type, autoClose) {
+        // Создаем контейнер для уведомлений если его нет
+        let container = document.getElementById('notification-container');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'notification-container';
+            container.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 10000;
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            `;
+            document.body.appendChild(container);
+        }
+        
+        // Создаем уведомление
+        const toast = document.createElement('div');
+        toast.className = `notification-toast ${type}`;
+        toast.style.cssText = `
+            background: ${this.getBackgroundColor(type)};
+            color: white;
+            padding: 16px 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 300px;
+            max-width: 400px;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            font-weight: 500;
+        `;
+        
+        toast.innerHTML = `
+            <span style="font-size: 1.2em;">${this.getIcon(type)}</span>
+            <span style="flex: 1;">${message}</span>
+            <button onclick="this.parentElement.remove()" style="background: none; border: none; color: white; cursor: pointer; font-size: 1.2em; padding: 4px;">✕</button>
+        `;
+        
+        container.appendChild(toast);
+        
+        // Анимация появления
+        setTimeout(() => {
+            toast.style.transform = 'translateX(0)';
+        }, 100);
+        
+        // Авто-закрытие
+        if (autoClose) {
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.style.transform = 'translateX(400px)';
+                    setTimeout(() => toast.remove(), 300);
+                }
+            }, 4000);
+        }
+    },
+    
+    getBackgroundColor: function(type) {
+        const colors = {
+            success: 'linear-gradient(135deg, #10b981, #059669)',
+            error: 'linear-gradient(135deg, #ef4444, #dc2626)',
+            warning: 'linear-gradient(135deg, #f59e0b, #d97706)',
+            info: 'linear-gradient(135deg, #3b82f6, #2563eb)'
+        };
+        return colors[type] || colors.info;
+    },
+    
+    getIcon: function(type) {
+        const icons = {
+            success: '✅',
+            error: '❌',
+            warning: '⚠️',
+            info: 'ℹ️'
+        };
+        return icons[type] || 'ℹ️';
     }
-  },
-  
-  success: function(message) {
-    this.show('✅ ' + message, 'success');
-  },
-  
-  error: function(message) {
-    this.show('❌ ' + message, 'error');
-  },
-  
-  info: function(message) {
-    this.show('ℹ️ ' + message, 'info');
-  }
 };
 
 // Добавить в utils.js

@@ -1,12 +1,17 @@
 /* css/style.css - ОСНОВНЫЕ СТИЛИ ПРИЛОЖЕНИЯ */
 
-/* 🌈 CSS ПЕРЕМЕННЫЕ (ЦВЕТОВАЯ ПАЛИТРА) */
+/* 🌈 CSS ПЕРЕМЕННЫЕ (ОБНОВЛЕННЫЕ ДЛЯ ЛУЧШЕЙ ЧИТАЕМОСТИ) */
 :root {
-  /* Основные цвета */
-  --primary: #8b5cf6;
-  --primary-dark: #7c3aed;
-  --primary-light: #a78bfa;
+  /* УЛУЧШЕННЫЕ ЦВЕТА ДЛЯ ЛУЧШЕЙ ЧИТАЕМОСТИ */
+  --primary: #7c3aed;
+  --primary-dark: #6d28d9;
+  --primary-light: #8b5cf6;
   --secondary: #6366f1;
+  
+  /* Более насыщенные цвета для текста */
+  --text-dark: #1e293b;
+  --text-light: #475569;
+  --text-white: #ffffff;
   
   /* Статусные цвета */
   --success: #10b981;
@@ -16,21 +21,18 @@
   
   /* Нейтральные цвета */
   --bg-light: #f8fafc;
-  --text-dark: #1f2937;
-  --text-light: #6b7280;
-  --text-white: #ffffff;
   --border-light: #e5e7eb;
   
-  /* Градиенты */
-  --gradient-primary: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+  /* Улучшенные градиенты */
+  --gradient-primary: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
   --gradient-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
   --gradient-warning: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-  --gradient-card: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.7) 100%);
+  --gradient-card: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 100%);
   
-  /* Тени */
+  /* Улучшенные тени */
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   --shadow-glow: 0 0 20px rgba(139, 92, 246, 0.3);
   
   /* Анимации */
@@ -381,4 +383,53 @@ body {
 
 .animate-bounce-in {
   animation: bounceIn 0.6s ease-out;
+}
+
+/* 🌟 СТРАНИЦА ВХОДА */
+.login-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.login-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  padding: 40px;
+  width: 100%;
+  max-width: 440px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.login-title {
+  font-size: 2.5rem;
+  margin-bottom: 8px;
+  background: linear-gradient(135deg, #8b5cf6, #6366f1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.login-subtitle {
+  color: var(--text-light);
+  margin-bottom: 32px;
+  font-size: 1.1rem;
+}
+
+.quick-access {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border-light);
+}
+
+.quick-access-title {
+  color: var(--text-light);
+  margin-bottom: 16px;
+  font-size: 0.9rem;
 }

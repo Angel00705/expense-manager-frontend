@@ -145,38 +145,47 @@
     <script src="js/data.js"></script>
     <script src="js/utils.js"></script>
     <script src="js/dashboard.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('📊 Дашборд загружается...');
-            
-            Auth.init();
-            if (!Auth.requireAuth()) return;
-            
-            setupRoleBasedUI();
-            updateUserInfo();
-            loadDashboardData();
-            const historyLink = document.getElementById('historyLink');
-if (historyLink && Auth.isAdmin()) {
-    historyLink.style.display = 'flex';
-}
-        });
+    // В dashboard.html ЗАМЕНИТЬ весь script блок на этот:
 
-        function updateUserInfo() {
-            const userInfo = document.getElementById('userInfo');
-            if (userInfo && Auth.currentUser) {
-                userInfo.innerHTML = `👋 ${Auth.currentUser.name} <span style="opacity: 0.8;">(${Auth.currentUser.role === 'admin' ? 'Бухгалтер' : 'Управляющий'})</span>`;
-            }
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('📊 Дашборд загружается...');
+        
+        Auth.init();
+        if (!Auth.requireAuth()) return;
+        
+        setupRoleBasedUI();
+        updateUserInfo();
+        
+        // ✅ ДОБАВЛЯЕМ ЭТУ СТРОЧКУ - запускаем календарь и статистику
+        DashboardManager.init();
+        
+        // Показываем историю изменений для админов
+        const historyLink = document.getElementById('historyLink');
+        if (historyLink && Auth.isAdmin()) {
+            historyLink.style.display = 'flex';
         }
+        
+        // ✅ ДОБАВЛЯЕМ КНОПКУ НАЗАД
+        NavigationHelper.addBackButton('dashboard.html', '← Назад');
+    });
 
-        function setupRoleBasedUI() {
-            const createTaskBtn = document.getElementById('createTaskBtn');
-            const quickCreateTask = document.getElementById('quickCreateTask');
-            if (createTaskBtn && quickCreateTask) {
-                const display = Auth.isAdmin() ? 'block' : 'none';
-                createTaskBtn.style.display = display;
-                quickCreateTask.style.display = display;
-            }
+    function updateUserInfo() {
+        const userInfo = document.getElementById('userInfo');
+        if (userInfo && Auth.currentUser) {
+            userInfo.innerHTML = `👋 ${Auth.currentUser.name} <span style="opacity: 0.8;">(${Auth.currentUser.role === 'admin' ? 'Бухгалтер' : 'Управляющий'})</span>`;
         }
-    </script>
+    }
+
+    function setupRoleBasedUI() {
+        const createTaskBtn = document.getElementById('createTaskBtn');
+        const quickCreateTask = document.getElementById('quickCreateTask');
+        if (createTaskBtn && quickCreateTask) {
+            const display = Auth.isAdmin() ? 'block' : 'none';
+            createTaskBtn.style.display = display;
+            quickCreateTask.style.display = display;
+        }
+    }
+</script>
 </body>
 </html>

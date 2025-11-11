@@ -182,54 +182,57 @@
             });
         }
 
-        function loadCards() {
-            const container = document.getElementById('cardsContainer');
-            const regionFilter = document.getElementById('regionFilter').value;
-            const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+       // В cards.html НАЙТИ функцию loadCards() и ЗАМЕНИТЬ на:
+
+function loadCards() {
+    const container = document.getElementById('cardsContainer');
+    const regionFilter = document.getElementById('regionFilter').value;
+    const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+    
+    // Собираем все данные карт
+    allCardsData = {};
+    let hasCards = false;
+    
+    appData.regions.forEach(region => {
+        // ✅ ИСПРАВЛЕНИЕ: Правильная фильтрация по регионам
+        if (regionFilter && regionFilter !== '' && regionFilter !== region) return;
+        
+        const regionIPs = appData.individualEntrepreneurs[region];
+        let regionCards = [];
+        
+        regionIPs.forEach(ip => {
+            // Проверяем поиск по ИП
+            if (searchQuery && !ip.toLowerCase().includes(searchQuery)) return;
             
-            // Собираем все данные карт
-            allCardsData = {};
-            let hasCards = false;
+            const cards = appData.bankCards[ip];
+            if (!cards) return;
             
-            appData.regions.forEach(region => {
-                if (regionFilter && regionFilter !== region) return;
-                
-                const regionIPs = appData.individualEntrepreneurs[region];
-                let regionCards = [];
-                
-                regionIPs.forEach(ip => {
-                    // Проверяем поиск по ИП
-                    if (searchQuery && !ip.toLowerCase().includes(searchQuery)) return;
-                    
-                    const cards = appData.bankCards[ip];
-                    if (!cards) return;
-                    
-                    // Проверяем поиск по номеру карты
-                    const hasMatchingCard = searchQuery && (
-                        (cards.corpCard && cards.corpCard.includes(searchQuery)) ||
-                        (cards.flCard && cards.flCard.includes(searchQuery))
-                    );
-                    
-                    if (searchQuery && !hasMatchingCard && !ip.toLowerCase().includes(searchQuery)) return;
-                    
-                    regionCards.push({
-                        ip: ip,
-                        region: region,
-                        corpCard: cards.corpCard,
-                        flCard: cards.flCard,
-                        status: cards.status
-                    });
-                    
-                    hasCards = true;
-                });
-                
-                if (regionCards.length > 0) {
-                    allCardsData[region] = regionCards;
-                }
+            // Проверяем поиск по номеру карты
+            const hasMatchingCard = searchQuery && (
+                (cards.corpCard && cards.corpCard.toLowerCase().includes(searchQuery)) ||
+                (cards.flCard && cards.flCard.toLowerCase().includes(searchQuery))
+            );
+            
+            if (searchQuery && !hasMatchingCard && !ip.toLowerCase().includes(searchQuery)) return;
+            
+            regionCards.push({
+                ip: ip,
+                region: region,
+                corpCard: cards.corpCard,
+                flCard: cards.flCard,
+                status: cards.status
             });
             
-            displayCards(allCardsData, hasCards);
+            hasCards = true;
+        });
+        
+        if (regionCards.length > 0) {
+            allCardsData[region] = regionCards;
         }
+    });
+    
+    displayCards(allCardsData, hasCards);
+}
 
         function displayCards(cardsData, hasCards) {
             const container = document.getElementById('cardsContainer');
