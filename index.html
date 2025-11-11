@@ -3,69 +3,142 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IP Expense Manager - Вход</title>
+    <title>IP Expense Manager | Вход в систему</title>
     <link rel="stylesheet" href="css/style.css">
-    <!-- Фавикон -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><defs><linearGradient id='borderGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%238b5cf6'/><stop offset='50%' stop-color='%236d28d9'/><stop offset='100%' stop-color='%231e40af'/></linearGradient><linearGradient id='checkGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%23a78bfa'/><stop offset='100%' stop-color='%234f46e5'/></linearGradient><filter id='glow' x='-50%' y='-50%' width='200%' height='200%'><feGaussianBlur in='SourceGraphic' stdDeviation='1' result='blur'/><feMerge><feMergeNode in='blur'/><feMergeNode in='SourceGraphic'/></feMerge></filter></defs><circle cx='10' cy='10' r='9' fill='none' stroke='url(%23borderGrad)' stroke-width='1.5' opacity='0.9'/><path d='M6,10 L8.5,12.5 L14,7' stroke='url(%23checkGrad)' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round' filter='url(%23glow)'/></svg>">
 </head>
 <body>
-    <div class="container" style="min-height: 100vh; display: flex; align-items: center; justify-content: center;">
-        <div class="glass-card p-8" style="max-width: 400px; width: 100%;">
-            <div class="text-center mb-6">
-                <h1 style="font-size: 2rem; margin-bottom: var(--spacing-xs);">💼</h1>
-                <h1 style="font-size: 1.5rem; margin-bottom: var(--spacing-xs);">IP Expense Manager</h1>
-                <p class="text-muted">Войдите в систему управления расходами</p>
+    <!-- Анимированный фон -->
+    <div class="background-animation">
+        <div class="gradient-circle circle-1"></div>
+        <div class="gradient-circle circle-2"></div>
+        <div class="gradient-circle circle-3"></div>
+    </div>
+
+    <div class="login-container">
+        <!-- Левая часть - Приветствие -->
+        <div class="welcome-section">
+            <div class="logo">
+                <div class="logo-icon">💼</div>
+                <h1>IP Expense Manager</h1>
             </div>
-            
-            <form id="loginForm">
-                <div class="form-group">
-                    <label class="form-label" for="username">Логин</label>
-                    <input type="text" class="form-control" id="username" required>
-                </div>
+            <div class="welcome-content">
+                <h2>Управление расходами для ИП</h2>
+                <p class="subtitle">Эффективный контроль финансов 28 индивидуальных предпринимателей в 6 регионах России</p>
                 
-                <div class="form-group">
-                    <label class="form-label" for="password">Пароль</label>
-                    <input type="password" class="form-control" id="password" required>
+                <div class="features-list">
+                    <div class="feature-item">
+                        <span class="feature-icon">📊</span>
+                        <span>Дашборд аналитики</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">🎯</span>
+                        <span>Умные шаблоны задач</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">💳</span>
+                        <span>Управление картами</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">📈</span>
+                        <span>Отчеты в реальном времени</span>
+                    </div>
                 </div>
-                
-                <div class="form-group">
-                    <label class="form-label" for="account">Выберите аккаунт</label>
-                    <select class="form-control" id="account" required>
-                        <option value="">-- Выберите аккаунт --</option>
-                        <option value="admin">Администратор</option>
-                        <option value="manager1">Менеджер 1</option>
-                        <option value="manager2">Менеджер 2</option>
-                    </select>
+            </div>
+        </div>
+
+        <!-- Правая часть - Форма входа -->
+        <div class="login-section">
+            <div class="login-card">
+                <div class="login-header">
+                    <h3>Вход в систему</h3>
+                    <p>Введите ваши учетные данные</p>
                 </div>
-                
-                <button type="submit" class="btn btn-primary" style="width: 100%;">
-                    Войти в систему
-                </button>
-            </form>
+
+                <form id="loginForm" class="login-form">
+                    <div class="input-group">
+                        <div class="input-icon">👤</div>
+                        <input type="text" id="username" class="form-input" placeholder="Логин" required>
+                    </div>
+
+                    <div class="input-group">
+                        <div class="input-icon">🔒</div>
+                        <input type="password" id="password" class="form-input" placeholder="Пароль" required>
+                    </div>
+
+                    <div class="input-group">
+                        <div class="input-icon">👥</div>
+                        <select id="account" class="form-input" required>
+                            <option value="">Выберите аккаунт</option>
+                            <option value="admin">Администратор</option>
+                            <option value="manager1">Менеджер 1</option>
+                            <option value="manager2">Менеджер 2</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="login-btn">
+                        <span class="btn-text">Войти в систему</span>
+                        <span class="btn-icon">→</span>
+                    </button>
+                </form>
+
+                <!-- Тестовые данные -->
+                <div class="test-credentials">
+                    <div class="test-header">
+                        <span class="test-icon">🧪</span>
+                        <span>Тестовые данные</span>
+                    </div>
+                    <div class="test-data">
+                        <div>Логин: <strong>admin</strong></div>
+                        <div>Пароль: <strong>admin</strong></div>
+                        <div>Аккаунт: <strong>Администратор</strong></div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script src="js/utils.js"></script>
     <script src="js/data.js"></script>
     <script>
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginForm = document.getElementById('loginForm');
             
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            const account = document.getElementById('account').value;
-            
-            if (auth.login(username, password, account)) {
-                window.location.href = 'dashboard.html';
-            } else {
-                alert('Неверные учетные данные!');
+            // Автозаполнение тестовых данных
+            document.getElementById('username').value = 'admin';
+            document.getElementById('password').value = 'admin';
+            document.getElementById('account').value = 'admin';
+
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                const account = document.getElementById('account').value;
+                
+                if (window.auth && typeof auth.login === 'function') {
+                    if (auth.login(username, password, account)) {
+                        // Добавляем анимацию загрузки
+                        const btn = document.querySelector('.login-btn');
+                        btn.innerHTML = '<div class="loading-spinner"></div>';
+                        btn.disabled = true;
+                        
+                        setTimeout(() => {
+                            window.location.href = 'dashboard.html';
+                        }, 1000);
+                    } else {
+                        showError('Неверные учетные данные');
+                    }
+                } else {
+                    showError('Система авторизации не загружена');
+                }
+            });
+
+            function showError(message) {
+                // Можно добавить красивый toast вместо alert
+                alert(message);
             }
         });
-
-        // Автозаполнение для тестирования
-        document.getElementById('username').value = 'admin';
-        document.getElementById('password').value = 'admin';
-        document.getElementById('account').value = 'admin';
     </script>
 </body>
 </html>
