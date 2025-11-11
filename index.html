@@ -3,9 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IP Expense Manager | Вход в систему</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title>IP Expense Manager - Вход</title>
+    <!-- Фавикон -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><defs><linearGradient id='borderGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%238b5cf6'/><stop offset='50%' stop-color='%236d28d9'/><stop offset='100%' stop-color='%231e40af'/></linearGradient><linearGradient id='checkGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%23a78bfa'/><stop offset='100%' stop-color='%234f46e5'/></linearGradient><filter id='glow' x='-50%' y='-50%' width='200%' height='200%'><feGaussianBlur in='SourceGraphic' stdDeviation='1' result='blur'/><feMerge><feMergeNode in='blur'/><feMergeNode in='SourceGraphic'/></feMerge></filter></defs><circle cx='10' cy='10' r='9' fill='none' stroke='url(%23borderGrad)' stroke-width='1.5' opacity='0.9'/><path d='M6,10 L8.5,12.5 L14,7' stroke='url(%23checkGrad)' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round' filter='url(%23glow)'/></svg>">
+    <!-- Стили -->
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/login.css">
 </head>
 <body>
     <!-- Анимированный фон -->
@@ -15,6 +18,7 @@
         <div class="gradient-circle circle-3"></div>
     </div>
 
+    <!-- Основной контент -->
     <div class="login-container">
         <!-- Левая часть - Приветствие -->
         <div class="welcome-section">
@@ -22,26 +26,27 @@
                 <div class="logo-icon">💼</div>
                 <h1>IP Expense Manager</h1>
             </div>
+            
             <div class="welcome-content">
-                <h2>Управление расходами для ИП</h2>
-                <p class="subtitle">Эффективный контроль финансов 28 индивидуальных предпринимателей в 6 регионах России</p>
+                <h2>Управление финансами для индивидуальных предпринимателей</h2>
+                <p class="subtitle">Простая и эффективная система контроля расходов по регионам и банковским картам</p>
                 
                 <div class="features-list">
                     <div class="feature-item">
-                        <span class="feature-icon">📊</span>
-                        <span>Дашборд аналитики</span>
+                        <div class="feature-icon">📊</div>
+                        <div>Дашборд с аналитикой в реальном времени</div>
                     </div>
                     <div class="feature-item">
-                        <span class="feature-icon">🎯</span>
-                        <span>Умные шаблоны задач</span>
+                        <div class="feature-icon">🎯</div>
+                        <div>Умные шаблоны для повторяющихся задач</div>
                     </div>
                     <div class="feature-item">
-                        <span class="feature-icon">💳</span>
-                        <span>Управление картами</span>
+                        <div class="feature-icon">💳</div>
+                        <div>Контроль расходов по банковским картам</div>
                     </div>
                     <div class="feature-item">
-                        <span class="feature-icon">📈</span>
-                        <span>Отчеты в реальном времени</span>
+                        <div class="feature-icon">👥</div>
+                        <div>Ролевая модель для команды</div>
                     </div>
                 </div>
             </div>
@@ -52,18 +57,24 @@
             <div class="login-card">
                 <div class="login-header">
                     <h3>Вход в систему</h3>
-                    <p>Введите ваши учетные данные</p>
+                    <p>Выберите вашу роль для входа</p>
                 </div>
 
-                <form id="loginForm" class="login-form">
+                <form class="login-form" id="loginForm">
                     <div class="input-group">
-                        <div class="input-icon">📧</div>
-                        <input type="email" id="email" class="form-input" placeholder="Email" required value="admin@test.ru">
+                        <div class="input-icon">👤</div>
+                        <select class="form-input" id="userSelect" required>
+                            <option value="">Выберите пользователя...</option>
+                            <option value="admin">Администратор (Полный доступ)</option>
+                            <option value="manager1">Менеджер Иванов (Астрахань, Бурятия)</option>
+                            <option value="manager2">Менеджер Петрова (Курган, Калмыкия)</option>
+                            <option value="manager3">Менеджер Сидорова (Мордовия, Удмуртия)</option>
+                        </select>
                     </div>
 
                     <div class="input-group">
                         <div class="input-icon">🔒</div>
-                        <input type="password" id="password" class="form-input" placeholder="Пароль" required value="admin123">
+                        <input type="password" class="form-input" id="password" placeholder="Пароль" value="password" readonly>
                     </div>
 
                     <button type="submit" class="login-btn">
@@ -75,135 +86,19 @@
                 <!-- Тестовые данные -->
                 <div class="test-credentials">
                     <div class="test-header">
-                        <span class="test-icon">🧪</span>
+                        <span class="test-icon">ℹ️</span>
                         <span>Тестовые данные</span>
                     </div>
                     <div class="test-data">
-                        <div><strong>Администратор:</strong></div>
-                        <div>Email: <strong>admin@test.ru</strong></div>
-                        <div>Пароль: <strong>admin123</strong></div>
-                        <div style="margin-top: 0.5rem;"><strong>Менеджер Астрахань:</strong></div>
-                        <div>Email: <strong>astrakhan@test.ru</strong></div>
-                        <div>Пароль: <strong>manager123</strong></div>
+                        <div><strong>Логин:</strong> Выберите любого пользователя из списка</div>
+                        <div><strong>Пароль:</strong> password (уже введен)</div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Подключаем основные скрипты -->
-    <script src="js/utils.js"></script>
-    <script src="js/data.js"></script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 Страница входа загружена');
-            
-            // Инициализируем Auth систему
-            if (window.Auth && typeof Auth.init === 'function') {
-                Auth.init();
-                console.log('✅ Auth система инициализирована');
-            }
-
-            const loginForm = document.getElementById('loginForm');
-            const loginBtn = document.querySelector('.login-btn');
-
-            // Анимация появления элементов
-            const animateElements = () => {
-                const elements = document.querySelectorAll('.login-card, .welcome-section');
-                elements.forEach((el, index) => {
-                    el.style.opacity = '0';
-                    el.style.transform = 'translateY(30px)';
-                    
-                    setTimeout(() => {
-                        el.style.transition = 'all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-                        el.style.opacity = '1';
-                        el.style.transform = 'translateY(0)';
-                    }, index * 300);
-                });
-            };
-
-            // Запускаем анимации
-            setTimeout(animateElements, 100);
-
-            // Обработчик формы входа
-            loginForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const email = document.getElementById('email').value;
-                const password = document.getElementById('password').value;
-                
-                console.log('🔐 Попытка входа:', { email, password });
-                
-                // Используем основную систему авторизации
-                if (window.Auth && typeof Auth.login === 'function') {
-                    const result = Auth.login(email, password);
-                    
-                    if (result.success) {
-                        console.log('✅ Успешный вход, пользователь:', result.user);
-                        
-                        // Анимация загрузки
-                        loginBtn.innerHTML = '<div class="loading-spinner"></div>';
-                        loginBtn.disabled = true;
-                        
-                        // Плавный переход на дашборд
-                        setTimeout(() => {
-                            window.location.href = 'dashboard.html';
-                        }, 1200);
-                    } else {
-                        console.error('❌ Ошибка входа:', result.error);
-                        showError(result.error || 'Неверные учетные данные');
-                    }
-                } else {
-                    console.error('❌ Auth система не загружена');
-                    showError('Система авторизации не загружена');
-                }
-            });
-
-            function showError(message) {
-                // Временное решение - позже заменим на красивый toast
-                const errorDiv = document.createElement('div');
-                errorDiv.style.cssText = `
-                    position: fixed;
-                    top: 20px;
-                    right: 20px;
-                    background: linear-gradient(135deg, #ef4444, #dc2626);
-                    color: white;
-                    padding: 16px 20px;
-                    border-radius: 12px;
-                    box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
-                    z-index: 10000;
-                    animation: slideInRight 0.3s ease;
-                `;
-                errorDiv.innerHTML = `
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <span style="font-size: 1.2em;">❌</span>
-                        <span>${message}</span>
-                    </div>
-                `;
-                
-                document.body.appendChild(errorDiv);
-                
-                setTimeout(() => {
-                    errorDiv.style.animation = 'slideOutRight 0.3s ease';
-                    setTimeout(() => errorDiv.remove(), 300);
-                }, 4000);
-            }
-
-            // Добавляем CSS для анимаций ошибок
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes slideInRight {
-                    from { transform: translateX(400px); opacity: 0; }
-                    to { transform: translateX(0); opacity: 1; }
-                }
-                @keyframes slideOutRight {
-                    from { transform: translateX(0); opacity: 1; }
-                    to { transform: translateX(400px); opacity: 0; }
-                }
-            `;
-            document.head.appendChild(style);
-        });
-    </script>
+    <!-- Скрипт авторизации -->
+    <script src="js/auth.js"></script>
 </body>
 </html>

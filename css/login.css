@@ -1,115 +1,4 @@
-/* ===== ОСНОВНЫЕ СТИЛИ ===== */
-:root {
-  /* ЦВЕТА */
-  --primary: #7c3aed;
-  --primary-dark: #6d28d9;
-  --primary-light: #8b5cf6;
-  --gradient: linear-gradient(135deg, #7c3aed 0%, #3b82f6 100%);
-  --gradient-hover: linear-gradient(135deg, #8b5cf6 0%, #4f86f8 100%);
-  
-  --bg-primary: #0f172a;
-  --bg-secondary: #1e293b;
-  --bg-card: rgba(30, 41, 59, 0.85);
-  --bg-glass: rgba(255, 255, 255, 0.1);
-  
-  --text-primary: #f8fafc;
-  --text-secondary: #cbd5e1;
-  --text-muted: #64748b;
-  
-  --border: rgba(255, 255, 255, 0.15);
-  --border-light: rgba(255, 255, 255, 0.25);
-  --shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-  --shadow-glow: 0 10px 30px rgba(124, 58, 237, 0.3);
-  
-  /* РАЗМЕРЫ */
-  --radius: 12px;
-  --radius-lg: 20px;
-  --radius-xl: 28px;
-  --spacing: 1rem;
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
-  background: var(--bg-primary);
-  color: var(--text-primary);
-  min-height: 100vh;
-  overflow-x: hidden;
-  line-height: 1.6;
-}
-
-/* ===== АНИМИРОВАННЫЙ ФОН ===== */
-.background-animation {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -1;
-  overflow: hidden;
-  background: 
-    radial-gradient(circle at 15% 50%, rgba(124, 58, 237, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 85% 30%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 50% 80%, rgba(16, 185, 129, 0.05) 0%, transparent 50%);
-}
-
-.gradient-circle {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(80px);
-  opacity: 0.4;
-  animation: float 25s infinite linear;
-  mix-blend-mode: screen;
-}
-
-.circle-1 {
-  width: 500px;
-  height: 500px;
-  background: linear-gradient(135deg, #7c3aed, #8b5cf6);
-  top: -250px;
-  left: -250px;
-  animation-delay: 0s;
-}
-
-.circle-2 {
-  width: 400px;
-  height: 400px;
-  background: linear-gradient(135deg, #3b82f6, #60a5fa);
-  bottom: -200px;
-  right: 10%;
-  animation-delay: -8s;
-}
-
-.circle-3 {
-  width: 300px;
-  height: 300px;
-  background: linear-gradient(135deg, #10b981, #34d399);
-  top: 20%;
-  left: 70%;
-  animation-delay: -16s;
-}
-
-@keyframes float {
-  0%, 100% { 
-    transform: translate(0, 0) rotate(0deg) scale(1); 
-  }
-  25% { 
-    transform: translate(30px, 30px) rotate(90deg) scale(1.1); 
-  }
-  50% { 
-    transform: translate(0, 60px) rotate(180deg) scale(1); 
-  }
-  75% { 
-    transform: translate(-30px, 30px) rotate(270deg) scale(0.9); 
-  }
-}
-
-/* ===== КОНТЕЙНЕР ВХОДА ===== */
+/* ===== LOGIN PAGE SPECIFIC STYLES ===== */
 .login-container {
   min-height: 100vh;
   display: grid;
@@ -152,12 +41,28 @@ body {
   align-items: center;
   justify-content: center;
   box-shadow: var(--shadow-glow);
-  animation: pulse 2s infinite;
+  animation: 
+    pulse 2s infinite,
+    glow 3s ease-in-out infinite;
 }
 
 @keyframes pulse {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.05); }
+}
+
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 
+      0 0 20px rgba(124, 58, 237, 0.5),
+      var(--shadow-glow);
+  }
+  50% {
+    box-shadow: 
+      0 0 30px rgba(124, 58, 237, 0.8),
+      0 0 40px rgba(124, 58, 237, 0.3),
+      var(--shadow-glow);
+  }
 }
 
 .logo h1 {
@@ -272,61 +177,11 @@ body {
   font-size: 1.1rem;
 }
 
-/* ===== ФОРМА ===== */
+/* ===== ФОРМА ЛОГИНА ===== */
 .login-form {
   display: flex;
   flex-direction: column;
   gap: 1.75rem;
-}
-
-.input-group {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.input-icon {
-  position: absolute;
-  left: 1.25rem;
-  font-size: 1.3rem;
-  z-index: 2;
-  opacity: 0.7;
-  transition: opacity 0.3s ease;
-}
-
-.input-group:focus-within .input-icon {
-  opacity: 1;
-}
-
-.form-input {
-  width: 100%;
-  padding: 1.25rem 1.25rem 1.25rem 3.5rem;
-  background: var(--bg-glass);
-  border: 2px solid var(--border);
-  border-radius: var(--radius);
-  color: var(--text-primary);
-  font-size: 1.1rem;
-  transition: all 0.3s ease;
-  font-family: inherit;
-}
-
-.form-input:focus {
-  outline: none;
-  border-color: var(--primary);
-  background: rgba(255, 255, 255, 0.12);
-  box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.15);
-  transform: translateY(-1px);
-}
-
-.form-input::placeholder {
-  color: var(--text-muted);
-}
-
-/* Стили для select */
-.form-input option {
-  background: var(--bg-secondary);
-  color: var(--text-primary);
-  padding: 1rem;
 }
 
 /* ===== КНОПКА ВХОДА ===== */
@@ -437,22 +292,6 @@ body {
   font-weight: 600;
 }
 
-/* ===== АНИМАЦИЯ ЗАГРУЗКИ ===== */
-.loading-spinner {
-  width: 24px;
-  height: 24px;
-  border: 3px solid transparent;
-  border-top: 3px solid white;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin: 0 auto;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
 /* ===== АДАПТИВНОСТЬ ===== */
 @media (max-width: 768px) {
   .login-container {
@@ -503,77 +342,4 @@ body {
     height: 70px;
     font-size: 2.5rem;
   }
-}
-/* ===== ДОПОЛНИТЕЛЬНЫЕ АНИМАЦИИ ===== */
-@keyframes slideInRight {
-    from { 
-        transform: translateX(400px); 
-        opacity: 0; 
-    }
-    to { 
-        transform: translateX(0); 
-        opacity: 1; 
-    }
-}
-
-@keyframes slideOutRight {
-    from { 
-        transform: translateX(0); 
-        opacity: 1; 
-    }
-    to { 
-        transform: translateX(400px); 
-        opacity: 0; 
-    }
-}
-
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(40px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Анимация для появления элементов */
-.fade-in-up {
-    animation: fadeInUp 0.8s ease-out;
-}
-
-/* Эффект параллакса для фона */
-.background-animation {
-    animation: parallax 20s ease-in-out infinite;
-}
-
-@keyframes parallax {
-    0%, 100% {
-        transform: translateY(0px);
-    }
-    50% {
-        transform: translateY(-20px);
-    }
-}
-
-/* Свечение для логотипа */
-.logo-icon {
-    animation: 
-        pulse 2s ease-in-out infinite,
-        glow 3s ease-in-out infinite;
-}
-
-@keyframes glow {
-    0%, 100% {
-        box-shadow: 
-            0 0 20px rgba(124, 58, 237, 0.5),
-            var(--shadow-glow);
-    }
-    50% {
-        box-shadow: 
-            0 0 30px rgba(124, 58, 237, 0.8),
-            0 0 40px rgba(124, 58, 237, 0.3),
-            var(--shadow-glow);
-    }
 }
