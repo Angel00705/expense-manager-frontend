@@ -26,20 +26,20 @@
             </form>
             
             <div class="quick-access">
-                <p style="color: var(--text-light); margin-bottom: 16px; font-size: 0.9rem;">Быстрый доступ для тестирования:</p>
-                <button type="button" class="btn btn-outline" style="width: 100%; margin-bottom: 8px;" 
-                        onclick="fillCredentials('admin@test.ru', 'admin123')">
-                    👨‍💼 Войти как Админ
-                </button>
-                <button type="button" class="btn btn-outline" style="width: 100%; margin-bottom: 8px;" 
-                        onclick="fillCredentials('astrakhan@test.ru', 'manager123')">
-                    👩‍💼 Войти как Менеджер (Астрахань)
-                </button>
-                <button type="button" class="btn btn-outline" style="width: 100%;" 
-                        onclick="fillCredentials('buryatia@test.ru', 'manager123')">
-                    👩‍💼 Войти как Менеджер (Бурятия)
-                </button>
-            </div>
+    <p style="color: var(--text-light); margin-bottom: 16px; font-size: 0.9rem;">Быстрый доступ для тестирования:</p>
+    <button type="button" class="btn btn-outline" style="width: 100%; margin-bottom: 8px;" 
+            onclick="fillCredentials('admin@test.ru', 'admin123')">
+        👨‍💼 Администратор
+    </button>
+    <button type="button" class="btn btn-outline" style="width: 100%; margin-bottom: 8px;" 
+            onclick="fillCredentials('astrakhan@test.ru', 'manager123')">
+        👩‍💼 Менеджер Астрахань
+    </button>
+    <button type="button" class="btn btn-outline" style="width: 100%;" 
+            onclick="fillCredentials('buryatia@test.ru', 'manager123')">
+        👩‍💼 Менеджер Бурятия
+    </button>
+</div>
         </div>
     </div>
 
@@ -69,23 +69,7 @@
             console.log('🔍 Проверка авторизации...');
             console.log('Текущий пользователь:', Auth.currentUser);
             
-            // Если пользователь уже авторизован, показываем кнопку "Продолжить"
-            if (Auth.currentUser) {
-                const quickAccessDiv = document.querySelector('.quick-access');
-                if (quickAccessDiv) {
-                    const continueBtn = document.createElement('button');
-                    continueBtn.type = 'button';
-                    continueBtn.className = 'btn btn-success';
-                    continueBtn.style.width = '100%';
-                    continueBtn.style.marginBottom = '8px';
-                    continueBtn.innerHTML = '🚀 Продолжить как ' + Auth.currentUser.name;
-                    continueBtn.onclick = function() {
-                        window.location.href = 'dashboard.html';
-                    };
-                    quickAccessDiv.parentNode.insertBefore(continueBtn, quickAccessDiv);
-                }
-            }
-            
+                      
             // Обработка формы входа
             document.getElementById('loginForm').addEventListener('submit', function(e) {
                 e.preventDefault();
