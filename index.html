@@ -8,10 +8,10 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><defs><linearGradient id='borderGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%238b5cf6'/><stop offset='50%' stop-color='%236d28d9'/><stop offset='100%' stop-color='%231e40af'/></linearGradient><linearGradient id='checkGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%23a78bfa'/><stop offset='100%' stop-color='%234f46e5'/></linearGradient><filter id='glow' x='-50%' y='-50%' width='200%' height='200%'><feGaussianBlur in='SourceGraphic' stdDeviation='1' result='blur'/><feMerge><feMergeNode in='blur'/><feMergeNode in='SourceGraphic'/></feMerge></filter></defs><circle cx='10' cy='10' r='9' fill='none' stroke='url(%23borderGrad)' stroke-width='1.5' opacity='0.9'/><path d='M6,10 L8.5,12.5 L14,7' stroke='url(%23checkGrad)' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round' filter='url(%23glow)'/></svg>">
 </head>
 <body>
-    <div class="container">
-        <div class="glass-card" style="max-width: 400px; margin: 100px auto; padding: 40px; text-align: center;">
-            <h1 style="margin-bottom: 8px; color: var(--primary);">🎯 IP Expense Manager</h1>
-            <p style="color: var(--text-light); margin-bottom: 32px;">Система управления расходами ИП</p>
+    <div class="login-container">
+        <div class="login-card animate-bounce-in">
+            <h1 class="login-title">🎯 IP Expense Manager</h1>
+            <p class="login-subtitle">Система управления расходами ИП</p>
             
             <form id="loginForm">
                 <div class="form-group">
@@ -25,81 +25,105 @@
                 </button>
             </form>
             
-            <div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--border-light);">
-                <p style="color: var(--text-light); margin-bottom: 16px;">Быстрый доступ для тестирования:</p>
+            <div class="quick-access">
+                <p style="color: var(--text-light); margin-bottom: 16px; font-size: 0.9rem;">Быстрый доступ для тестирования:</p>
                 <button type="button" class="btn btn-outline" style="width: 100%; margin-bottom: 8px;" 
                         onclick="fillCredentials('admin@test.ru', 'admin123')">
                     👨‍💼 Войти как Админ
                 </button>
-                <button type="button" class="btn btn-outline" style="width: 100%;" 
+                <button type="button" class="btn btn-outline" style="width: 100%; margin-bottom: 8px;" 
                         onclick="fillCredentials('astrakhan@test.ru', 'manager123')">
-                    👩‍💼 Войти как Менеджер
+                    👩‍💼 Войти как Менеджер (Астрахань)
+                </button>
+                <button type="button" class="btn btn-outline" style="width: 100%;" 
+                        onclick="fillCredentials('buryatia@test.ru', 'manager123')">
+                    👩‍💼 Войти как Менеджер (Бурятия)
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- ПЕРЕНЕСИТЕ СКРИПТЫ СЮДА - В КОНЕЦ BODY -->
     <script src="js/utils.js"></script>
     <script src="js/data.js"></script>
     
     <script>
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('🏠 Главная страница загружена');
-    
-    // Инициализируем авторизацию
-    Auth.init();
-    
-    // Проверяем авторизацию, но НЕ перенаправляем сразу
-    console.log('🔍 Проверка авторизации...');
-    console.log('Текущий пользователь:', Auth.currentUser);
-    
-    // ПОКАЗЫВАЕМ форму входа, даже если пользователь авторизован
-    // Это дает возможность войти под другим аккаунтом
-    
-    // Обработка формы входа
-    document.getElementById('loginForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-        
-        console.log('📧 Попытка входа:', email);
-        
-        if (!email || !password) {
-            alert('❌ Пожалуйста, заполните все поля');
-            return;
-        }
-        
-        const result = Auth.login(email, password);
-        
-        if (result.success) {
-            alert('✅ Добро пожаловать, ' + result.user.name + '!');
+        // Функция для быстрого заполнения credentials
+        function fillCredentials(email, password) {
+            console.log('🔐 Заполняем данные для:', email);
+            document.getElementById('email').value = email;
+            document.getElementById('password').value = password;
+            
+            // Автоматически отправляем форму
             setTimeout(() => {
-                window.location.href = 'dashboard.html';
-            }, 1000);
-        } else {
-            alert('❌ ' + result.error);
+                document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+            }, 100);
         }
-    });
-    
-    // Если пользователь уже авторизован, показываем кнопку "Продолжить"
-    if (Auth.currentUser) {
-        const quickAccessDiv = document.querySelector('.quick-access');
-        if (quickAccessDiv) {
-            const continueBtn = document.createElement('button');
-            continueBtn.type = 'button';
-            continueBtn.className = 'btn btn-success';
-            continueBtn.style.width = '100%';
-            continueBtn.style.marginBottom = '8px';
-            continueBtn.innerHTML = '🚀 Продолжить как ' + Auth.currentUser.name;
-            continueBtn.onclick = function() {
-                window.location.href = 'dashboard.html';
-            };
-            quickAccessDiv.parentNode.insertBefore(continueBtn, quickAccessDiv);
-        }
-    }
-});
-</script>
+
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🏠 Главная страница загружена');
+            
+            // Инициализируем авторизацию
+            Auth.init();
+            
+            // Проверяем авторизацию
+            console.log('🔍 Проверка авторизации...');
+            console.log('Текущий пользователь:', Auth.currentUser);
+            
+            // Если пользователь уже авторизован, показываем кнопку "Продолжить"
+            if (Auth.currentUser) {
+                const quickAccessDiv = document.querySelector('.quick-access');
+                if (quickAccessDiv) {
+                    const continueBtn = document.createElement('button');
+                    continueBtn.type = 'button';
+                    continueBtn.className = 'btn btn-success';
+                    continueBtn.style.width = '100%';
+                    continueBtn.style.marginBottom = '8px';
+                    continueBtn.innerHTML = '🚀 Продолжить как ' + Auth.currentUser.name;
+                    continueBtn.onclick = function() {
+                        window.location.href = 'dashboard.html';
+                    };
+                    quickAccessDiv.parentNode.insertBefore(continueBtn, quickAccessDiv);
+                }
+            }
+            
+            // Обработка формы входа
+            document.getElementById('loginForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                
+                console.log('📧 Попытка входа:', email);
+                
+                if (!email || !password) {
+                    if (typeof Notification !== 'undefined') {
+                        Notification.error('Пожалуйста, заполните все поля');
+                    } else {
+                        alert('❌ Пожалуйста, заполните все поля');
+                    }
+                    return;
+                }
+                
+                const result = Auth.login(email, password);
+                
+                if (result.success) {
+                    if (typeof Notification !== 'undefined') {
+                        Notification.success('Добро пожаловать, ' + result.user.name + '!');
+                    } else {
+                        alert('✅ Добро пожаловать, ' + result.user.name + '!');
+                    }
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 1000);
+                } else {
+                    if (typeof Notification !== 'undefined') {
+                        Notification.error(result.error);
+                    } else {
+                        alert('❌ ' + result.error);
+                    }
+                }
+            });
+        });
+    </script>
 </body>
 </html>
