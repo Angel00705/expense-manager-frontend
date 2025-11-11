@@ -7,6 +7,8 @@
   padding: var(--spacing);
   gap: 4rem;
   position: relative;
+  height: 100vh; /* Добавляем фиксированную высоту */
+  max-height: 100vh; /* Ограничиваем максимальную высоту */
 }
 
 @media (max-width: 968px) {
@@ -14,21 +16,39 @@
     grid-template-columns: 1fr;
     gap: 2rem;
     padding: 2rem 1rem;
+    height: auto; /* На мобильных убираем фиксированную высоту */
+    min-height: 100vh;
+    max-height: none;
   }
 }
 
 /* ===== ЛЕВАЯ ЧАСТЬ - ПРИВЕТСТВИЕ ===== */
 .welcome-section {
-  padding: 4rem 2rem;
+  padding: 2rem;
   max-width: 600px;
   margin: 0 auto;
+  max-height: 90vh; /* Ограничиваем высоту контента */
+  overflow-y: auto; /* Добавляем прокрутку если контент не помещается */
+}
+
+.welcome-section::-webkit-scrollbar {
+  width: 4px;
+}
+
+.welcome-section::-webkit-scrollbar-track {
+  background: var(--bg-glass);
+}
+
+.welcome-section::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 2px;
 }
 
 .logo {
   display: flex;
   align-items: center;
   gap: 1.5rem;
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
 }
 
 .logo-icon {
@@ -75,31 +95,31 @@
 }
 
 .welcome-content h2 {
-  font-size: 2.25rem;
+  font-size: 2rem;
   margin-bottom: 1.5rem;
   font-weight: 700;
   line-height: 1.2;
 }
 
 .subtitle {
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   color: var(--text-secondary);
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
   line-height: 1.6;
 }
 
 .features-list {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1rem;
 }
 
 .feature-item {
   display: flex;
   align-items: center;
-  gap: 1.25rem;
-  font-size: 1.1rem;
-  padding: 1rem;
+  gap: 1rem;
+  font-size: 1rem;
+  padding: 0.875rem;
   background: var(--bg-glass);
   border-radius: var(--radius);
   border: 1px solid var(--border);
@@ -113,8 +133,8 @@
 }
 
 .feature-icon {
-  font-size: 1.75rem;
-  width: 50px;
+  font-size: 1.5rem;
+  width: 40px;
   text-align: center;
   filter: grayscale(0.3);
   transition: filter 0.3s ease;
@@ -130,6 +150,7 @@
   justify-content: center;
   align-items: center;
   padding: 2rem;
+  max-height: 90vh; /* Ограничиваем высоту */
 }
 
 .login-card {
@@ -138,14 +159,28 @@
   -webkit-backdrop-filter: blur(25px) saturate(180%);
   border: 1px solid var(--border-light);
   border-radius: var(--radius-xl);
-  padding: 3.5rem;
+  padding: 2.5rem;
   width: 100%;
-  max-width: 480px;
+  max-width: 440px;
+  max-height: 90vh; /* Ограничиваем высоту карточки */
+  overflow-y: auto; /* Добавляем прокрутку если нужно */
   box-shadow: 
     var(--shadow),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
   position: relative;
-  overflow: hidden;
+}
+
+.login-card::-webkit-scrollbar {
+  width: 4px;
+}
+
+.login-card::-webkit-scrollbar-track {
+  background: var(--bg-glass);
+}
+
+.login-card::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 2px;
 }
 
 .login-card::before {
@@ -160,11 +195,11 @@
 
 .login-header {
   text-align: center;
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
 }
 
 .login-header h3 {
-  font-size: 2rem;
+  font-size: 1.75rem;
   margin-bottom: 0.75rem;
   font-weight: 700;
   background: linear-gradient(135deg, var(--text-primary), var(--text-secondary));
@@ -174,14 +209,14 @@
 
 .login-header p {
   color: var(--text-muted);
-  font-size: 1.1rem;
+  font-size: 1rem;
 }
 
 /* ===== ФОРМА ЛОГИНА ===== */
 .login-form {
   display: flex;
   flex-direction: column;
-  gap: 1.75rem;
+  gap: 1.5rem;
 }
 
 /* ===== КНОПКА ВХОДА ===== */
@@ -189,16 +224,16 @@
   background: var(--gradient);
   border: none;
   border-radius: var(--radius);
-  padding: 1.4rem 2rem;
+  padding: 1.2rem 2rem;
   color: white;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.4s ease;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 1rem;
+  margin-top: 0.5rem;
   position: relative;
   overflow: hidden;
 }
@@ -246,8 +281,8 @@
 
 /* ===== ТЕСТОВЫЕ ДАННЫЕ ===== */
 .test-credentials {
-  margin-top: 2.5rem;
-  padding: 1.75rem;
+  margin-top: 2rem;
+  padding: 1.5rem;
   background: var(--bg-glass);
   border-radius: var(--radius);
   border-left: 4px solid var(--primary);
@@ -269,21 +304,21 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  margin-bottom: 1.25rem;
+  margin-bottom: 1rem;
   font-weight: 600;
   color: var(--text-secondary);
-  font-size: 1.1rem;
+  font-size: 1rem;
 }
 
 .test-icon {
-  font-size: 1.3rem;
+  font-size: 1.2rem;
 }
 
 .test-data {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
-  font-size: 1rem;
+  gap: 0.5rem;
+  font-size: 0.9rem;
   color: var(--text-muted);
 }
 
@@ -292,16 +327,24 @@
   font-weight: 600;
 }
 
+.test-data div {
+  line-height: 1.4;
+}
+
 /* ===== АДАПТИВНОСТЬ ===== */
 @media (max-width: 768px) {
   .login-container {
     padding: 1rem;
-    gap: 2rem;
+    gap: 1.5rem;
+    height: auto;
+    min-height: 100vh;
   }
   
   .welcome-section {
-    padding: 2rem 1rem;
+    padding: 1rem;
     text-align: center;
+    max-height: none;
+    overflow-y: visible;
   }
   
   .logo {
@@ -309,6 +352,7 @@
     flex-direction: column;
     text-align: center;
     gap: 1rem;
+    margin-bottom: 1.5rem;
   }
   
   .logo h1 {
@@ -316,30 +360,53 @@
   }
   
   .welcome-content h2 {
-    font-size: 1.75rem;
+    font-size: 1.5rem;
   }
   
   .subtitle {
-    font-size: 1.1rem;
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
   }
   
   .login-card {
-    padding: 2.5rem 2rem;
+    padding: 2rem 1.5rem;
+    max-height: none;
+  }
+  
+  .login-section {
+    max-height: none;
+    padding: 1rem;
   }
   
   .feature-item {
-    padding: 0.875rem;
+    padding: 0.75rem;
+    font-size: 0.9rem;
+  }
+  
+  .feature-icon {
+    font-size: 1.3rem;
+    width: 35px;
   }
 }
 
 @media (max-width: 480px) {
   .login-card {
-    padding: 2rem 1.5rem;
+    padding: 1.5rem 1rem;
   }
   
   .logo-icon {
     width: 70px;
     height: 70px;
     font-size: 2.5rem;
+  }
+  
+  .login-btn {
+    padding: 1rem 1.5rem;
+    font-size: 1rem;
+  }
+  
+  .test-credentials {
+    padding: 1rem;
+    margin-top: 1.5rem;
   }
 }
