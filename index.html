@@ -94,7 +94,8 @@
                         <div>Логин: <strong>manager3</strong> | Пароль: <strong>manager123</strong></div>
                         
                         <div style="margin-top: 1rem; color: var(--primary-light); font-size: 0.9rem;">
-                      </div>
+                            💡 <strong>Подсказка:</strong> Введите логин и пароль из таблицы выше
+                        </div>
                     </div>
                 </div>
             </div>
@@ -106,8 +107,10 @@
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+
+            console.log('Попытка входа:', username, password);
 
             // Проверка логина и пароля
             const validUsers = {
@@ -150,16 +153,26 @@
                 localStorage.setItem('currentUser', JSON.stringify(userData));
                 localStorage.setItem('isLoggedIn', 'true');
                 
+                console.log('Успешный вход, перенаправление...');
+                
                 // Перенаправляем на дашборд
-                window.location.href = 'dashboard.html';
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 100);
             } else {
-                alert('Ошибка: Неверный логин или пароль. Используйте данные из таблицы "Тестовые доступы"');
+                alert('❌ Ошибка: Неверный логин или пароль. Используйте данные из таблицы "Тестовые доступы"');
             }
         });
 
         // Фокус на поле логина при загрузке страницы
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('username').focus();
+            
+            // Проверяем, не авторизован ли пользователь
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            if (isLoggedIn === 'true') {
+                window.location.href = 'dashboard.html';
+            }
         });
     </script>
 </body>

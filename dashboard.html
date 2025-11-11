@@ -3,217 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📊 Дашборд - IP Expense Manager</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/dashboard.css">
-    <!-- ФАВИКОН -->
+    <title>Дашборд - IP Expense Manager</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><defs><linearGradient id='borderGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%238b5cf6'/><stop offset='50%' stop-color='%236d28d9'/><stop offset='100%' stop-color='%231e40af'/></linearGradient><linearGradient id='checkGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%23a78bfa'/><stop offset='100%' stop-color='%234f46e5'/></linearGradient><filter id='glow' x='-50%' y='-50%' width='200%' height='200%'><feGaussianBlur in='SourceGraphic' stdDeviation='1' result='blur'/><feMerge><feMergeNode in='blur'/><feMergeNode in='SourceGraphic'/></feMerge></filter></defs><circle cx='10' cy='10' r='9' fill='none' stroke='url(%23borderGrad)' stroke-width='1.5' opacity='0.9'/><path d='M6,10 L8.5,12.5 L14,7' stroke='url(%23checkGrad)' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round' filter='url(%23glow)'/></svg>">
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/components/navbar.css">
+    <link rel="stylesheet" href="css/dashboard.css">
 </head>
-<script>
-// ВРЕМЕННЫЙ ТЕСТ - УДАЛИ ПОСЛЕ ПРОВЕРКИ
-console.log('=== ДИАГНОСТИКА DASHBOARD ===');
-console.log('1. DashboardManager:', typeof DashboardManager);
-console.log('2. Auth:', typeof Auth);
-console.log('3. Notification:', typeof Notification);
-console.log('4. appData:', typeof appData);
-
-// Принудительная инициализация
-if (typeof DashboardManager !== 'undefined') {
-    console.log('✅ DashboardManager найден, запускаем...');
-    DashboardManager.init();
-} else {
-    console.log('❌ DashboardManager НЕ НАЙДЕН!');
-    
-    // Проверяем загрузку файлов
-    const scripts = document.getElementsByTagName('script');
-    console.log('Загруженные скрипты:');
-    for (let script of scripts) {
-        console.log(' -', script.src);
-    }
-}
-</script>
 <body>
-    <nav class="navbar">
-        <div class="container">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <a href="dashboard.html" class="navbar-brand">🎯 IP Expense Manager</a>
-                <div style="display: flex; align-items: center; gap: 20px;">
-                    <span style="color: white; font-size: 14px;" id="userInfo"></span>
-                    <button onclick="Auth.logout()" class="btn" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); font-size: 14px;">🚪 Выйти</button>
+    <!-- Анимированный фон -->
+    <div class="background-animation">
+        <div class="gradient-circle circle-1"></div>
+        <div class="gradient-circle circle-2"></div>
+        <div class="gradient-circle circle-3"></div>
+    </div>
+
+    <!-- Навбар -->
+    <nav class="main-navbar">
+        <div class="navbar-container">
+            <a href="dashboard.html" class="navbar-brand">
+                <div class="brand-logo">💼</div>
+                <span class="brand-text">IP Expense Manager</span>
+            </a>
+            
+            <button class="mobile-menu-btn">☰</button>
+            
+            <ul class="navbar-links">
+                <li><a href="dashboard.html" class="nav-link active"><span class="nav-icon">📊</span> Дашборд</a></li>
+                <li><a href="tasks.html" class="nav-link"><span class="nav-icon">📋</span> Задачи</a></li>
+                <li><a href="create-task.html" class="nav-link"><span class="nav-icon">➕</span> Создать</a></li>
+                <li><a href="cards.html" class="nav-link"><span class="nav-icon">💳</span> Карты</a></li>
+                <li><a href="analytics.html" class="nav-link"><span class="nav-icon">📈</span> Аналитика</a></li>
+            </ul>
+            
+            <div class="user-menu">
+                <div class="user-info">
+                    <span class="user-name" id="userName">Пользователь</span>
+                    <span class="user-role" id="userRole">Роль</span>
                 </div>
+                <button onclick="logout()" class="logout-btn">
+                    <span class="nav-icon">🚪</span>
+                    Выйти
+                </button>
             </div>
         </div>
     </nav>
 
-    <main class="container" style="padding: 30px 20px;">
-        <!-- ЗАГОЛОВОК И БЫСТРЫЕ ДЕЙСТВИЯ -->
-        <div class="glass-card" style="padding: 24px; margin-bottom: 24px;">
-            <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 16px;">
-                <div style="flex: 1;">
-                    <h1 style="margin-bottom: 8px; color: var(--primary);">📊 Обзор системы</h1>
-                    <p style="color: var(--text-light); margin: 0;">Добро пожаловать в панель управления расходами ИП</p>
-                </div>
-                <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-                    <a href="create-task.html" class="btn btn-primary" id="createTaskBtn">➕ Задача</a>
-                    <a href="tasks.html" class="btn btn-success">📋 Все задачи</a>
-                    <a href="templates.html" class="btn btn-outline">🎯 Шаблоны</a>
-                    <a href="history.html" class="quick-action-btn" style="display: none;" id="historyLink">
-    <span class="quick-action-icon">📋</span>
-    <span>История изменений</span>
-</a>
-                </div>
-            </div>
+    <!-- Основной контент -->
+    <main class="main-container">
+        <header class="page-header">
+            <h1 class="page-title">Дашборд</h1>
+            <p class="page-subtitle">Обзор ваших финансовых показателей</p>
+        </header>
 
-            <!-- КАРТОЧКИ СТАТИСТИКИ -->
-            <div class="stats-grid">
+        <!-- Статистика -->
+        <section class="dashboard-section">
+            <div class="dashboard-grid">
                 <div class="stat-card">
-                    <div class="stat-icon">🏢</div>
-                    <div class="stat-content">
-                        <div class="stat-value" id="totalIPs">28</div>
-                        <div class="stat-label">Всего ИП</div>
-                    </div>
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-value" id="totalExpenses">0 ₽</div>
+                    <div class="stat-label">Общие расходы</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon">📋</div>
-                    <div class="stat-content">
-                        <div class="stat-value" id="activeTasks">0</div>
-                        <div class="stat-label">Активных задач</div>
-                    </div>
+                    <div class="stat-value" id="activeTasks">0</div>
+                    <div class="stat-label">Активные задачи</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon">✅</div>
-                    <div class="stat-content">
-                        <div class="stat-value" id="completedToday">0</div>
-                        <div class="stat-label">Выполнено сегодня</div>
-                    </div>
+                    <div class="stat-value" id="completedTasks">0</div>
+                    <div class="stat-label">Завершенные задачи</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon">💰</div>
-                    <div class="stat-content">
-                        <div class="stat-value" id="monthlyExpenses">0 ₽</div>
-                        <div class="stat-label">Расходы за месяц</div>
-                    </div>
+                    <div class="stat-icon">🏢</div>
+                    <div class="stat-value" id="activeIPs">0</div>
+                    <div class="stat-label">Активные ИП</div>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <div class="dashboard-grid">
-            <!-- КАЛЕНДАРЬ И БЫСТРЫЕ ДЕЙСТВИЯ -->
-            <div class="dashboard-column">
-                <div class="glass-card" style="padding: 24px; margin-bottom: 24px;">
-                    <h3 style="margin-bottom: 20px; color: var(--primary);">📅 Календарь задач</h3>
-                    <div id="taskCalendar"></div>
-                </div>
-
-                <div class="glass-card" style="padding: 24px;">
-                    <h3 style="margin-bottom: 16px; color: var(--primary);">🚀 Быстрые действия</h3>
-                    <div class="quick-actions-grid">
-                        <a href="create-task.html" class="quick-action-btn" id="quickCreateTask">
-                            <span class="quick-action-icon">➕</span>
-                            <span>Создать задачу</span>
-                        </a>
-                        <a href="tasks.html" class="quick-action-btn">
-                            <span class="quick-action-icon">📋</span>
-                            <span>Все задачи</span>
-                        </a>
-                        <a href="analytics.html" class="quick-action-btn">
-                            <span class="quick-action-icon">📊</span>
-                            <span>Аналитика</span>
-                        </a>
-                        <a href="expense-items.html" class="quick-action-btn">
-                            <span class="quick-action-icon">🗂️</span>
-                            <span>Статьи расходов</span>
-                        </a>
-                        <a href="cards.html" class="quick-action-btn">
-                            <span class="quick-action-icon">💳</span>
-                            <span>Управление картами</span>
-                        </a>
-                        <a href="templates.html" class="quick-action-btn">
-                            <span class="quick-action-icon">🎯</span>
-                            <span>Шаблоны задач</span>
-                        </a>
-                    </div>
-                </div>
+        <!-- Быстрые действия -->
+        <section class="dashboard-section">
+            <div class="section-header">
+                <h2 class="section-title">Быстрые действия</h2>
             </div>
+            <div class="quick-actions">
+                <a href="create-task.html" class="action-btn">
+                    <span class="action-icon">➕</span>
+                    <span class="action-text">Создать задачу</span>
+                </a>
+                <a href="tasks.html" class="action-btn">
+                    <span class="action-icon">📋</span>
+                    <span class="action-text">Все задачи</span>
+                </a>
+                <a href="cards.html" class="action-btn">
+                    <span class="action-icon">💳</span>
+                    <span class="action-text">Управление картами</span>
+                </a>
+                <a href="analytics.html" class="action-btn">
+                    <span class="action-icon">📈</span>
+                    <span class="action-text">Аналитика</span>
+                </a>
+            </div>
+        </section>
 
-            <!-- ПОСЛЕДНИЕ ЗАДАЧИ ТЕКУЩЕГО МЕСЯЦА -->
-            <div class="dashboard-column">
-                <div class="glass-card" style="padding: 24px;">
-                    <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 16px;">
-                        <h3 style="color: var(--primary); margin: 0;">📝 Задачи текущего месяца</h3>
-                        <a href="tasks.html" class="btn btn-outline" style="padding: 8px 16px; font-size: 0.9rem;">Все задачи</a>
-                    </div>
-                    <div id="recentTasks">
-                        <div style="text-align: center; color: var(--text-light); padding: 40px;">
-                            <div style="font-size: 3rem; margin-bottom: 16px;">📋</div>
-                            <p>Загрузка задач...</p>
+        <!-- Последние задачи -->
+        <section class="dashboard-section">
+            <div class="section-header">
+                <h2 class="section-title">Последние задачи</h2>
+                <a href="tasks.html" class="btn btn-secondary">Все задачи</a>
+            </div>
+            <div class="tasks-list" id="recentTasks">
+                <!-- Задачи будут загружены через JavaScript -->
+                <div class="task-item">
+                    <div class="task-info">
+                        <h4>Загрузка...</h4>
+                        <div class="task-meta">
+                            <span>Регион: </span>
+                            <span>ИП: </span>
+                            <span>Сумма: </span>
                         </div>
                     </div>
+                    <div class="task-status status-pending">В работе</div>
                 </div>
             </div>
-        </div>
+        </section>
     </main>
 
-    <!-- МОДАЛЬНОЕ ОКНО ДЛЯ КАЛЕНДАРЯ -->
-    <div id="calendarModal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 20px;">
-                <h3 id="modalDateTitle">Задачи на </h3>
-                <button onclick="closeCalendarModal()" class="btn btn-outline" style="padding: 8px 12px;">✕</button>
-            </div>
-            <div id="modalTasksList"></div>
-        </div>
-    </div>
-
-    <script src="js/data.js"></script>
-    <script src="js/utils.js"></script>
+    <!-- Скрипты -->
+    <script src="js/navbar.js"></script>
     <script src="js/dashboard.js"></script>
-    
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('📊 Дашборд загружается...');
-            
-            Auth.init();
-            if (!Auth.requireAuth()) return;
-            
-            setupRoleBasedUI();
-            updateUserInfo();
-            
-            // ✅ ДОБАВЛЯЕМ ЭТУ СТРОЧКУ - запускаем календарь и статистику
-            if (typeof DashboardManager !== 'undefined') {
-                DashboardManager.init();
-            } else {
-                console.error('❌ DashboardManager не найден');
-            }
-            
-            // Показываем историю изменений для админов
-            const historyLink = document.getElementById('historyLink');
-            if (historyLink && Auth.isAdmin()) {
-                historyLink.style.display = 'flex';
-            }
-            
-            // ✅ ДОБАВЛЯЕМ КНОПКУ НАЗАД
-            if (typeof NavigationHelper !== 'undefined') {
-                NavigationHelper.addBackButton('dashboard.html', '← Назад');
-            }
-        });
-
-        function updateUserInfo() {
-            const userInfo = document.getElementById('userInfo');
-            if (userInfo && Auth.currentUser) {
-                userInfo.innerHTML = `👋 ${Auth.currentUser.name} <span style="opacity: 0.8;">(${Auth.currentUser.role === 'admin' ? 'Бухгалтер' : 'Управляющий'})</span>`;
-            }
-        }
-
-        function setupRoleBasedUI() {
-            const createTaskBtn = document.getElementById('createTaskBtn');
-            const quickCreateTask = document.getElementById('quickCreateTask');
-            if (createTaskBtn && quickCreateTask) {
-                const display = Auth.isAdmin() ? 'inline-block' : 'none';
-                createTaskBtn.style.display = display;
-                quickCreateTask.style.display = display;
-            }
-        }
-    </script>
 </body>
 </html>
