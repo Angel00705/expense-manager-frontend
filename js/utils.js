@@ -1,5 +1,13 @@
-// js/utils.js - ПОЛНОСТЬЮ ИСПРАВЛЕННАЯ ВЕРСИЯ
+// js/utils.js - ДОБАВИТЬ В НАЧАЛО ФАЙЛА
+console.log('🔧 Загрузка utils.js...');
 
+// Инициализация при загрузке
+document.addEventListener('DOMContentLoaded', function() {
+    if (typeof Auth !== 'undefined') {
+        Auth.init();
+        console.log('✅ Auth система готова');
+    }
+});
 const Auth = {
   currentUser: null,
   initialized: false,

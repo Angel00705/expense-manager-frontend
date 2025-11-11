@@ -57,23 +57,13 @@
 
                 <form id="loginForm" class="login-form">
                     <div class="input-group">
-                        <div class="input-icon">👤</div>
-                        <input type="text" id="username" class="form-input" placeholder="Логин" required>
+                        <div class="input-icon">📧</div>
+                        <input type="email" id="email" class="form-input" placeholder="Email" required value="admin@test.ru">
                     </div>
 
                     <div class="input-group">
                         <div class="input-icon">🔒</div>
-                        <input type="password" id="password" class="form-input" placeholder="Пароль" required>
-                    </div>
-
-                    <div class="input-group">
-                        <div class="input-icon">👥</div>
-                        <select id="account" class="form-input" required>
-                            <option value="">Выберите аккаунт</option>
-                            <option value="admin">Администратор</option>
-                            <option value="manager1">Менеджер 1</option>
-                            <option value="manager2">Менеджер 2</option>
-                        </select>
+                        <input type="password" id="password" class="form-input" placeholder="Пароль" required value="admin123">
                     </div>
 
                     <button type="submit" class="login-btn">
@@ -89,55 +79,130 @@
                         <span>Тестовые данные</span>
                     </div>
                     <div class="test-data">
-                        <div>Логин: <strong>admin</strong></div>
-                        <div>Пароль: <strong>admin</strong></div>
-                        <div>Аккаунт: <strong>Администратор</strong></div>
+                        <div><strong>Администратор:</strong></div>
+                        <div>Email: <strong>admin@test.ru</strong></div>
+                        <div>Пароль: <strong>admin123</strong></div>
+                        <div style="margin-top: 0.5rem;"><strong>Менеджер Астрахань:</strong></div>
+                        <div>Email: <strong>astrakhan@test.ru</strong></div>
+                        <div>Пароль: <strong>manager123</strong></div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Подключаем основные скрипты -->
     <script src="js/utils.js"></script>
     <script src="js/data.js"></script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const loginForm = document.getElementById('loginForm');
+            console.log('🚀 Страница входа загружена');
             
-            // Автозаполнение тестовых данных
-            document.getElementById('username').value = 'admin';
-            document.getElementById('password').value = 'admin';
-            document.getElementById('account').value = 'admin';
+            // Инициализируем Auth систему
+            if (window.Auth && typeof Auth.init === 'function') {
+                Auth.init();
+                console.log('✅ Auth система инициализирована');
+            }
 
+            const loginForm = document.getElementById('loginForm');
+            const loginBtn = document.querySelector('.login-btn');
+
+            // Анимация появления элементов
+            const animateElements = () => {
+                const elements = document.querySelectorAll('.login-card, .welcome-section');
+                elements.forEach((el, index) => {
+                    el.style.opacity = '0';
+                    el.style.transform = 'translateY(30px)';
+                    
+                    setTimeout(() => {
+                        el.style.transition = 'all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+                        el.style.opacity = '1';
+                        el.style.transform = 'translateY(0)';
+                    }, index * 300);
+                });
+            };
+
+            // Запускаем анимации
+            setTimeout(animateElements, 100);
+
+            // Обработчик формы входа
             loginForm.addEventListener('submit', function(e) {
                 e.preventDefault();
                 
-                const username = document.getElementById('username').value;
+                const email = document.getElementById('email').value;
                 const password = document.getElementById('password').value;
-                const account = document.getElementById('account').value;
                 
-                if (window.auth && typeof auth.login === 'function') {
-                    if (auth.login(username, password, account)) {
-                        // Добавляем анимацию загрузки
-                        const btn = document.querySelector('.login-btn');
-                        btn.innerHTML = '<div class="loading-spinner"></div>';
-                        btn.disabled = true;
+                console.log('🔐 Попытка входа:', { email, password });
+                
+                // Используем основную систему авторизации
+                if (window.Auth && typeof Auth.login === 'function') {
+                    const result = Auth.login(email, password);
+                    
+                    if (result.success) {
+                        console.log('✅ Успешный вход, пользователь:', result.user);
                         
+                        // Анимация загрузки
+                        loginBtn.innerHTML = '<div class="loading-spinner"></div>';
+                        loginBtn.disabled = true;
+                        
+                        // Плавный переход на дашборд
                         setTimeout(() => {
                             window.location.href = 'dashboard.html';
-                        }, 1000);
+                        }, 1200);
                     } else {
-                        showError('Неверные учетные данные');
+                        console.error('❌ Ошибка входа:', result.error);
+                        showError(result.error || 'Неверные учетные данные');
                     }
                 } else {
+                    console.error('❌ Auth система не загружена');
                     showError('Система авторизации не загружена');
                 }
             });
 
             function showError(message) {
-                // Можно добавить красивый toast вместо alert
-                alert(message);
+                // Временное решение - позже заменим на красивый toast
+                const errorDiv = document.createElement('div');
+                errorDiv.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: linear-gradient(135deg, #ef4444, #dc2626);
+                    color: white;
+                    padding: 16px 20px;
+                    border-radius: 12px;
+                    box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
+                    z-index: 10000;
+                    animation: slideInRight 0.3s ease;
+                `;
+                errorDiv.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span style="font-size: 1.2em;">❌</span>
+                        <span>${message}</span>
+                    </div>
+                `;
+                
+                document.body.appendChild(errorDiv);
+                
+                setTimeout(() => {
+                    errorDiv.style.animation = 'slideOutRight 0.3s ease';
+                    setTimeout(() => errorDiv.remove(), 300);
+                }, 4000);
             }
+
+            // Добавляем CSS для анимаций ошибок
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes slideInRight {
+                    from { transform: translateX(400px); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+                @keyframes slideOutRight {
+                    from { transform: translateX(0); opacity: 1; }
+                    to { transform: translateX(400px); opacity: 0; }
+                }
+            `;
+            document.head.appendChild(style);
         });
     </script>
 </body>
