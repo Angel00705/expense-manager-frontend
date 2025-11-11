@@ -41,11 +41,14 @@ function updateRecentTasks(tasks) {
 
     if (recentTasks.length === 0) {
         recentTasksContainer.innerHTML = `
-            <div class="task-item">
-                <div class="task-info">
-                    <h4>Задач пока нет</h4>
-                    <div class="task-meta">Создайте первую задачу</div>
-                </div>
+            <div class="empty-state">
+                <div class="stat-icon">📋</div>
+                <h3>Задач пока нет</h3>
+                <p>Создайте первую задачу чтобы начать работу</p>
+                <a href="create-task.html" class="action-btn">
+                    <span class="action-icon">➕</span>
+                    <span class="action-text">Создать задачу</span>
+                </a>
             </div>
         `;
         return;
@@ -56,9 +59,9 @@ function updateRecentTasks(tasks) {
             <div class="task-info">
                 <h4>${task.title || 'Без названия'}</h4>
                 <div class="task-meta">
-                    <span>Регион: ${task.region}</span>
-                    <span>ИП: ${task.ip}</span>
-                    <span>Сумма: ${parseFloat(task.amount || 0).toLocaleString('ru-RU')} ₽</span>
+                    <span>📍 ${task.region}</span>
+                    <span>🏢 ${task.ip}</span>
+                    <span>💰 ${parseFloat(task.amount || 0).toLocaleString('ru-RU')} ₽</span>
                 </div>
             </div>
             <div class="task-status status-${task.status === 'completed' ? 'completed' : 'pending'}">
