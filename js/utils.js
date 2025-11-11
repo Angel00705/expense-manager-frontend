@@ -121,6 +121,25 @@ const Notification = {
   }
 };
 
+// Добавить в utils.js
+const NavigationHelper = {
+  // Добавить кнопку "Назад" в навигацию
+  addBackButton: function(targetPage = 'dashboard.html', text = '← Назад') {
+    const nav = document.querySelector('.navbar .container > div');
+    if (nav) {
+      const backBtn = document.createElement('a');
+      backBtn.href = targetPage;
+      backBtn.className = 'btn btn-outline';
+      backBtn.style.background = 'rgba(255,255,255,0.1)';
+      backBtn.style.color = 'white';
+      backBtn.style.border = '1px solid rgba(255,255,255,0.3)';
+      backBtn.style.marginRight = '12px';
+      backBtn.innerHTML = text;
+      nav.insertBefore(backBtn, nav.firstChild);
+    }
+  }
+};
+
 // ПОЛНЫЙ TaskManager с ВСЕМИ методами
 const TaskManager = {
   statuses: {
@@ -303,6 +322,118 @@ const BulkOperations = {
     return csv;
   }
 };
+// В utils.js добавляем после BulkOperations:
+
+// Система аудита для отслеживания изменений
+const AuditSystem = {
+    // Получить историю изменений
+    getHistory: function() {
+        try {
+            const history = localStorage.getItem('auditHistory');
+            return history ? JSON.parse(history) : [];
+        } catch (e) {
+            return [];
+        }
+    },
+
+    // Сохранить историю изменений
+    saveHistory: function(history) {
+        try {
+            localStorage.setItem('auditHistory', JSON.stringify(history));
+            return true;
+        } catch (e) {
+            console.error('Ошибка сохранения истории:', e);
+            return false;
+        }
+    },
+
+    // Добавить запись в историю
+    logAction: function(action, entity, entityId, details = {}) {
+        if (!Auth.currentUser || Auth.currentUser.role !== 'admin') return;
+
+        const history = this.getHistory();
+        
+        const record = {
+            id: 'audit_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+            timestamp: new Date().toISOString(),
+            user: {
+                name: Auth.currentUser.name,
+                email: Auth.currentUser.email,
+                role: Auth.currentUser.role
+            },
+            action: action, // create, update, delete
+            entity: entity, // task, expense_item, card, etc.
+            entityId: entityId,
+            details: details
+        };
+
+        history.unshift(record); // Добавляем в начало
+        
+        // Ограничиваем историю последними 1000 записей
+        if (history.length > 1000) {
+            history.splice(1000);
+        }
+        
+        this.saveHistory(history);
+        return record;
+    }
+};
+
+// Обновляем TaskManager для логирования действий
+const originalCreateTask = TaskManager.createTask;
+TaskManager.createTask = function(taskData) {
+    const task = originalCreateTask.call(this, taskData);
+    if (task && Auth.isAdmin()) {
+        AuditSystem.logAction('create', 'task', task.id, {
+            title: task.title,
+            description: task.description,
+            region: task.region,
+            ip: task.ip,
+            amount: task.plannedAmount
+        });
+    }
+    return task;
+};
+
+const originalUpdateTask = TaskManager.updateTask;
+TaskManager.updateTask = function(taskId, updates) {
+    const oldTask = this.getAllTasks().find(t => t.id === taskId);
+    const task = originalUpdateTask.call(this, taskId, updates);
+    
+    if (task && Auth.isAdmin() && oldTask) {
+        const changes = {};
+        Object.keys(updates).forEach(key => {
+            if (oldTask[key] !== updates[key]) {
+                changes[key] = {
+                    old: oldTask[key],
+                    new: updates[key]
+                };
+            }
+        });
+        
+        if (Object.keys(changes).length > 0) {
+            AuditSystem.logAction('update', 'task', taskId, {
+                title: task.title,
+                changes: changes
+            });
+        }
+    }
+    return task;
+};
+
+const originalDeleteTask = TaskManager.deleteTask;
+TaskManager.deleteTask = function(taskId) {
+    const task = this.getAllTasks().find(t => t.id === taskId);
+    const success = originalDeleteTask.call(this, taskId);
+    
+    if (success && task && Auth.isAdmin()) {
+        AuditSystem.logAction('delete', 'task', taskId, {
+            title: task.title,
+            region: task.region
+        });
+    }
+    return success;
+};
 
 // Экспорт в глобальную область
 window.Auth = Auth;
@@ -310,5 +441,7 @@ window.Notification = Notification;
 window.TaskManager = TaskManager;
 window.FormatHelper = FormatHelper;
 window.BulkOperations = BulkOperations;
+window.NavigationHelper = NavigationHelper;
+window.AuditSystem = AuditSystem;
 
 console.log('🔧 Utils.js загружен успешно');

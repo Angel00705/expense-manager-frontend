@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>💳 Карты - IP Expense Manager</title>
     <link rel="stylesheet" href="css/style.css">
+    <!-- ФАВИКОН -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><defs><linearGradient id='borderGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%238b5cf6'/><stop offset='50%' stop-color='%236d28d9'/><stop offset='100%' stop-color='%231e40af'/></linearGradient><linearGradient id='checkGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%23a78bfa'/><stop offset='100%' stop-color='%234f46e5'/></linearGradient><filter id='glow' x='-50%' y='-50%' width='200%' height='200%'><feGaussianBlur in='SourceGraphic' stdDeviation='1' result='blur'/><feMerge><feMergeNode in='blur'/><feMergeNode in='SourceGraphic'/></feMerge></filter></defs><circle cx='10' cy='10' r='9' fill='none' stroke='url(%23borderGrad)' stroke-width='1.5' opacity='0.9'/><path d='M6,10 L8.5,12.5 L14,7' stroke='url(%23checkGrad)' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round' filter='url(%23glow)'/></svg>">
 </head>
 <body>
@@ -28,7 +29,7 @@
 
     <main class="container" style="padding: 40px 20px;">
         <div class="glass-card animate-slide-in">
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 30px; flex-wrap: wrap; gap: 16px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
                 <div>
                     <h1 style="margin-bottom: 8px; color: var(--primary);">💳 Банковские карты</h1>
                     <p style="color: var(--text-light); margin: 0;">Управление банковскими картами по регионам и ИП</p>
@@ -36,60 +37,68 @@
                 <button class="btn btn-primary" id="addButton" style="display: none;" onclick="showAddCardForm()">➕ Добавить карту</button>
             </div>
 
-            <div style="display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap;">
-                <div class="form-group" style="flex: 1; min-width: 150px;">
-                    <select class="form-control form-select" id="regionFilter" onchange="filterCards()">
+            <!-- КОМПАКТНЫЕ ФИЛЬТРЫ -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px;">
+                <div class="form-group">
+                    <label class="form-label" style="font-size: 0.9rem; margin-bottom: 6px;">📍 Регион</label>
+                    <select class="form-control form-select" id="regionFilter" onchange="filterCards()" style="padding: 10px 12px; font-size: 0.9rem;">
                         <option value="">Все регионы</option>
                     </select>
                 </div>
-                <div class="form-group" style="flex: 1; min-width: 200px;">
-                    <input type="text" class="form-control" id="searchInput" placeholder="🔍 Поиск по ИП или карте..." onkeyup="filterCards()">
+                <div class="form-group">
+                    <label class="form-label" style="font-size: 0.9rem; margin-bottom: 6px;">🔍 Поиск</label>
+                    <input type="text" class="form-control" id="searchInput" placeholder="ИП или номер карты..." onkeyup="filterCards()" style="padding: 10px 12px; font-size: 0.9rem;">
                 </div>
             </div>
 
+            <!-- КОМПАКТНЫЙ КОНТЕЙНЕР КАРТ -->
             <div id="cardsContainer">
-                <div style="text-align: center; color: var(--text-light); padding: 60px;">
-                    <div style="font-size: 4rem; margin-bottom: 16px;">💳</div>
+                <div style="text-align: center; color: var(--text-light); padding: 40px;">
+                    <div style="font-size: 3rem; margin-bottom: 16px;">💳</div>
                     <p>Загрузка карт...</p>
                 </div>
             </div>
         </div>
 
-        <div class="glass-card animate-fade-in" id="cardForm" style="padding: 30px; margin-top: 30px; display: none;">
-            <h3 style="margin-bottom: 20px; color: var(--primary);" id="formTitle">➕ Добавить новую карту</h3>
+        <!-- ФОРМА ДОБАВЛЕНИЯ/РЕДАКТИРОВАНИЯ -->
+        <div class="glass-card animate-fade-in" id="cardForm" style="padding: 24px; margin-top: 24px; display: none;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+                <h3 style="color: var(--primary); margin: 0;" id="formTitle">➕ Добавить новую карту</h3>
+                <button type="button" class="btn btn-outline" style="padding: 8px 12px;" onclick="hideCardForm()">✕</button>
+            </div>
             
             <form id="cardFormElement">
-                <div style="display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap;">
-                    <div class="form-group" style="flex: 1; min-width: 200px;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 20px;">
+                    <div class="form-group">
                         <label class="form-label">🏙️ Регион *</label>
                         <select class="form-control form-select" id="cardRegion" required onchange="onCardRegionChange()">
                             <option value="">Выберите регион...</option>
                         </select>
                     </div>
                     
-                    <div class="form-group" style="flex: 1; min-width: 200px;">
-                        <label class="form-label">💼 Индивидуальный предприниматель *</label>
+                    <div class="form-group">
+                        <label class="form-label">💼 ИП *</label>
                         <select class="form-control form-select" id="cardIP" required disabled>
                             <option value="">Сначала выберите регион</option>
                         </select>
                     </div>
                 </div>
                 
-                <div style="display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap;">
-                    <div class="form-group" style="flex: 1; min-width: 200px;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 20px;">
+                    <div class="form-group">
                         <label class="form-label">💳 Корпоративная карта</label>
                         <input type="text" class="form-control" id="corpCard" 
-                               placeholder="Например: *1234" maxlength="5">
+                               placeholder="*1234" maxlength="5" style="font-family: monospace;">
                     </div>
                     
-                    <div class="form-group" style="flex: 1; min-width: 200px;">
+                    <div class="form-group">
                         <label class="form-label">👤 Карта ФЛ</label>
                         <input type="text" class="form-control" id="flCard" 
-                               placeholder="Например: *5678" maxlength="5">
+                               placeholder="*5678" maxlength="5" style="font-family: monospace;">
                     </div>
                 </div>
                 
-                <div class="form-group" style="margin-bottom: 24px;">
+                <div class="form-group" style="margin-bottom: 20px;">
                     <label class="form-label">📍 Статус карты *</label>
                     <select class="form-control form-select" id="cardStatus" required>
                         <option value="в регионе">✅ В регионе</option>
@@ -99,12 +108,12 @@
                     </select>
                 </div>
                 
-                <div style="display: flex; gap: 16px;">
-                    <button type="submit" class="btn btn-primary" id="submitButton">
-                        💾 Сохранить
-                    </button>
+                <div style="display: flex; gap: 12px; justify-content: flex-end;">
                     <button type="button" class="btn btn-outline" onclick="hideCardForm()">
                         ❌ Отмена
+                    </button>
+                    <button type="submit" class="btn btn-primary" id="submitButton">
+                        💾 Сохранить
                     </button>
                 </div>
             </form>
@@ -115,6 +124,7 @@
     <script src="js/utils.js"></script>
     <script>
         let editingCardIP = null;
+        let allCardsData = {};
 
         document.addEventListener('DOMContentLoaded', function() {
             console.log('💳 Страница карт загружается...');
@@ -177,17 +187,18 @@
             const regionFilter = document.getElementById('regionFilter').value;
             const searchQuery = document.getElementById('searchInput').value.toLowerCase();
             
-            let cardsHtml = '';
+            // Собираем все данные карт
+            allCardsData = {};
             let hasCards = false;
             
             appData.regions.forEach(region => {
                 if (regionFilter && regionFilter !== region) return;
                 
                 const regionIPs = appData.individualEntrepreneurs[region];
-                let regionCardsHtml = '';
-                let regionHasCards = false;
+                let regionCards = [];
                 
                 regionIPs.forEach(ip => {
+                    // Проверяем поиск по ИП
                     if (searchQuery && !ip.toLowerCase().includes(searchQuery)) return;
                     
                     const cards = appData.bankCards[ip];
@@ -201,79 +212,108 @@
                     
                     if (searchQuery && !hasMatchingCard && !ip.toLowerCase().includes(searchQuery)) return;
                     
-                    regionHasCards = true;
-                    hasCards = true;
+                    regionCards.push({
+                        ip: ip,
+                        region: region,
+                        corpCard: cards.corpCard,
+                        flCard: cards.flCard,
+                        status: cards.status
+                    });
                     
-                    regionCardsHtml += `
-                        <div class="glass-card" style="padding: 20px; margin-bottom: 16px;">
-                            <div style="display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
-                                <div style="flex: 1; min-width: 300px;">
-                                    <h3 style="margin-bottom: 8px; color: var(--primary);">${ip}</h3>
-                                    <div style="color: var(--text-light); margin-bottom: 16px;">${region}</div>
-                                    
-                                    <div style="display: flex; gap: 24px; flex-wrap: wrap;">
-                                        ${cards.corpCard ? `
-                                            <div>
-                                                <div style="font-weight: 600; color: var(--success); margin-bottom: 4px;">💳 Корп. карта</div>
-                                                <div style="font-family: monospace; font-size: 1.1rem; color: var(--text-dark);">${cards.corpCard}</div>
-                                            </div>
-                                        ` : ''}
-                                        
-                                        ${cards.flCard ? `
-                                            <div>
-                                                <div style="font-weight: 600; color: var(--warning); margin-bottom: 4px;">👤 Карта ФЛ</div>
-                                                <div style="font-family: monospace; font-size: 1.1rem; color: var(--text-dark);">${cards.flCard}</div>
-                                            </div>
-                                        ` : ''}
-                                    </div>
-                                    
-                                    <div style="margin-top: 16px;">
-                                        <span class="badge ${getStatusBadgeClass(cards.status)}">
-                                            ${cards.status}
-                                        </span>
-                                    </div>
+                    hasCards = true;
+                });
+                
+                if (regionCards.length > 0) {
+                    allCardsData[region] = regionCards;
+                }
+            });
+            
+            displayCards(allCardsData, hasCards);
+        }
+
+        function displayCards(cardsData, hasCards) {
+            const container = document.getElementById('cardsContainer');
+            
+            if (!hasCards) {
+                container.innerHTML = `
+                    <div style="text-align: center; color: var(--text-light); padding: 40px;">
+                        <div style="font-size: 3rem; margin-bottom: 16px;">💳</div>
+                        <h3 style="margin-bottom: 8px;">Карты не найдены</h3>
+                        <p>Попробуйте изменить параметры фильтрации</p>
+                        ${Auth.isAdmin() ? 
+                            '<button class="btn btn-primary" style="margin-top: 16px;" onclick="showAddCardForm()">➕ Добавить первую карту</button>' : 
+                            ''
+                        }
+                    </div>
+                `;
+                return;
+            }
+            
+            let cardsHtml = '';
+            
+            Object.entries(cardsData).forEach(([region, cards]) => {
+                cardsHtml += `
+                    <div style="margin-bottom: 24px;">
+                        <h2 style="margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid var(--primary); font-size: 1.25rem;">
+                            🏙️ ${region}
+                        </h2>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px;">
+                `;
+                
+                cards.forEach(card => {
+                    cardsHtml += `
+                        <div class="glass-card" style="padding: 16px; transition: var(--transition);">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+                                <div style="flex: 1;">
+                                    <h3 style="margin-bottom: 4px; color: var(--primary); font-size: 1rem;">${card.ip}</h3>
+                                    <div style="color: var(--text-light); font-size: 0.8rem; margin-bottom: 8px;">${card.region}</div>
                                 </div>
-                                
                                 ${Auth.isAdmin() ? `
-                                <div style="display: flex; gap: 8px;">
-                                    <button class="btn btn-outline" style="padding: 8px 12px;" 
-                                            onclick="editCard('${ip}')">
+                                <div style="display: flex; gap: 4px; margin-left: 12px;">
+                                    <button class="btn btn-outline" style="padding: 6px 8px; font-size: 0.8rem;" 
+                                            onclick="editCard('${card.ip}')">
                                         ✏️
                                     </button>
-                                    <button class="btn btn-outline" style="padding: 8px 12px; background: rgba(239, 68, 68, 0.1); color: var(--error);" 
-                                            onclick="deleteCard('${ip}')">
+                                    <button class="btn btn-outline" style="padding: 6px 8px; font-size: 0.8rem; background: rgba(239, 68, 68, 0.1); color: var(--error);" 
+                                            onclick="deleteCard('${card.ip}')">
                                         🗑️
                                     </button>
                                 </div>
                                 ` : ''}
                             </div>
+                            
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                                ${card.corpCard ? `
+                                    <div>
+                                        <div style="font-weight: 600; color: var(--success); margin-bottom: 2px; font-size: 0.8rem;">💳 Корп.</div>
+                                        <div style="font-family: monospace; font-size: 0.9rem; color: var(--text-dark);">${card.corpCard}</div>
+                                    </div>
+                                ` : '<div></div>'}
+                                
+                                ${card.flCard ? `
+                                    <div>
+                                        <div style="font-weight: 600; color: var(--warning); margin-bottom: 2px; font-size: 0.8rem;">👤 ФЛ</div>
+                                        <div style="font-family: monospace; font-size: 0.9rem; color: var(--text-dark);">${card.flCard}</div>
+                                    </div>
+                                ` : '<div></div>'}
+                            </div>
+                            
+                            <div>
+                                <span class="badge ${getStatusBadgeClass(card.status)}" style="font-size: 0.75rem;">
+                                    ${card.status}
+                                </span>
+                            </div>
                         </div>
                     `;
                 });
                 
-                if (regionHasCards) {
-                    cardsHtml += `
-                        <div style="margin-bottom: 24px;">
-                            <h2 style="margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid var(--primary);">
-                                🏙️ ${region}
-                            </h2>
-                            ${regionCardsHtml}
+                cardsHtml += `
                         </div>
-                    `;
-                }
-            });
-            
-            if (!hasCards) {
-                container.innerHTML = `
-                    <div style="text-align: center; color: var(--text-light); padding: 60px;">
-                        <div style="font-size: 4rem; margin-bottom: 16px;">💳</div>
-                        <h3 style="margin-bottom: 8px;">Карты не найдены</h3>
-                        <p>Попробуйте изменить параметры фильтрации</p>
                     </div>
                 `;
-            } else {
-                container.innerHTML = cardsHtml;
-            }
+            });
+            
+            container.innerHTML = cardsHtml;
         }
 
         function getStatusBadgeClass(status) {
@@ -281,6 +321,7 @@
                 case 'в регионе': return 'badge-success';
                 case 'В ПВЗ': return 'badge-warning';
                 case 'Перевыпустить': return 'badge-error';
+                case 'Заблокирована': return 'badge-error';
                 default: return 'badge-info';
             }
         }
@@ -320,6 +361,7 @@
             document.getElementById('submitButton').textContent = '💾 Сохранить';
             editingCardIP = null;
             document.getElementById('cardFormElement').reset();
+            document.getElementById('cardIP').disabled = false;
         }
 
         function hideCardForm() {
@@ -334,7 +376,10 @@
             }
             
             const cards = appData.bankCards[ip];
-            if (!cards) return;
+            if (!cards) {
+                Notification.error('Карты для этого ИП не найдены');
+                return;
+            }
             
             // Находим регион ИП
             let region = '';
@@ -351,6 +396,8 @@
             
             document.getElementById('cardRegion').value = region;
             onCardRegionChange();
+            
+            // Ждем обновления списка ИП
             setTimeout(() => {
                 document.getElementById('cardIP').value = ip;
                 document.getElementById('cardIP').disabled = true; // Нельзя менять ИП при редактировании
@@ -388,8 +435,8 @@
             const formData = {
                 region: document.getElementById('cardRegion').value,
                 ip: document.getElementById('cardIP').value,
-                corpCard: document.getElementById('corpCard').value,
-                flCard: document.getElementById('flCard').value,
+                corpCard: document.getElementById('corpCard').value.trim(),
+                flCard: document.getElementById('flCard').value.trim(),
                 status: document.getElementById('cardStatus').value
             };
             
@@ -397,6 +444,14 @@
             if (!formData.region || !formData.ip || !formData.status) {
                 Notification.error('Пожалуйста, заполните все обязательные поля');
                 return;
+            }
+            
+            // Форматирование номеров карт
+            if (formData.corpCard && !formData.corpCard.startsWith('*')) {
+                formData.corpCard = '*' + formData.corpCard;
+            }
+            if (formData.flCard && !formData.flCard.startsWith('*')) {
+                formData.flCard = '*' + formData.flCard;
             }
             
             // Проверяем, что указана хотя бы одна карта
