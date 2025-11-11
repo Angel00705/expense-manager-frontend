@@ -146,6 +146,11 @@
             
             // Загружаем карты
             loadCards();
+            
+            // Добавляем кнопку назад
+            if (typeof NavigationHelper !== 'undefined') {
+                NavigationHelper.addBackButton('dashboard.html', '← Назад');
+            }
         });
 
         function updateUserInfo() {
@@ -161,13 +166,31 @@
             if (addButton) {
                 addButton.style.display = Auth.isAdmin() ? 'block' : 'none';
             }
+            
+            // Скрываем выбор региона у менеджеров при добавлении карт
+            const cardRegion = document.getElementById('cardRegion');
+            if (cardRegion && Auth.isManager()) {
+                cardRegion.disabled = true;
+                // Автоматически выбираем регион менеджера
+                if (Auth.currentUser.region) {
+                    cardRegion.value = Auth.currentUser.region;
+                    onCardRegionChange(); // Загружаем ИП для этого региона
+                }
+            }
         }
 
         function populateFilters() {
             const regionFilter = document.getElementById('regionFilter');
             const cardRegion = document.getElementById('cardRegion');
             
+            // Очищаем селекты
+            regionFilter.innerHTML = '<option value="">Все регионы</option>';
+            cardRegion.innerHTML = '<option value="">Выберите регион...</option>';
+            
             appData.regions.forEach(region => {
+                // Для менеджеров показываем только их регион
+                if (Auth.isManager() && Auth.currentUser.region !== region) return;
+                
                 // Для фильтра
                 const filterOption = document.createElement('option');
                 filterOption.value = region;
@@ -180,59 +203,64 @@
                 formOption.textContent = region;
                 cardRegion.appendChild(formOption);
             });
+            
+            // Автоматически выбираем регион для менеджеров
+            if (Auth.isManager() && Auth.currentUser.region) {
+                regionFilter.value = Auth.currentUser.region;
+                regionFilter.disabled = true; // Запрещаем менять регион менеджерам
+            }
         }
 
-       // В cards.html НАЙТИ функцию loadCards() и ЗАМЕНИТЬ на:
-
-function loadCards() {
-    const container = document.getElementById('cardsContainer');
-    const regionFilter = document.getElementById('regionFilter').value;
-    const searchQuery = document.getElementById('searchInput').value.toLowerCase();
-    
-    // Собираем все данные карт
-    allCardsData = {};
-    let hasCards = false;
-    
-    appData.regions.forEach(region => {
-        // ✅ ИСПРАВЛЕНИЕ: Правильная фильтрация по регионам
-        if (regionFilter && regionFilter !== '' && regionFilter !== region) return;
-        
-        const regionIPs = appData.individualEntrepreneurs[region];
-        let regionCards = [];
-        
-        regionIPs.forEach(ip => {
-            // Проверяем поиск по ИП
-            if (searchQuery && !ip.toLowerCase().includes(searchQuery)) return;
+        function loadCards() {
+            const container = document.getElementById('cardsContainer');
+            const regionFilter = document.getElementById('regionFilter').value;
+            const searchQuery = document.getElementById('searchInput').value.toLowerCase();
             
-            const cards = appData.bankCards[ip];
-            if (!cards) return;
+            // Собираем все данные карт
+            allCardsData = {};
+            let hasCards = false;
             
-            // Проверяем поиск по номеру карты
-            const hasMatchingCard = searchQuery && (
-                (cards.corpCard && cards.corpCard.toLowerCase().includes(searchQuery)) ||
-                (cards.flCard && cards.flCard.toLowerCase().includes(searchQuery))
-            );
-            
-            if (searchQuery && !hasMatchingCard && !ip.toLowerCase().includes(searchQuery)) return;
-            
-            regionCards.push({
-                ip: ip,
-                region: region,
-                corpCard: cards.corpCard,
-                flCard: cards.flCard,
-                status: cards.status
+            appData.regions.forEach(region => {
+                // Правильная фильтрация по регионам для менеджеров
+                if (Auth.isManager() && Auth.currentUser.region !== region) return;
+                if (regionFilter && regionFilter !== '' && regionFilter !== region) return;
+                
+                const regionIPs = appData.individualEntrepreneurs[region];
+                let regionCards = [];
+                
+                regionIPs.forEach(ip => {
+                    // Проверяем поиск по ИП
+                    if (searchQuery && !ip.toLowerCase().includes(searchQuery)) return;
+                    
+                    const cards = appData.bankCards[ip];
+                    if (!cards) return;
+                    
+                    // Проверяем поиск по номеру карты
+                    const hasMatchingCard = searchQuery && (
+                        (cards.corpCard && cards.corpCard.toLowerCase().includes(searchQuery)) ||
+                        (cards.flCard && cards.flCard.toLowerCase().includes(searchQuery))
+                    );
+                    
+                    if (searchQuery && !hasMatchingCard && !ip.toLowerCase().includes(searchQuery)) return;
+                    
+                    regionCards.push({
+                        ip: ip,
+                        region: region,
+                        corpCard: cards.corpCard,
+                        flCard: cards.flCard,
+                        status: cards.status
+                    });
+                    
+                    hasCards = true;
+                });
+                
+                if (regionCards.length > 0) {
+                    allCardsData[region] = regionCards;
+                }
             });
             
-            hasCards = true;
-        });
-        
-        if (regionCards.length > 0) {
-            allCardsData[region] = regionCards;
+            displayCards(allCardsData, hasCards);
         }
-    });
-    
-    displayCards(allCardsData, hasCards);
-}
 
         function displayCards(cardsData, hasCards) {
             const container = document.getElementById('cardsContainer');
@@ -350,6 +378,12 @@ function loadCards() {
             } else {
                 ipSelect.innerHTML = '<option value="">Сначала выберите регион</option>';
                 ipSelect.disabled = true;
+            }
+            
+            // Для менеджеров автоматически выбираем их регион
+            if (Auth.isManager() && Auth.currentUser.region && !region) {
+                document.getElementById('cardRegion').value = Auth.currentUser.region;
+                onCardRegionChange();
             }
         }
 
