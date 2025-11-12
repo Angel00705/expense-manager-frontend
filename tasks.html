@@ -3,328 +3,138 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📋 Задачи - IP Expense Manager</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title>Задачи - IP Expense Manager</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><defs><linearGradient id='borderGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%238b5cf6'/><stop offset='50%' stop-color='%236d28d9'/><stop offset='100%' stop-color='%231e40af'/></linearGradient><linearGradient id='checkGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%23a78bfa'/><stop offset='100%' stop-color='%234f46e5'/></linearGradient><filter id='glow' x='-50%' y='-50%' width='200%' height='200%'><feGaussianBlur in='SourceGraphic' stdDeviation='1' result='blur'/><feMerge><feMergeNode in='blur'/><feMergeNode in='SourceGraphic'/></feMerge></filter></defs><circle cx='10' cy='10' r='9' fill='none' stroke='url(%23borderGrad)' stroke-width='1.5' opacity='0.9'/><path d='M6,10 L8.5,12.5 L14,7' stroke='url(%23checkGrad)' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round' filter='url(%23glow)'/></svg>">
+    
+    <!-- Подключаем стили -->
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/components/navbar.css">
+    <link rel="stylesheet" href="css/tasks.css">
 </head>
 <body>
-    <nav class="navbar">
-        <div class="container">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <a href="dashboard.html" class="navbar-brand">
-                    🎯 IP Expense Manager
-                </a>
-                <div style="display: flex; align-items: center; gap: 20px;">
-                    <span style="color: white; font-size: 14px;" id="userInfo">
-                        <!-- Заполнится через JavaScript -->
-                    </span>
-                    <button onclick="Auth.logout()" class="btn" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); font-size: 14px;">
-                        🚪 Выйти
-                    </button>
+    <!-- Анимированный фон -->
+    <div class="background-animation">
+        <div class="gradient-circle circle-1"></div>
+        <div class="gradient-circle circle-2"></div>
+        <div class="gradient-circle circle-3"></div>
+    </div>
+
+    <!-- Навбар -->
+    <nav class="main-navbar">
+        <div class="navbar-container">
+            <a href="dashboard.html" class="navbar-brand">
+                <div class="brand-logo">💼</div>
+                <span class="brand-text">IP Expense Manager</span>
+            </a>
+            
+            <button class="mobile-menu-btn">☰</button>
+            
+            <ul class="navbar-links">
+                <li><a href="dashboard.html" class="nav-link"><span class="nav-icon">📊</span> Дашборд</a></li>
+                <li><a href="tasks.html" class="nav-link active"><span class="nav-icon">📋</span> Задачи</a></li>
+                <li><a href="create-task.html" class="nav-link"><span class="nav-icon">➕</span> Создать</a></li>
+                <li><a href="cards.html" class="nav-link"><span class="nav-icon">💳</span> Карты</a></li>
+                <li><a href="analytics.html" class="nav-link"><span class="nav-icon">📈</span> Аналитика</a></li>
+            </ul>
+            
+            <div class="user-menu">
+                <div class="user-info">
+                    <span class="user-name" id="userName">Пользователь</span>
+                    <span class="user-role" id="userRole">Роль</span>
                 </div>
+                <button onclick="logout()" class="logout-btn">
+                    <span class="nav-icon">🚪</span>
+                    Выйти
+                </button>
             </div>
         </div>
     </nav>
 
-    <main class="container" style="padding: 40px 20px;">
-        <div class="glass-card" style="padding: 30px; margin-bottom: 30px;">
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
-                <div>
-                    <h1 style="margin-bottom: 8px; color: var(--primary);">📋 Все задачи</h1>
-                    <p style="color: var(--text-light); margin: 0;">Управление и отслеживание выполнения задач</p>
-                </div>
-                <div style="display: flex; gap: 16px; flex-wrap: wrap;">
-                    <a href="create-task.html" class="btn btn-primary" id="createTaskButton">➕ Новая задача</a>
+    <!-- Основной контент -->
+    <main class="tasks-container">
+        <div class="tasks-header">
+            <div>
+                <h1 class="page-title">Задачи</h1>
+                <p class="page-subtitle">Управление финансовыми задачами по регионам</p>
+            </div>
+            <a href="create-task.html" class="btn btn-primary">
+                <span class="nav-icon">➕</span>
+                Новая задача
+            </a>
+        </div>
+
+        <!-- Панель инструментов -->
+        <div class="tools-bar">
+            <div class="search-box">
+                <div class="input-group">
+                    <div class="input-icon">🔍</div>
+                    <input type="text" class="form-input" id="searchInput" placeholder="Поиск по названию или описанию...">
                 </div>
             </div>
-
-            <div class="row">
-                <div class="col-4">
-                    <div class="form-group">
-                        <label class="form-label">📊 Статус</label>
-                        <select class="form-control form-select" id="statusFilter" onchange="filterTasks()">
-                            <option value="">Все статусы</option>
-                            <option value="pending">⏳ Ожидает выполнения</option>
-                            <option value="in_progress">🔄 В работе</option>
-                            <option value="completed">✅ Выполнено</option>
-                            <option value="cancelled">❌ Отменено</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-4">
-                    <div class="form-group">
-                        <label class="form-label">📍 Регион</label>
-                        <select class="form-control form-select" id="regionFilter" onchange="filterTasks()">
-                            <option value="">Все регионы</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-4">
-                    <div class="form-group">
-                        <label class="form-label">🔍 Поиск</label>
-                        <input type="text" class="form-control" id="searchInput" placeholder="Поиск по названию..." onkeyup="filterTasks()">
-                    </div>
-                </div>
+            
+            <div class="filter-group">
+                <select class="filter-select" id="statusFilter">
+                    <option value="">Все статусы</option>
+                    <option value="pending">В работе</option>
+                    <option value="completed">Завершено</option>
+                    <option value="cancelled">Отменено</option>
+                </select>
+                
+                <select class="filter-select" id="regionFilter">
+                    <option value="">Все регионы</option>
+                    <option value="Астрахань">Астрахань</option>
+                    <option value="Бурятия">Бурятия</option>
+                    <option value="Курган">Курган</option>
+                    <option value="Калмыкия">Калмыкия</option>
+                    <option value="Мордовия">Мордовия</option>
+                    <option value="Удмуртия">Удмуртия</option>
+                </select>
+                
+                <select class="filter-select" id="priorityFilter">
+                    <option value="">Все приоритеты</option>
+                    <option value="high">Высокий</option>
+                    <option value="medium">Средний</option>
+                    <option value="low">Низкий</option>
+                </select>
             </div>
         </div>
 
-        <div class="glass-card animate-fade-in" style="padding: 30px;">
-            <div id="tasksList">
-                <div style="text-align: center; color: var(--text-light); padding: 60px;">
-                    <div style="font-size: 4rem; margin-bottom: 16px;">📋</div>
-                    <p>Загрузка задач...</p>
-                </div>
-            </div>
+        <!-- Сетка задач -->
+        <div class="tasks-grid" id="tasksGrid">
+            <!-- Задачи будут загружены через JavaScript -->
+        </div>
+
+        <!-- Состояние пустого списка -->
+        <div class="empty-state" id="emptyState" style="display: none;">
+            <div class="icon">📋</div>
+            <h3>Задач не найдено</h3>
+            <p>Попробуйте изменить параметры фильтрации или создайте новую задачу</p>
+            <a href="create-task.html" class="btn btn-primary">
+                <span class="nav-icon">➕</span>
+                Создать задачу
+            </a>
+        </div>
+
+        <!-- Массовые действия -->
+        <div class="bulk-actions" id="bulkActions">
+            <span class="bulk-count" id="selectedCount">0 задач выбрано</span>
+            <button class="btn btn-secondary" onclick="completeSelected()">
+                <span class="nav-icon">✅</span>
+                Завершить
+            </button>
+            <button class="btn btn-secondary" onclick="deleteSelected()">
+                <span class="nav-icon">🗑️</span>
+                Удалить
+            </button>
+            <button class="btn btn-secondary" onclick="clearSelection()">
+                <span class="nav-icon">❌</span>
+                Отменить выбор
+            </button>
         </div>
     </main>
 
-    <script src="js/data.js"></script>
-    <script src="js/utils.js"></script>
-    <script>
-        let allTasks = [];
-
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('📋 Страница задач загружается...');
-            
-            // Инициализируем авторизацию
-            Auth.init();
-            
-            // Проверяем авторизацию
-            if (!Auth.requireAuth()) return;
-            
-            // Обновляем информацию о пользователе
-            updateUserInfo();
-            
-            // Настраиваем интерфейс по ролям
-            setupRoleBasedUI();
-            
-            // Заполняем фильтр регионов
-            populateRegionFilter();
-            
-            // Загружаем задачи
-            loadTasks();
-        });
-
-        function updateUserInfo() {
-            const userInfo = document.getElementById('userInfo');
-            if (userInfo && Auth.currentUser) {
-                userInfo.innerHTML = `👋 ${Auth.currentUser.name} 
-                    <span style="opacity: 0.8;">(${Auth.currentUser.role === 'admin' ? 'Бухгалтер' : 'Управляющий'})</span>`;
-            }
-        }
-
-        function setupRoleBasedUI() {
-            const createTaskButton = document.getElementById('createTaskButton');
-            if (createTaskButton) {
-                createTaskButton.style.display = Auth.isAdmin() ? 'block' : 'none';
-            }
-        }
-
-        function populateRegionFilter() {
-            const regionFilter = document.getElementById('regionFilter');
-            appData.regions.forEach(region => {
-                const option = document.createElement('option');
-                option.value = region;
-                option.textContent = region;
-                regionFilter.appendChild(option);
-            });
-        }
-
-        function loadTasks() {
-            allTasks = TaskManager.getUserTasks();
-            
-            if (allTasks.length === 0) {
-                allTasks = [
-                    {
-                        id: 'demo_1',
-                        title: 'Закупка продуктов для офиса',
-                        region: 'Астрахань',
-                        ip: 'ИП Крутоусов',
-                        expenseItem: '🛒 Продукты',
-                        responsibleManager: 'Ксения Б.',
-                        plannedAmount: 5000,
-                        status: 'pending',
-                        plannedDate: '2024-01-20',
-                        bankCard: '*3420',
-                        description: 'Кофе, чай, сахар, печенье, вода',
-                        createdAt: new Date().toISOString()
-                    },
-                    {
-                        id: 'demo_2',
-                        title: 'Оплата аренды офиса',
-                        region: 'Курган',
-                        ip: 'ИП Бондаренко',
-                        expenseItem: '🏢 АРЕНДА ОФИСЫ',
-                        responsibleManager: 'Евгения Г.',
-                        plannedAmount: 15000,
-                        status: 'completed',
-                        plannedDate: '2024-01-15',
-                        bankCard: '*7254',
-                        description: 'Аренда за январь 2024 года',
-                        createdAt: new Date().toISOString()
-                    }
-                ];
-            }
-            
-            filterTasks();
-        }
-
-        // Обновить filterTasks() в tasks.html
-function filterTasks() {
-    const statusFilter = document.getElementById('statusFilter').value;
-    const regionFilter = document.getElementById('regionFilter').value;
-    const searchQuery = document.getElementById('searchInput').value.toLowerCase();
-    const dateFrom = document.getElementById('dateFrom')?.value;
-    const dateTo = document.getElementById('dateTo')?.value;
-    const amountFrom = document.getElementById('amountFrom')?.value;
-    const amountTo = document.getElementById('amountTo')?.value;
-    
-    let filteredTasks = allTasks.filter(task => {
-        const matchesStatus = !statusFilter || task.status === statusFilter;
-        const matchesRegion = !regionFilter || task.region === regionFilter;
-        const matchesSearch = !searchQuery || 
-            task.title.toLowerCase().includes(searchQuery) ||
-            (task.description && task.description.toLowerCase().includes(searchQuery)) ||
-            task.ip.toLowerCase().includes(searchQuery);
-        
-        // Фильтр по дате
-        const matchesDate = (!dateFrom || task.plannedDate >= dateFrom) && 
-                           (!dateTo || task.plannedDate <= dateTo);
-        
-        // Фильтр по сумме
-        const matchesAmount = (!amountFrom || task.plannedAmount >= parseFloat(amountFrom)) && 
-                             (!amountTo || task.plannedAmount <= parseFloat(amountTo));
-        
-        return matchesStatus && matchesRegion && matchesSearch && matchesDate && matchesAmount;
-    });
-    
-    // Сортировка
-    const sortBy = document.getElementById('sortBy')?.value || 'date';
-    filteredTasks.sort((a, b) => {
-        switch(sortBy) {
-            case 'date': return new Date(a.plannedDate) - new Date(b.plannedDate);
-            case 'amount': return b.plannedAmount - a.plannedAmount;
-            case 'title': return a.title.localeCompare(b.title);
-            default: return 0;
-        }
-    });
-    
-    displayTasks(filteredTasks);
-}
-
-        function displayTasks(tasks) {
-            const tasksList = document.getElementById('tasksList');
-            
-            if (tasks.length === 0) {
-                tasksList.innerHTML = `
-                    <div style="text-align: center; color: var(--text-light); padding: 60px;">
-                        <div style="font-size: 4rem; margin-bottom: 16px;">🔍</div>
-                        <h3 style="margin-bottom: 8px;">Задачи не найдены</h3>
-                        <p>Попробуйте изменить параметры фильтрации</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            tasksList.innerHTML = tasks.map(task => `
-                <div class="glass-card" style="padding: 24px; margin-bottom: 20px; border-left: 4px solid ${
-                    task.status === 'completed' ? 'var(--success)' : 
-                    task.status === 'in_progress' ? 'var(--warning)' : 'var(--primary)'
-                };">
-                    <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 16px;">
-                        <div style="flex: 1; min-width: 300px;">
-                            <h3 style="margin-bottom: 8px; color: var(--text-dark);">${task.title}</h3>
-                            <div style="display: flex; gap: 12px; margin-bottom: 12px; flex-wrap: wrap;">
-                                <span class="badge ${task.status === 'completed' ? 'badge-success' : task.status === 'in_progress' ? 'badge-warning' : 'badge-info'}">
-                                    ${TaskManager.statuses[task.status]}
-                                </span>
-                                <span class="badge badge-info">${task.region}</span>
-                                <span class="badge" style="background: rgba(139, 92, 246, 0.1); color: var(--primary);">
-                                    ${task.expenseItem}
-                                </span>
-                            </div>
-                            <div style="color: var(--text-light); font-size: 0.9rem;">
-                                <div>💼 ${task.ip} • 👤 ${task.responsibleManager}</div>
-                                <div>💳 Карта: ${task.bankCard} • 📅 ${FormatHelper.formatDate(task.plannedDate)}</div>
-                                ${task.description ? `<div style="margin-top: 8px;">📝 ${task.description}</div>` : ''}
-                            </div>
-                        </div>
-                        
-                        <div style="text-align: right;">
-                            <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary); margin-bottom: 8px;">
-                                ${FormatHelper.formatAmount(task.plannedAmount)}
-                            </div>
-                            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                                ${Auth.isAdmin() ? `
-                                    <button class="btn btn-outline" style="padding: 8px 12px;" onclick="editTask('${task.id}')">
-                                        ✏️
-                                    </button>
-                                    <button class="btn btn-outline" style="padding: 8px 12px; background: rgba(239, 68, 68, 0.1); color: var(--error);" onclick="deleteTask('${task.id}')">
-                                        🗑️
-                                    </button>
-                                ` : ''}
-                                ${Auth.isManager() && task.status !== 'completed' ? `
-                                    <button class="btn btn-success" style="padding: 8px 16px;" onclick="completeTask('${task.id}')">
-                                        ✅ Выполнить
-                                    </button>
-                                ` : ''}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function editTask(taskId) {
-            if (!Auth.isAdmin()) {
-                Notification.error('Эта функция доступна только администраторам');
-                return;
-            }
-            
-            const task = allTasks.find(t => t.id === taskId);
-            if (task) {
-                Notification.info(`✏️ Редактирование задачи: ${task.title}`);
-                window.location.href = `create-task.html?edit=${taskId}`;
-            }
-        }
-
-        function deleteTask(taskId) {
-            if (!Auth.isAdmin()) {
-                Notification.error('Эта функция доступна только администраторам');
-                return;
-            }
-            
-            const task = allTasks.find(t => t.id === taskId);
-            if (task && confirm(`Вы уверены, что хотите удалить задачу "${task.title}"?`)) {
-                const success = TaskManager.deleteTask(taskId);
-                if (success) {
-                    allTasks = allTasks.filter(t => t.id !== taskId);
-                    filterTasks();
-                    Notification.success('🗑️ Задача удалена');
-                } else {
-                    Notification.error('❌ Ошибка при удалении задачи');
-                }
-            }
-        }
-
-        function completeTask(taskId) {
-            const task = allTasks.find(t => t.id === taskId);
-            if (task) {
-                const updatedTask = TaskManager.updateTask(taskId, { 
-                    status: 'completed',
-                    updatedAt: new Date().toISOString()
-                });
-                
-                if (updatedTask) {
-                    task.status = 'completed';
-                    filterTasks();
-                    Notification.success('✅ Задача отмечена как выполненная');
-                } else {
-                    Notification.error('❌ Ошибка при обновлении задачи');
-                }
-            }
-        }
-        NavigationHelper.addBackButton('dashboard.html', '← Назад к дашборду');
-    </script>
+    <!-- Скрипты -->
+    <script src="js/navbar.js"></script>
+    <script src="js/tasks.js"></script>
 </body>
 </html>
