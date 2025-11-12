@@ -3,266 +3,167 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🗂️ Статьи расходов - IP Expense Manager</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title>Статьи расходов - IP Expense Manager</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><defs><linearGradient id='borderGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%238b5cf6'/><stop offset='50%' stop-color='%236d28d9'/><stop offset='100%' stop-color='%231e40af'/></linearGradient><linearGradient id='checkGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%23a78bfa'/><stop offset='100%' stop-color='%234f46e5'/></linearGradient><filter id='glow' x='-50%' y='-50%' width='200%' height='200%'><feGaussianBlur in='SourceGraphic' stdDeviation='1' result='blur'/><feMerge><feMergeNode in='blur'/><feMergeNode in='SourceGraphic'/></feMerge></filter></defs><circle cx='10' cy='10' r='9' fill='none' stroke='url(%23borderGrad)' stroke-width='1.5' opacity='0.9'/><path d='M6,10 L8.5,12.5 L14,7' stroke='url(%23checkGrad)' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round' filter='url(%23glow)'/></svg>">
+    
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/components/navbar.css">
+    <link rel="stylesheet" href="css/expense-items.css">
 </head>
 <body>
-    <nav class="navbar">
-        <div class="container">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <a href="dashboard.html" class="navbar-brand">
-                    🎯 IP Expense Manager
-                </a>
-                <div style="display: flex; align-items: center; gap: 20px;">
-                    <span style="color: white; font-size: 14px;" id="userInfo">
-                        <!-- Заполнится через JavaScript -->
-                    </span>
-                    <button onclick="Auth.logout()" class="btn" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); font-size: 14px;">
-                        🚪 Выйти
-                    </button>
+    <div class="background-animation">
+        <div class="gradient-circle circle-1"></div>
+        <div class="gradient-circle circle-2"></div>
+        <div class="gradient-circle circle-3"></div>
+    </div>
+
+    <!-- Навбар -->
+    <nav class="main-navbar">
+        <div class="navbar-container">
+            <a href="dashboard.html" class="navbar-brand">
+                <div class="brand-logo">💼</div>
+                <span class="brand-text">IP Expense Manager</span>
+            </a>
+            
+            <button class="mobile-menu-btn">☰</button>
+            
+            <ul class="navbar-links">
+                <li><a href="dashboard.html" class="nav-link"><span class="nav-icon">📊</span> Дашборд</a></li>
+                <li><a href="tasks.html" class="nav-link"><span class="nav-icon">📋</span> Задачи</a></li>
+                <li><a href="templates.html" class="nav-link"><span class="nav-icon">🎯</span> Шаблоны</a></li>
+                <li><a href="cards.html" class="nav-link"><span class="nav-icon">💳</span> Карты</a></li>
+                <li><a href="analytics.html" class="nav-link"><span class="nav-icon">📈</span> Аналитика</a></li>
+                <li><a href="history.html" class="nav-link"><span class="nav-icon">📜</span> История</a></li>
+                <li><a href="expense-items.html" class="nav-link active"><span class="nav-icon">📑</span> Статьи расходов</a></li>
+            </ul>
+            
+            <div class="user-menu">
+                <div class="user-info">
+                    <span class="user-name" id="userName">Пользователь</span>
+                    <span class="user-role" id="userRole">Роль</span>
                 </div>
+                <button onclick="logout()" class="logout-btn">
+                    <span class="nav-icon">🚪</span>
+                    Выйти
+                </button>
             </div>
         </div>
     </nav>
 
-    <main class="container" style="padding: 40px 20px;">
-        <div class="glass-card animate-slide-in" style="padding: 30px;">
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 30px; flex-wrap: wrap; gap: 16px;">
-                <div>
-                    <h1 style="margin-bottom: 8px; color: var(--primary);">🗂️ Статьи расходов</h1>
-                    <p style="color: var(--text-light); margin: 0;">Управление категориями расходов и назначение ответственных</p>
-                </div>
-                <button class="btn btn-primary" id="addButton" style="display: none;">➕ Добавить статью</button>
+    <main class="expense-items-container">
+        <div class="expense-items-header">
+            <div>
+                <h1 class="page-title">📑 Статьи расходов</h1>
+                <p class="page-subtitle">Управление категориями и статьями расходов</p>
             </div>
+            <button class="btn btn-primary" onclick="openAddCategoryModal()">
+                <span class="nav-icon">➕</span>
+                Добавить статью
+            </button>
+        </div>
 
-            <div style="overflow-x: auto;">
-                <table style="width: 100%; border-collapse: collapse;">
-                    <thead>
-                        <tr style="border-bottom: 2px solid var(--primary);">
-                            <th style="text-align: left; padding: 16px; font-weight: 600; color: var(--text-dark);">Статья расходов</th>
-                            <th style="text-align: left; padding: 16px; font-weight: 600; color: var(--text-dark);">Ответственный</th>
-                            <th style="text-align: left; padding: 16px; font-weight: 600; color: var(--text-dark);">Кол-во задач</th>
-                            <th style="text-align: left; padding: 16px; font-weight: 600; color: var(--text-dark);" id="actionsHeader">Действия</th>
-                        </tr>
-                    </thead>
-                    <tbody id="expenseItemsTable">
-                        <!-- Заполняется через JavaScript -->
-                    </tbody>
-                </table>
+        <!-- Статистика -->
+        <div class="expense-stats">
+            <div class="stat-item">
+                <div class="stat-value" id="totalCategories">0</div>
+                <div class="stat-label">Всего статей</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="activeCategories">0</div>
+                <div class="stat-label">Активные статьи</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="totalExpenses">0 ₽</div>
+                <div class="stat-label">Общие расходы</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="avgPerCategory">0 ₽</div>
+                <div class="stat-label">Среднее на статью</div>
             </div>
         </div>
 
-        <div class="glass-card animate-fade-in" id="expenseForm" style="padding: 30px; margin-top: 30px; display: none;">
-            <h3 style="margin-bottom: 20px; color: var(--primary);" id="formTitle">➕ Добавить новую статью расходов</h3>
-            
-            <form id="expenseItemForm">
-                <div class="row" style="margin-bottom: 24px;">
-                    <div class="col-6">
-                        <div class="form-group">
-                            <label class="form-label">🏷️ Название статьи *</label>
-                            <input type="text" class="form-control" id="expenseItemName" required 
-                                   placeholder="Например: 🛒 Продукты">
-                        </div>
-                    </div>
-                    
-                    <div class="col-6">
-                        <div class="form-group">
-                            <label class="form-label">👤 Ответственный *</label>
-                            <select class="form-control form-select" id="expenseItemManager" required>
-                                <option value="">Выберите ответственного...</option>
-                                <option value="Ксения Б.">Ксения Б.</option>
-                                <option value="Полина М.">Полина М.</option>
-                                <option value="Иван В.">Иван В.</option>
-                                <option value="Инна Б.">Инна Б.</option>
-                                <option value="Алеся Б.">Алеся Б.</option>
-                                <option value="Евгения Г.">Евгения Г.</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                
-                <div style="display: flex; gap: 16px;">
-                    <button type="submit" class="btn btn-primary" id="submitButton">
-                        💾 Сохранить
-                    </button>
-                    <button type="button" class="btn btn-outline" onclick="hideForm()">
-                        ❌ Отмена
-                    </button>
-                </div>
-            </form>
+        <!-- Сетка категорий -->
+        <div class="categories-grid" id="categoriesGrid">
+            <!-- Категории будут загружены через JavaScript -->
+        </div>
+
+        <!-- Состояние пустого списка -->
+        <div class="empty-state" id="emptyState" style="display: none;">
+            <div class="icon">📑</div>
+            <h3>Статьи расходов не найдены</h3>
+            <p>Добавьте первую статью расходов для организации учета</p>
+            <button class="btn btn-primary" onclick="openAddCategoryModal()">
+                <span class="nav-icon">➕</span>
+                Добавить статью
+            </button>
         </div>
     </main>
 
-    <script src="js/data.js"></script>
-    <script src="js/utils.js"></script>
-    <script>
-        let editingItemId = null;
-
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('🗂️ Страница статей расходов загружается...');
+    <!-- Модальное окно добавления/редактирования статьи -->
+    <div class="modal" id="categoryModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Добавить статью расходов</h3>
+                <button class="close-modal" onclick="closeCategoryModal()">×</button>
+            </div>
             
-            // Инициализируем авторизацию
-            Auth.init();
-            
-            // Проверяем авторизацию
-            if (!Auth.requireAuth()) return;
-            
-            // Обновляем информацию о пользователе
-            updateUserInfo();
-            
-            // Настраиваем интерфейс по ролям
-            setupRoleBasedUI();
-            
-            // Загружаем статьи расходов
-            loadExpenseItems();
-        });
-
-        function updateUserInfo() {
-            const userInfo = document.getElementById('userInfo');
-            if (userInfo && Auth.currentUser) {
-                userInfo.innerHTML = `👋 ${Auth.currentUser.name} 
-                    <span style="opacity: 0.8;">(${Auth.currentUser.role === 'admin' ? 'Бухгалтер' : 'Управляющий'})</span>`;
-            }
-        }
-
-        function setupRoleBasedUI() {
-            const addButton = document.getElementById('addButton');
-            const actionsHeader = document.getElementById('actionsHeader');
-            
-            if (Auth.isAdmin()) {
-                if (addButton) addButton.style.display = 'block';
-                if (actionsHeader) actionsHeader.style.display = 'table-cell';
-            } else {
-                if (addButton) addButton.style.display = 'none';
-                if (actionsHeader) actionsHeader.style.display = 'none';
-            }
-        }
-
-        function loadExpenseItems() {
-            const tableBody = document.getElementById('expenseItemsTable');
-            
-            const itemsWithStats = appData.expenseItems.map(item => {
-                // Подсчитываем реальное количество задач для этой статьи расходов
-                const tasks = TaskManager.getAllTasks();
-                const taskCount = tasks.filter(task => task.expenseItem === item).length;
+            <form id="categoryForm">
+                <input type="hidden" id="categoryId">
                 
-                return {
-                    name: item,
-                    manager: appData.managers[item] || 'Не назначен',
-                    taskCount: taskCount
-                };
-            });
-            
-            tableBody.innerHTML = itemsWithStats.map((item, index) => `
-                <tr style="border-bottom: 1px solid var(--border-light); transition: var(--transition);">
-                    <td style="padding: 16px;">
-                        <div style="font-weight: 600; color: var(--text-dark);">${item.name}</div>
-                    </td>
-                    <td style="padding: 16px;">
-                        <span class="badge badge-info">${item.manager}</span>
-                    </td>
-                    <td style="padding: 16px;">
-                        <span style="font-weight: 600; color: var(--primary);">${item.taskCount}</span>
-                    </td>
-                    <td style="padding: 16px;" class="actions-cell">
-                        ${Auth.isAdmin() ? `
-                        <div style="display: flex; gap: 8px;">
-                            <button class="btn btn-outline" style="padding: 6px 10px;" 
-                                    onclick="editExpenseItem(${index}, '${item.name.replace(/'/g, "\\'")}', '${item.manager}')">
-                                ✏️
-                            </button>
-                            <button class="btn btn-outline" style="padding: 6px 10px; background: rgba(239, 68, 68, 0.1); color: var(--error);" 
-                                    onclick="deleteExpenseItem(${index}, '${item.name.replace(/'/g, "\\'")}')">
-                                🗑️
-                            </button>
-                        </div>
-                        ` : ''}
-                    </td>
-                </tr>
-            `).join('');
-        }
+                <div class="form-group">
+                    <label class="form-label" for="categoryName">Название статьи</label>
+                    <input type="text" class="form-input" id="categoryName" placeholder="Например: Налоги и сборы" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="categoryIcon">Иконка</label>
+                    <select class="form-select" id="categoryIcon" required>
+                        <option value="💰">💰 Деньги</option>
+                        <option value="🏢">🏢 Офис</option>
+                        <option value="🚗">🚗 Транспорт</option>
+                        <option value="📱">📱 Связь</option>
+                        <option value="🛒">🛒 Закупки</option>
+                        <option value="👥">👥 Персонал</option>
+                        <option value="📊">📊 Налоги</option>
+                        <option value="🎯">🎯 Маркетинг</option>
+                        <option value="⚡">⚡ Коммунальные</option>
+                        <option value="✈️">✈️ Командировки</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="categoryDescription">Описание</label>
+                    <textarea class="form-textarea" id="categoryDescription" placeholder="Описание статьи расходов..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="categoryBudget">Бюджет (в месяц)</label>
+                    <input type="number" class="form-input" id="categoryBudget" placeholder="0.00" step="0.01" min="0">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="categoryTags">Теги (через запятую)</label>
+                    <input type="text" class="form-input" id="categoryTags" placeholder="налог, обязательный, ежемесячно">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="categoryStatus">Статус</label>
+                    <select class="form-select" id="categoryStatus" required>
+                        <option value="active">Активна</option>
+                        <option value="inactive">Неактивна</option>
+                        <option value="archived">В архиве</option>
+                    </select>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeCategoryModal()">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-        function showAddForm() {
-            if (!Auth.isAdmin()) {
-                Notification.error('Эта функция доступна только администраторам');
-                return;
-            }
-            
-            document.getElementById('expenseForm').style.display = 'block';
-            document.getElementById('formTitle').textContent = '➕ Добавить новую статью расходов';
-            document.getElementById('submitButton').textContent = '💾 Сохранить';
-            editingItemId = null;
-            document.getElementById('expenseItemForm').reset();
-        }
-
-        function hideForm() {
-            document.getElementById('expenseForm').style.display = 'none';
-            editingItemId = null;
-        }
-
-        function editExpenseItem(id, name, manager) {
-            if (!Auth.isAdmin()) {
-                Notification.error('Эта функция доступна только администраторам');
-                return;
-            }
-            
-            document.getElementById('expenseForm').style.display = 'block';
-            document.getElementById('formTitle').textContent = '✏️ Редактировать статью расходов';
-            document.getElementById('submitButton').textContent = '💾 Обновить';
-            
-            document.getElementById('expenseItemName').value = name;
-            document.getElementById('expenseItemManager').value = manager;
-            editingItemId = id;
-        }
-
-        function deleteExpenseItem(id, name) {
-            if (!Auth.isAdmin()) {
-                Notification.error('Эта функция доступна только администраторам');
-                return;
-            }
-            
-            if (confirm(`Вы уверены, что хотите удалить статью расходов "${name}"?`)) {
-                // Здесь будет удаление из бэкенда
-                Notification.success(`🗑️ Статья "${name}" удалена`);
-                loadExpenseItems(); // Перезагружаем таблицу
-            }
-        }
-
-        // Обработка формы
-        document.getElementById('expenseItemForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            if (!Auth.isAdmin()) {
-                Notification.error('Эта функция доступна только администраторам');
-                return;
-            }
-            
-            const formData = {
-                name: document.getElementById('expenseItemName').value,
-                manager: document.getElementById('expenseItemManager').value
-            };
-            
-            // Валидация
-            if (!formData.name || !formData.manager) {
-                Notification.error('Пожалуйста, заполните все обязательные поля');
-                return;
-            }
-            
-            if (editingItemId === null) {
-                // Добавление новой статьи
-                Notification.success(`✅ Статья "${formData.name}" добавлена`);
-            } else {
-                // Редактирование существующей
-                Notification.success(`✅ Статья "${formData.name}" обновлена`);
-            }
-            
-            hideForm();
-            loadExpenseItems();
-        });
-
-        // Показываем кнопку добавления для админов
-        document.getElementById('addButton').addEventListener('click', showAddForm);
-    </script>
+    <script src="js/navbar.js"></script>
+    <script src="js/expense-items.js"></script>
 </body>
 </html>

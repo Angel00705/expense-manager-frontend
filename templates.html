@@ -18,35 +18,37 @@
     </div>
 
     <!-- Навбар (такой же как в dashboard.html) -->
-    <nav class="main-navbar">
-        <div class="navbar-container">
-            <a href="dashboard.html" class="navbar-brand">
-                <div class="brand-logo">💼</div>
-                <span class="brand-text">IP Expense Manager</span>
-            </a>
-            
-            <button class="mobile-menu-btn">☰</button>
-            
-            <ul class="navbar-links">
-                <li><a href="dashboard.html" class="nav-link"><span class="nav-icon">📊</span> Дашборд</a></li>
-                <li><a href="tasks.html" class="nav-link"><span class="nav-icon">📋</span> Задачи</a></li>
-                <li><a href="templates.html" class="nav-link active"><span class="nav-icon">🎯</span> Шаблоны</a></li>
-                <li><a href="cards.html" class="nav-link"><span class="nav-icon">💳</span> Карты</a></li>
-                <li><a href="analytics.html" class="nav-link"><span class="nav-icon">📈</span> Аналитика</a></li>
-            </ul>
-            
-            <div class="user-menu">
-                <div class="user-info">
-                    <span class="user-name" id="userName">Пользователь</span>
-                    <span class="user-role" id="userRole">Роль</span>
-                </div>
-                <button onclick="logout()" class="logout-btn">
-                    <span class="nav-icon">🚪</span>
-                    Выйти
-                </button>
+    <!-- Навбар -->
+<nav class="main-navbar">
+    <div class="navbar-container">
+        <a href="dashboard.html" class="navbar-brand">
+            <div class="brand-logo">💼</div>
+            <span class="brand-text">IP Expense Manager</span>
+        </a>
+        
+        <button class="mobile-menu-btn">☰</button>
+        
+        <ul class="navbar-links">
+            <li><a href="dashboard.html" class="nav-link"><span class="nav-icon">📊</span> Дашборд</a></li>
+            <li><a href="tasks.html" class="nav-link"><span class="nav-icon">📋</span> Задачи</a></li>
+            <li><a href="templates.html" class="nav-link"><span class="nav-icon">🎯</span> Шаблоны</a></li>
+            <li><a href="cards.html" class="nav-link"><span class="nav-icon">💳</span> Карты</a></li>
+            <li><a href="analytics.html" class="nav-link"><span class="nav-icon">📈</span> Аналитика</a></li>
+            <li><a href="history.html" class="nav-link active"><span class="nav-icon">📜</span> История</a></li>
+        </ul>
+        
+        <div class="user-menu">
+            <div class="user-info">
+                <span class="user-name" id="userName">Пользователь</span>
+                <span class="user-role" id="userRole">Роль</span>
             </div>
+            <button onclick="logout()" class="logout-btn">
+                <span class="nav-icon">🚪</span>
+                Выйти
+            </button>
         </div>
-    </nav>
+    </div>
+</nav>
 
     <main class="templates-container">
         <div class="templates-header">
