@@ -127,7 +127,9 @@ const REAL_CARDS_DATA = [
     region: "",
     corpCard: "-",
     personalCard: "*6532",
+    personalCard: "*7611",
     corpStatus: "",
+    personalStatus: "",
     personalStatus: ""
   },
   {
