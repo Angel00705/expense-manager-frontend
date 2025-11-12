@@ -1,613 +1,357 @@
-// js/analytics.js - СИСТЕМА АНАЛИТИКИ И ГРАФИКОВ
+// ===== ANALYTICS FUNCTIONALITY =====
+let charts = {};
 
-const Analytics = {
-    charts: {},
+function initAnalytics() {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (!currentUser) return;
+
+    loadAnalyticsData();
+    renderCharts();
+    updateKPI();
+}
+
+function loadAnalyticsData() {
+    // Загружаем задачи для анализа
+    const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
     
-    // Инициализация аналитики
-    init: function() {
-        console.log('📊 Инициализация системы аналитики');
-        this.loadAnalyticsData();
-    },
-    
-    // Загрузка данных для аналитики
-    loadAnalyticsData: function() {
-        const tasks = TaskManager.getAllTasks();
-        this.tasksData = tasks;
-        this.generateReports();
-    },
-    
-    // Генерация всех отчетов
-    generateReports: function() {
-        this.generateExpensesByRegion();
-        this.generateManagerPerformance();
-        this.generatePlanVsActual();
-        this.generateTaskKPIs();
-        this.generateExpenseDistribution();
-        this.generateMonthlyTrends();
-    },
-    
-    // 📈 ГРАФИК: РАСХОДЫ ПО РЕГИОНАМ
-    generateExpensesByRegion: function() {
-        const expensesByRegion = {};
-        
-        this.tasksData.forEach(task => {
-            if (!expensesByRegion[task.region]) {
-                expensesByRegion[task.region] = 0;
-            }
-            if (task.plannedAmount) {
-                expensesByRegion[task.region] += task.plannedAmount;
-            }
-        });
-        
-        const regions = Object.keys(expensesByRegion);
-        const amounts = Object.values(expensesByRegion);
-        
-        const ctx = document.getElementById('expensesByRegionChart');
-        if (!ctx) return;
-        
-        this.charts.expensesByRegion = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: regions,
-                datasets: [{
-                    label: '💰 Расходы по регионам',
-                    data: amounts,
-                    backgroundColor: [
-                        'rgba(139, 92, 246, 0.7)',
-                        'rgba(99, 102, 241, 0.7)',
-                        'rgba(16, 185, 129, 0.7)',
-                        'rgba(245, 158, 11, 0.7)',
-                        'rgba(239, 68, 68, 0.7)',
-                        'rgba(59, 130, 246, 0.7)'
-                    ],
-                    borderColor: [
-                        'rgb(139, 92, 246)',
-                        'rgb(99, 102, 241)',
-                        'rgb(16, 185, 129)',
-                        'rgb(245, 158, 11)',
-                        'rgb(239, 68, 68)',
-                        'rgb(59, 130, 246)'
-                    ],
-                    borderWidth: 2
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                return `💰 ${FormatHelper.formatAmount(context.parsed.y)}`;
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function(value) {
-                                return FormatHelper.formatAmount(value);
-                            }
-                        }
-                    }
-                }
-            }
-        });
-    },
-    
-    // 👥 ОТЧЕТ: ЭФФЕКТИВНОСТЬ УПРАВЛЯЮЩИХ
-    generateManagerPerformance: function() {
-        const managerStats = {};
-        
-        this.tasksData.forEach(task => {
-            if (!managerStats[task.responsibleManager]) {
-                managerStats[task.responsibleManager] = {
-                    totalTasks: 0,
-                    completedTasks: 0,
-                    totalAmount: 0,
-                    regions: new Set()
-                };
-            }
-            
-            const stats = managerStats[task.responsibleManager];
-            stats.totalTasks++;
-            stats.totalAmount += task.plannedAmount || 0;
-            stats.regions.add(task.region);
-            
-            if (task.status === 'completed') {
-                stats.completedTasks++;
-            }
-        });
-        
-        // Обновляем таблицу эффективности
-        this.updateManagerPerformanceTable(managerStats);
-        
-        // Создаем график эффективности
-        this.createManagerPerformanceChart(managerStats);
-    },
-    
-    // 📊 ТАБЛИЦА ЭФФЕКТИВНОСТИ УПРАВЛЯЮЩИХ
-    updateManagerPerformanceTable: function(managerStats) {
-        const tableBody = document.getElementById('managerPerformanceTable');
-        if (!tableBody) return;
-        
-        let html = '';
-        
-        Object.entries(managerStats).forEach(([manager, stats]) => {
-            const completionRate = stats.totalTasks > 0 
-                ? Math.round((stats.completedTasks / stats.totalTasks) * 100) 
-                : 0;
-                
-            const avgAmount = stats.totalTasks > 0 
-                ? Math.round(stats.totalAmount / stats.totalTasks) 
-                : 0;
-                
-            html += `
-                <tr>
-                    <td>👤 ${manager}</td>
-                    <td>${stats.totalTasks}</td>
-                    <td>${stats.completedTasks}</td>
-                    <td>
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${completionRate}%"></div>
-                            </div>
-                            <span>${completionRate}%</span>
-                        </div>
-                    </td>
-                    <td>${FormatHelper.formatAmount(avgAmount)}</td>
-                    <td>${Array.from(stats.regions).join(', ')}</td>
-                </tr>
-            `;
-        });
-        
-        tableBody.innerHTML = html;
-    },
-    
-    // 📈 ГРАФИК ЭФФЕКТИВНОСТИ УПРАВЛЯЮЩИХ
-    createManagerPerformanceChart: function(managerStats) {
-        const ctx = document.getElementById('managerPerformanceChart');
-        if (!ctx) return;
-        
-        const managers = Object.keys(managerStats);
-        const completionRates = managers.map(manager => {
-            const stats = managerStats[manager];
-            return stats.totalTasks > 0 
-                ? Math.round((stats.completedTasks / stats.totalTasks) * 100) 
-                : 0;
-        });
-        
-        this.charts.managerPerformance = new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: managers,
-                datasets: [{
-                    data: completionRates,
-                    backgroundColor: [
-                        'rgba(139, 92, 246, 0.8)',
-                        'rgba(99, 102, 241, 0.8)',
-                        'rgba(16, 185, 129, 0.8)',
-                        'rgba(245, 158, 11, 0.8)',
-                        'rgba(239, 68, 68, 0.8)',
-                        'rgba(59, 130, 246, 0.8)'
-                    ],
-                    borderWidth: 2,
-                    borderColor: 'white'
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom'
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                return `📊 ${context.label}: ${context.parsed}% выполнения`;
-                            }
-                        }
-                    }
-                }
-            }
-        });
-    },
-    
-    // 💰 ДАШБОРД: ПЛАН VS ФАКТ
-    generatePlanVsActual: function() {
-        // Для демонстрации используем случайные данные
-        const months = ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн'];
-        const planned = months.map(() => Math.floor(Math.random() * 500000) + 200000);
-        const actual = months.map((_, i) => planned[i] * (0.7 + Math.random() * 0.6));
-        
-        const ctx = document.getElementById('planVsActualChart');
-        if (!ctx) return;
-        
-        this.charts.planVsActual = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: months,
-                datasets: [
-                    {
-                        label: '📅 План',
-                        data: planned,
-                        borderColor: 'rgb(139, 92, 246)',
-                        backgroundColor: 'rgba(139, 92, 246, 0.1)',
-                        borderWidth: 3,
-                        tension: 0.4,
-                        fill: true
-                    },
-                    {
-                        label: '📊 Факт',
-                        data: actual,
-                        borderColor: 'rgb(16, 185, 129)',
-                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                        borderWidth: 3,
-                        tension: 0.4,
-                        fill: true
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                return `${context.dataset.label}: ${FormatHelper.formatAmount(context.parsed.y)}`;
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    y: {
-                        ticks: {
-                            callback: function(value) {
-                                return FormatHelper.formatAmount(value);
-                            }
-                        }
-                    }
-                }
-            }
-        });
-    },
-    
-    // 🎯 KPI ВЫПОЛНЕНИЯ ЗАДАЧ
-    generateTaskKPIs: function() {
-        const totalTasks = this.tasksData.length;
-        const completedTasks = this.tasksData.filter(task => task.status === 'completed').length;
-        const inProgressTasks = this.tasksData.filter(task => task.status === 'in_progress').length;
-        const pendingTasks = this.tasksData.filter(task => task.status === 'pending').length;
-        
-        const completionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
-        const avgCompletionTime = this.calculateAverageCompletionTime();
-        
-        // Обновляем метрики
-        this.updateKPIMetrics({
-            totalTasks,
-            completedTasks,
-            inProgressTasks,
-            pendingTasks,
-            completionRate,
-            avgCompletionTime
-        });
-        
-        // Создаем график статусов задач
-        this.createTaskStatusChart({
-            completed: completedTasks,
-            inProgress: inProgressTasks,
-            pending: pendingTasks
-        });
-    },
-    
-    // 📊 РАСЧЕТ СРЕДНЕГО ВРЕМЕНИ ВЫПОЛНЕНИЯ
-    calculateAverageCompletionTime: function() {
-        const completedTasks = this.tasksData.filter(task => 
-            task.status === 'completed' && task.createdAt && task.updatedAt
-        );
-        
-        if (completedTasks.length === 0) return 0;
-        
-        const totalTime = completedTasks.reduce((sum, task) => {
-            const created = new Date(task.createdAt);
-            const updated = new Date(task.updatedAt);
-            return sum + (updated - created);
-        }, 0);
-        
-        return Math.round(totalTime / completedTasks.length / (1000 * 60 * 60 * 24)); // в днях
-    },
-    
-    // 🔢 ОБНОВЛЕНИЕ KPI МЕТРИК
-    updateKPIMetrics: function(metrics) {
-        const elements = {
-            totalTasks: document.getElementById('kpiTotalTasks'),
-            completedTasks: document.getElementById('kpiCompletedTasks'),
-            completionRate: document.getElementById('kpiCompletionRate'),
-            avgCompletionTime: document.getElementById('kpiAvgCompletionTime')
-        };
-        
-        if (elements.totalTasks) elements.totalTasks.textContent = metrics.totalTasks;
-        if (elements.completedTasks) elements.completedTasks.textContent = metrics.completedTasks;
-        if (elements.completionRate) elements.completionRate.textContent = `${metrics.completionRate}%`;
-        if (elements.avgCompletionTime) {
-            elements.avgCompletionTime.textContent = `${metrics.avgCompletionTime} дн.`;
-        }
-    },
-    
-    // 📈 ГРАФИК СТАТУСОВ ЗАДАЧ
-    createTaskStatusChart: function(statusData) {
-        const ctx = document.getElementById('taskStatusChart');
-        if (!ctx) return;
-        
-        this.charts.taskStatus = new Chart(ctx, {
-            type: 'pie',
-            data: {
-                labels: ['✅ Выполнено', '🔄 В работе', '⏳ Ожидает'],
-                datasets: [{
-                    data: [statusData.completed, statusData.inProgress, statusData.pending],
-                    backgroundColor: [
-                        'rgba(16, 185, 129, 0.8)',
-                        'rgba(245, 158, 11, 0.8)',
-                        'rgba(139, 92, 246, 0.8)'
-                    ],
-                    borderWidth: 2,
-                    borderColor: 'white'
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom'
-                    }
-                }
-            }
-        });
-    },
-    
-    // 📊 РАСПРЕДЕЛЕНИЕ РАСХОДОВ ПО СТАТЬЯМ
-    generateExpenseDistribution: function() {
-        const expenseDistribution = {};
-        
-        this.tasksData.forEach(task => {
-            if (!expenseDistribution[task.expenseItem]) {
-                expenseDistribution[task.expenseItem] = 0;
-            }
-            expenseDistribution[task.expenseItem] += task.plannedAmount || 0;
-        });
-        
-        const expenses = Object.entries(expenseDistribution)
-            .sort((a, b) => b[1] - a[1])
-            .slice(0, 8); // Топ 8 статей расходов
-        
-        const ctx = document.getElementById('expenseDistributionChart');
-        if (!ctx) return;
-        
-        this.charts.expenseDistribution = new Chart(ctx, {
-            type: 'polarArea',
-            data: {
-                labels: expenses.map(([expense]) => expense),
-                datasets: [{
-                    data: expenses.map(([, amount]) => amount),
-                    backgroundColor: [
-                        'rgba(139, 92, 246, 0.7)',
-                        'rgba(99, 102, 241, 0.7)',
-                        'rgba(16, 185, 129, 0.7)',
-                        'rgba(245, 158, 11, 0.7)',
-                        'rgba(239, 68, 68, 0.7)',
-                        'rgba(59, 130, 246, 0.7)',
-                        'rgba(168, 85, 247, 0.7)',
-                        'rgba(14, 165, 233, 0.7)'
-                    ]
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'right'
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                return `${context.label}: ${FormatHelper.formatAmount(context.parsed.r)}`;
-                            }
-                        }
-                    }
-                }
-            }
-        });
-    },
-    
-    // 📈 ТРЕНДЫ ПО МЕСЯЦАМ
-    generateMonthlyTrends: function() {
-        const monthlyData = {};
-        
-        this.tasksData.forEach(task => {
-            if (task.createdAt) {
-                const month = new Date(task.createdAt).toLocaleDateString('ru-RU', { 
-                    month: 'short', 
-                    year: 'numeric' 
-                });
-                
-                if (!monthlyData[month]) {
-                    monthlyData[month] = { tasks: 0, amount: 0 };
-                }
-                
-                monthlyData[month].tasks++;
-                monthlyData[month].amount += task.plannedAmount || 0;
-            }
-        });
-        
-        const months = Object.keys(monthlyData).slice(-6); // Последние 6 месяцев
-        const tasksCount = months.map(month => monthlyData[month].tasks);
-        const amounts = months.map(month => monthlyData[month].amount);
-        
-        const ctx = document.getElementById('monthlyTrendsChart');
-        if (!ctx) return;
-        
-        this.charts.monthlyTrends = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: months,
-                datasets: [
-                    {
-                        label: '📋 Количество задач',
-                        data: tasksCount,
-                        backgroundColor: 'rgba(139, 92, 246, 0.7)',
-                        yAxisID: 'y'
-                    },
-                    {
-                        label: '💰 Сумма расходов',
-                        data: amounts,
-                        backgroundColor: 'rgba(16, 185, 129, 0.7)',
-                        yAxisID: 'y1',
-                        type: 'line'
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        type: 'linear',
-                        display: true,
-                        position: 'left',
-                        title: {
-                            display: true,
-                            text: 'Количество задач'
-                        }
-                    },
-                    y1: {
-                        type: 'linear',
-                        display: true,
-                        position: 'right',
-                        title: {
-                            display: true,
-                            text: 'Сумма расходов'
-                        },
-                        ticks: {
-                            callback: function(value) {
-                                return FormatHelper.formatAmount(value);
-                            }
-                        },
-                        grid: {
-                            drawOnChartArea: false
-                        }
-                    }
-                }
-            }
-        });
-    },
-    
-    // 📄 ЭКСПОРТ ОТЧЕТОВ
-    exportReport: function(format) {
-        const reportData = this.generateExportData();
-        
-        if (format === 'csv') {
-            this.exportToCSV(reportData);
-        } else if (format === 'pdf') {
-            this.exportToPDF(reportData);
-        }
-        
-        Notification.success(`📄 Отчет экспортирован в формате ${format.toUpperCase()}`);
-    },
-    
-    // 📊 ГЕНЕРАЦИЯ ДАННЫХ ДЛЯ ЭКСПОРТА
-    generateExportData: function() {
-        return {
-            generatedAt: new Date().toLocaleString('ru-RU'),
-            totalTasks: this.tasksData.length,
-            completedTasks: this.tasksData.filter(task => task.status === 'completed').length,
-            totalAmount: this.tasksData.reduce((sum, task) => sum + (task.plannedAmount || 0), 0),
-            tasksByRegion: this.getTasksByRegion(),
-            tasksByManager: this.getTasksByManager()
-        };
-    },
-    
-    // 📋 ЗАДАЧИ ПО РЕГИОНАМ
-    getTasksByRegion: function() {
-        const byRegion = {};
-        this.tasksData.forEach(task => {
-            if (!byRegion[task.region]) {
-                byRegion[task.region] = { tasks: 0, amount: 0 };
-            }
-            byRegion[task.region].tasks++;
-            byRegion[task.region].amount += task.plannedAmount || 0;
-        });
-        return byRegion;
-    },
-    
-    // 👥 ЗАДАЧИ ПО УПРАВЛЯЮЩИМ
-    getTasksByManager: function() {
-        const byManager = {};
-        this.tasksData.forEach(task => {
-            if (!byManager[task.responsibleManager]) {
-                byManager[task.responsibleManager] = { tasks: 0, completed: 0, amount: 0 };
-            }
-            byManager[task.responsibleManager].tasks++;
-            byManager[task.responsibleManager].amount += task.plannedAmount || 0;
-            if (task.status === 'completed') {
-                byManager[task.responsibleManager].completed++;
-            }
-        });
-        return byManager;
-    },
-    
-    // 📄 ЭКСПОРТ В CSV
-    exportToCSV: function(data) {
-        let csv = 'Отчет IP Expense Manager\n';
-        csv += `Сгенерировано: ${data.generatedAt}\n\n`;
-        
-        csv += 'Общая статистика:\n';
-        csv += `Всего задач,${data.totalTasks}\n`;
-        csv += `Выполнено задач,${data.completedTasks}\n`;
-        csv += `Общая сумма,${FormatHelper.formatAmount(data.totalAmount)}\n\n`;
-        
-        csv += 'Задачи по регионам:\n';
-        csv += 'Регион,Кол-во задач,Сумма\n';
-        Object.entries(data.tasksByRegion).forEach(([region, stats]) => {
-            csv += `${region},${stats.tasks},${FormatHelper.formatAmount(stats.amount)}\n`;
-        });
-        
-        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement('a');
-        const url = URL.createObjectURL(blob);
-        link.setAttribute('href', url);
-        link.setAttribute('download', `expense_report_${new Date().toISOString().split('T')[0]}.csv`);
-        link.style.visibility = 'hidden';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    },
-    
-    // 📄 ЭКСПОРТ В PDF (заглушка)
-    exportToPDF: function(data) {
-        Notification.info('📄 Функция экспорта в PDF будет реализована в следующем обновлении');
-    },
-    
-    // 🔄 ОБНОВЛЕНИЕ ДАННЫХ
-    refreshData: function() {
-        Object.values(this.charts).forEach(chart => {
-            if (chart) chart.destroy();
-        });
-        
-        this.charts = {};
-        this.loadAnalyticsData();
-        
-        Notification.success('📊 Данные аналитики обновлены');
+    // Фильтруем задачи по регионам для менеджеров
+    if (currentUser.role !== 'admin') {
+        tasks = tasks.filter(task => currentUser.regions.includes(task.region));
     }
-};
+    
+    return tasks;
+}
 
-// Делаем Analytics глобально доступным
-window.Analytics = Analytics;
+function renderCharts() {
+    const tasks = loadAnalyticsData();
+    const chartType = document.getElementById('chartType').value;
+    
+    renderExpensesChart(tasks, chartType);
+    renderRegionsChart(tasks, chartType);
+    renderCategoriesChart(tasks, chartType);
+    renderManagersChart(tasks, chartType);
+}
+
+function renderExpensesChart(tasks, type = 'bar') {
+    const ctx = document.getElementById('expensesChart').getContext('2d');
+    
+    // Данные за последние 6 месяцев
+    const months = getLastMonths(6);
+    const monthlyData = months.map(month => {
+        const monthTasks = tasks.filter(task => {
+            const taskDate = new Date(task.createdAt);
+            return taskDate.getMonth() === month.month && 
+                   taskDate.getFullYear() === month.year;
+        });
+        return monthTasks.reduce((sum, task) => sum + (parseFloat(task.amount) || 0), 0);
+    });
+    
+    if (charts.expensesChart) {
+        charts.expensesChart.destroy();
+    }
+    
+    charts.expensesChart = new Chart(ctx, {
+        type: type,
+        data: {
+            labels: months.map(m => m.label),
+            datasets: [{
+                label: 'Расходы, ₽',
+                data: monthlyData,
+                backgroundColor: 'rgba(139, 92, 246, 0.6)',
+                borderColor: 'rgba(139, 92, 246, 1)',
+                borderWidth: 2,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    labels: {
+                        color: '#f8fafc'
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        color: '#94a3b8',
+                        callback: function(value) {
+                            return value.toLocaleString('ru-RU') + ' ₽';
+                        }
+                    },
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)'
+                    }
+                },
+                x: {
+                    ticks: {
+                        color: '#94a3b8'
+                    },
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)'
+                    }
+                }
+            }
+        }
+    });
+}
+
+function renderRegionsChart(tasks, type = 'pie') {
+    const ctx = document.getElementById('regionsChart').getContext('2d');
+    
+    const regions = ['Астрахань', 'Бурятия', 'Курган', 'Калмыкия', 'Мордовия', 'Удмуртия'];
+    const regionData = regions.map(region => {
+        const regionTasks = tasks.filter(task => task.region === region);
+        return regionTasks.reduce((sum, task) => sum + (parseFloat(task.amount) || 0), 0);
+    });
+    
+    if (charts.regionsChart) {
+        charts.regionsChart.destroy();
+    }
+    
+    charts.regionsChart = new Chart(ctx, {
+        type: type,
+        data: {
+            labels: regions,
+            datasets: [{
+                data: regionData,
+                backgroundColor: [
+                    'rgba(139, 92, 246, 0.8)',
+                    'rgba(59, 130, 246, 0.8)',
+                    'rgba(16, 185, 129, 0.8)',
+                    'rgba(245, 158, 11, 0.8)',
+                    'rgba(236, 72, 153, 0.8)',
+                    'rgba(139, 92, 246, 0.5)'
+                ],
+                borderColor: [
+                    'rgba(139, 92, 246, 1)',
+                    'rgba(59, 130, 246, 1)',
+                    'rgba(16, 185, 129, 1)',
+                    'rgba(245, 158, 11, 1)',
+                    'rgba(236, 72, 153, 1)',
+                    'rgba(139, 92, 246, 0.8)'
+                ],
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'right',
+                    labels: {
+                        color: '#f8fafc',
+                        padding: 20
+                    }
+                }
+            }
+        }
+    });
+}
+
+function renderCategoriesChart(tasks, type = 'doughnut') {
+    const ctx = document.getElementById('categoriesChart').getContext('2d');
+    
+    // Пример категорий расходов
+    const categories = ['Налоги', 'Зарплаты', 'Аренда', 'Маркетинг', 'Оборудование', 'Прочее'];
+    const categoryData = categories.map(() => Math.random() * 100000);
+    
+    if (charts.categoriesChart) {
+        charts.categoriesChart.destroy();
+    }
+    
+    charts.categoriesChart = new Chart(ctx, {
+        type: type,
+        data: {
+            labels: categories,
+            datasets: [{
+                data: categoryData,
+                backgroundColor: [
+                    'rgba(139, 92, 246, 0.8)',
+                    'rgba(59, 130, 246, 0.8)',
+                    'rgba(16, 185, 129, 0.8)',
+                    'rgba(245, 158, 11, 0.8)',
+                    'rgba(236, 72, 153, 0.8)',
+                    'rgba(156, 163, 175, 0.8)'
+                ],
+                borderColor: [
+                    'rgba(139, 92, 246, 1)',
+                    'rgba(59, 130, 246, 1)',
+                    'rgba(16, 185, 129, 1)',
+                    'rgba(245, 158, 11, 1)',
+                    'rgba(236, 72, 153, 1)',
+                    'rgba(156, 163, 175, 1)'
+                ],
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'right',
+                    labels: {
+                        color: '#f8fafc',
+                        padding: 20
+                    }
+                }
+            }
+        }
+    });
+}
+
+function renderManagersChart(tasks, type = 'bar') {
+    const ctx = document.getElementById('managersChart').getContext('2d');
+    
+    const managers = ['Менеджер 1', 'Менеджер 2', 'Менеджер 3'];
+    const managerData = managers.map(manager => {
+        const managerTasks = tasks.filter(task => task.responsible === manager);
+        return managerTasks.reduce((sum, task) => sum + (parseFloat(task.amount) || 0), 0);
+    });
+    
+    if (charts.managersChart) {
+        charts.managersChart.destroy();
+    }
+    
+    charts.managersChart = new Chart(ctx, {
+        type: type,
+        data: {
+            labels: managers,
+            datasets: [{
+                label: 'Оборот, ₽',
+                data: managerData,
+                backgroundColor: 'rgba(59, 130, 246, 0.6)',
+                borderColor: 'rgba(59, 130, 246, 1)',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    labels: {
+                        color: '#f8fafc'
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        color: '#94a3b8',
+                        callback: function(value) {
+                            return value.toLocaleString('ru-RU') + ' ₽';
+                        }
+                    },
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)'
+                    }
+                },
+                x: {
+                    ticks: {
+                        color: '#94a3b8'
+                    },
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)'
+                    }
+                }
+            }
+        }
+    });
+}
+
+function updateKPI() {
+    const tasks = loadAnalyticsData();
+    
+    const totalExpenses = tasks.reduce((sum, task) => sum + (parseFloat(task.amount) || 0), 0);
+    const completedTasks = tasks.filter(task => task.status === 'completed').length;
+    const activeIPs = new Set(tasks.map(task => task.ip)).size;
+    const avgTaskCost = completedTasks > 0 ? totalExpenses / completedTasks : 0;
+    
+    document.getElementById('totalExpensesKpi').textContent = totalExpenses.toLocaleString('ru-RU') + ' ₽';
+    document.getElementById('completedTasksKpi').textContent = completedTasks;
+    document.getElementById('activeIPsKpi').textContent = activeIPs;
+    document.getElementById('avgTaskCostKpi').textContent = avgTaskCost.toLocaleString('ru-RU') + ' ₽';
+}
+
+function getLastMonths(n) {
+    const months = [];
+    const date = new Date();
+    
+    for (let i = n - 1; i >= 0; i--) {
+        const d = new Date(date.getFullYear(), date.getMonth() - i, 1);
+        months.push({
+            label: d.toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' }),
+            month: d.getMonth(),
+            year: d.getFullYear()
+        });
+    }
+    
+    return months;
+}
+
+function updateCharts() {
+    renderCharts();
+    updateKPI();
+}
+
+function updateChartTypes() {
+    renderCharts();
+}
+
+function downloadChart(chartId) {
+    const chart = charts[chartId];
+    if (chart) {
+        const link = document.createElement('a');
+        link.download = `${chartId}.png`;
+        link.href = chart.toBase64Image();
+        link.click();
+    }
+}
+
+function exportToCSV() {
+    const tasks = loadAnalyticsData();
+    
+    const headers = ['Название', 'Регион', 'ИП', 'Сумма', 'Статус', 'Дата создания'];
+    const csvData = tasks.map(task => [
+        task.title || '',
+        task.region || '',
+        task.ip || '',
+        task.amount || '0',
+        task.status || 'pending',
+        task.createdAt || new Date().toISOString()
+    ]);
+    
+    const csvContent = [headers, ...csvData]
+        .map(row => row.map(field => `"${field}"`).join(','))
+        .join('\n');
+    
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    
+    link.setAttribute('href', url);
+    link.setAttribute('download', `expense_report_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+function generatePDFReport() {
+    alert('Функция генерации PDF отчета будет реализована в следующей версии');
+}
+
+function printCharts() {
+    window.print();
+}
+
+// Инициализация
+document.addEventListener('DOMContentLoaded', initAnalytics);

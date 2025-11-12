@@ -3,216 +3,214 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📊 Аналитика - IP Expense Manager</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/analytics.css">
+    <title>Аналитика - IP Expense Manager</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><defs><linearGradient id='borderGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%238b5cf6'/><stop offset='50%' stop-color='%236d28d9'/><stop offset='100%' stop-color='%231e40af'/></linearGradient><linearGradient id='checkGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%23a78bfa'/><stop offset='100%' stop-color='%234f46e5'/></linearGradient><filter id='glow' x='-50%' y='-50%' width='200%' height='200%'><feGaussianBlur in='SourceGraphic' stdDeviation='1' result='blur'/><feMerge><feMergeNode in='blur'/><feMergeNode in='SourceGraphic'/></feMerge></filter></defs><circle cx='10' cy='10' r='9' fill='none' stroke='url(%23borderGrad)' stroke-width='1.5' opacity='0.9'/><path d='M6,10 L8.5,12.5 L14,7' stroke='url(%23checkGrad)' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round' filter='url(%23glow)'/></svg>">
+    
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/components/navbar.css">
+    <link rel="stylesheet" href="css/analytics.css">
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="container">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <a href="dashboard.html" class="navbar-brand">
-                    🎯 IP Expense Manager
-                </a>
-                <div style="display: flex; align-items: center; gap: 20px;">
-                    <span style="color: white; font-size: 14px;" id="userInfo">
-                        <!-- Заполнится через JavaScript -->
-                    </span>
-                    <button onclick="Auth.logout()" class="btn" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); font-size: 14px;">
-                        🚪 Выйти
-                    </button>
+    <div class="background-animation">
+        <div class="gradient-circle circle-1"></div>
+        <div class="gradient-circle circle-2"></div>
+        <div class="gradient-circle circle-3"></div>
+    </div>
+
+    <!-- Навбар -->
+    <nav class="main-navbar">
+        <div class="navbar-container">
+            <a href="dashboard.html" class="navbar-brand">
+                <div class="brand-logo">💼</div>
+                <span class="brand-text">IP Expense Manager</span>
+            </a>
+            
+            <button class="mobile-menu-btn">☰</button>
+            
+            <ul class="navbar-links">
+                <li><a href="dashboard.html" class="nav-link"><span class="nav-icon">📊</span> Дашборд</a></li>
+                <li><a href="tasks.html" class="nav-link"><span class="nav-icon">📋</span> Задачи</a></li>
+                <li><a href="templates.html" class="nav-link"><span class="nav-icon">🎯</span> Шаблоны</a></li>
+                <li><a href="cards.html" class="nav-link"><span class="nav-icon">💳</span> Карты</a></li>
+                <li><a href="analytics.html" class="nav-link active"><span class="nav-icon">📈</span> Аналитика</a></li>
+            </ul>
+            
+            <div class="user-menu">
+                <div class="user-info">
+                    <span class="user-name" id="userName">Пользователь</span>
+                    <span class="user-role" id="userRole">Роль</span>
                 </div>
+                <button onclick="logout()" class="logout-btn">
+                    <span class="nav-icon">🚪</span>
+                    Выйти
+                </button>
             </div>
         </div>
     </nav>
 
-    <main class="container" style="padding: 40px 20px;">
-        <div class="glass-card" style="padding: 30px; margin-bottom: 30px;">
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 16px;">
-                <div>
-                    <h1 style="margin-bottom: 8px; color: var(--primary);">📊 Аналитика и отчеты</h1>
-                    <p style="color: var(--text-light); margin: 0;">Комплексная аналитика расходов и эффективности</p>
-                </div>
-                <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-                    <button class="btn btn-outline" onclick="Analytics.refreshData()">
-                        🔄 Обновить
-                    </button>
-                    <div class="dropdown">
-                        <button class="btn btn-primary">
-                            📄 Экспорт отчета
+    <main class="analytics-container">
+        <div class="analytics-header">
+            <div>
+                <h1 class="page-title">Аналитика</h1>
+                <p class="page-subtitle">Статистика и отчеты по финансовым показателям</p>
+            </div>
+            <div class="export-actions">
+                <button class="btn btn-secondary" onclick="exportToCSV()">
+                    <span class="nav-icon">📥</span>
+                    Экспорт в CSV
+                </button>
+            </div>
+        </div>
+
+        <!-- Фильтры -->
+        <div class="analytics-filters">
+            <div class="filter-group">
+                <label class="filter-label" for="dateRange">Период</label>
+                <select class="filter-select" id="dateRange" onchange="updateCharts()">
+                    <option value="7days">Последние 7 дней</option>
+                    <option value="30days" selected>Последние 30 дней</option>
+                    <option value="90days">Последние 90 дней</option>
+                    <option value="year">Этот год</option>
+                    <option value="all">За все время</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label class="filter-label" for="regionFilter">Регион</label>
+                <select class="filter-select" id="regionFilter" onchange="updateCharts()">
+                    <option value="">Все регионы</option>
+                    <option value="Астрахань">Астрахань</option>
+                    <option value="Бурятия">Бурятия</option>
+                    <option value="Курган">Курган</option>
+                    <option value="Калмыкия">Калмыкия</option>
+                    <option value="Мордовия">Мордовия</option>
+                    <option value="Удмуртия">Удмуртия</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label class="filter-label" for="chartType">Тип графика</label>
+                <select class="filter-select" id="chartType" onchange="updateChartTypes()">
+                    <option value="bar">Столбчатые</option>
+                    <option value="line">Линейные</option>
+                    <option value="pie">Круговые</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- KPI Карточки -->
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-value" id="totalExpensesKpi">0 ₽</div>
+                <div class="kpi-label">Общие расходы</div>
+                <div class="kpi-trend trend-up" id="expensesTrend">↑ 12%</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-value" id="completedTasksKpi">0</div>
+                <div class="kpi-label">Завершено задач</div>
+                <div class="kpi-trend trend-up" id="tasksTrend">↑ 8%</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-value" id="activeIPsKpi">0</div>
+                <div class="kpi-label">Активных ИП</div>
+                <div class="kpi-trend trend-down" id="ipsTrend">↓ 3%</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-value" id="avgTaskCostKpi">0 ₽</div>
+                <div class="kpi-label">Средний чек</div>
+                <div class="kpi-trend trend-up" id="avgCostTrend">↑ 5%</div>
+            </div>
+        </div>
+
+        <!-- Сетка графиков -->
+        <div class="charts-grid">
+            <!-- График расходов по месяцам -->
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h3 class="chart-title">Расходы по месяцам</h3>
+                    <div class="chart-actions">
+                        <button class="btn-icon" onclick="downloadChart('expensesChart')" title="Скачать график">
+                            📥
                         </button>
-                        <div class="dropdown-content">
-                            <a href="#" onclick="Analytics.exportReport('csv')">📊 CSV</a>
-                            <a href="#" onclick="Analytics.exportReport('pdf')">📄 PDF</a>
-                        </div>
                     </div>
                 </div>
+                <div class="chart-wrapper">
+                    <canvas id="expensesChart"></canvas>
+                </div>
             </div>
 
-            <div class="metrics-grid">
-                <div class="metric-card">
-                    <div class="metric-value" id="kpiTotalTasks">0</div>
-                    <div class="metric-label">Всего задач</div>
+            <!-- График распределения по регионам -->
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h3 class="chart-title">Распределение по регионам</h3>
+                    <div class="chart-actions">
+                        <button class="btn-icon" onclick="downloadChart('regionsChart')" title="Скачать график">
+                            📥
+                        </button>
+                    </div>
                 </div>
-                <div class="metric-card">
-                    <div class="metric-value" id="kpiCompletedTasks">0</div>
-                    <div class="metric-label">Выполнено задач</div>
+                <div class="chart-wrapper">
+                    <canvas id="regionsChart"></canvas>
                 </div>
-                <div class="metric-card">
-                    <div class="metric-value" id="kpiCompletionRate">0%</div>
-                    <div class="metric-label">Процент выполнения</div>
+            </div>
+
+            <!-- График по статьям расходов -->
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h3 class="chart-title">Статьи расходов</h3>
+                    <div class="chart-actions">
+                        <button class="btn-icon" onclick="downloadChart('categoriesChart')" title="Скачать график">
+                            📥
+                        </button>
+                    </div>
                 </div>
-                <div class="metric-card">
-                    <div class="metric-value" id="kpiAvgCompletionTime">0 дн.</div>
-                    <div class="metric-label">Среднее время выполнения</div>
+                <div class="chart-wrapper">
+                    <canvas id="categoriesChart"></canvas>
+                </div>
+            </div>
+
+            <!-- График эффективности менеджеров -->
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h3 class="chart-title">Эффективность менеджеров</h3>
+                    <div class="chart-actions">
+                        <button class="btn-icon" onclick="downloadChart('managersChart')" title="Скачать график">
+                            📥
+                        </button>
+                    </div>
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="managersChart"></canvas>
                 </div>
             </div>
         </div>
 
-        <div class="analytics-grid">
-            <div class="chart-card analytics-card">
-                <div class="chart-header">
-                    <h3 class="chart-title">💰 Расходы по регионам</h3>
-                </div>
-                <div class="chart-container">
-                    <canvas id="expensesByRegionChart"></canvas>
-                </div>
+        <!-- Секция экспорта -->
+        <div class="export-section">
+            <div class="export-header">
+                <h3>Экспорт данных</h3>
+                <p>Вы можете выгрузить данные для дальнейшего анализа</p>
             </div>
-
-            <div class="chart-card analytics-card">
-                <div class="chart-header">
-                    <h3 class="chart-title">👥 Эффективность управляющих</h3>
-                </div>
-                <div class="chart-container">
-                    <canvas id="managerPerformanceChart"></canvas>
-                </div>
-            </div>
-
-            <div class="chart-card analytics-card">
-                <div class="chart-header">
-                    <h3 class="chart-title">🎯 Статусы задач</h3>
-                </div>
-                <div class="chart-container">
-                    <canvas id="taskStatusChart"></canvas>
-                </div>
-            </div>
-
-            <div class="chart-card analytics-card">
-                <div class="chart-header">
-                    <h3 class="chart-title">📊 Распределение расходов</h3>
-                </div>
-                <div class="chart-container">
-                    <canvas id="expenseDistributionChart"></canvas>
-                </div>
-            </div>
-
-            <div class="chart-card analytics-card-wide">
-                <div class="chart-header">
-                    <h3 class="chart-title">💳 План vs Факт (ежемесячно)</h3>
-                </div>
-                <div class="chart-container">
-                    <canvas id="planVsActualChart"></canvas>
-                </div>
-            </div>
-
-            <div class="chart-card analytics-card-wide">
-                <div class="chart-header">
-                    <h3 class="chart-title">📈 Тренды по месяцам</h3>
-                </div>
-                <div class="chart-container">
-                    <canvas id="monthlyTrendsChart"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <div class="chart-card">
-            <div class="chart-header">
-                <h3 class="chart-title">📊 Детальная эффективность управляющих</h3>
-            </div>
-            <div style="overflow-x: auto;">
-                <table class="report-table">
-                    <thead>
-                        <tr>
-                            <th>Управляющий</th>
-                            <th>Всего задач</th>
-                            <th>Выполнено</th>
-                            <th>Процент выполнения</th>
-                            <th>Средняя сумма</th>
-                            <th>Регионы</th>
-                        </tr>
-                    </thead>
-                    <tbody id="managerPerformanceTable">
-                        <!-- Заполнится через JavaScript -->
-                    </tbody>
-                </table>
+            <div class="export-actions">
+                <button class="btn btn-secondary" onclick="exportToCSV()">
+                    <span class="nav-icon">📥</span>
+                    Экспорт в CSV
+                </button>
+                <button class="btn btn-secondary" onclick="generatePDFReport()">
+                    <span class="nav-icon">📄</span>
+                    PDF отчет
+                </button>
+                <button class="btn btn-secondary" onclick="printCharts()">
+                    <span class="nav-icon">🖨️</span>
+                    Печать отчетов
+                </button>
             </div>
         </div>
     </main>
 
-    <script src="js/data.js"></script>
-    <script src="js/utils.js"></script>
+    <script src="js/navbar.js"></script>
     <script src="js/analytics.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('📊 Страница аналитики загружается...');
-            
-            // Инициализируем авторизацию
-            Auth.init();
-            
-            // Проверяем авторизацию
-            if (!Auth.requireAuth()) return;
-            
-            // Обновляем информацию о пользователе
-            updateUserInfo();
-            
-            // Инициализируем аналитику
-            Analytics.init();
-        });
-
-        function updateUserInfo() {
-            const userInfo = document.getElementById('userInfo');
-            if (userInfo && Auth.currentUser) {
-                userInfo.innerHTML = `👋 ${Auth.currentUser.name} 
-                    <span style="opacity: 0.8;">(${Auth.currentUser.role === 'admin' ? 'Бухгалтер' : 'Управляющий'})</span>`;
-            }
-        }
-
-        // Стили для dropdown
-        const style = document.createElement('style');
-        style.textContent = `
-            .dropdown {
-                position: relative;
-                display: inline-block;
-            }
-            .dropdown-content {
-                display: none;
-                position: absolute;
-                background: white;
-                min-width: 160px;
-                box-shadow: var(--shadow-lg);
-                border-radius: 8px;
-                z-index: 1;
-                margin-top: 4px;
-            }
-            .dropdown-content a {
-                color: var(--text-dark);
-                padding: 12px 16px;
-                text-decoration: none;
-                display: block;
-                border-radius: 8px;
-                transition: var(--transition);
-            }
-            .dropdown-content a:hover {
-                background: var(--bg-light);
-            }
-            .dropdown:hover .dropdown-content {
-                display: block;
-            }
-        `;
-        document.head.appendChild(style);
-    NavigationHelper.addBackButton('dashboard.html', '← Назад к дашборду');
-    </script>
 </body>
 </html>
