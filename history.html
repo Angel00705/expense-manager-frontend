@@ -3,106 +3,150 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📋 История изменений - IP Expense Manager</title>
-    <link rel="stylesheet" href="css/style.css">
-    <!-- ФАВИКОН -->
+    <title>История - IP Expense Manager</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><defs><linearGradient id='borderGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%238b5cf6'/><stop offset='50%' stop-color='%236d28d9'/><stop offset='100%' stop-color='%231e40af'/></linearGradient><linearGradient id='checkGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%23a78bfa'/><stop offset='100%' stop-color='%234f46e5'/></linearGradient><filter id='glow' x='-50%' y='-50%' width='200%' height='200%'><feGaussianBlur in='SourceGraphic' stdDeviation='1' result='blur'/><feMerge><feMergeNode in='blur'/><feMergeNode in='SourceGraphic'/></feMerge></filter></defs><circle cx='10' cy='10' r='9' fill='none' stroke='url(%23borderGrad)' stroke-width='1.5' opacity='0.9'/><path d='M6,10 L8.5,12.5 L14,7' stroke='url(%23checkGrad)' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round' filter='url(%23glow)'/></svg>">
+    
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/components/navbar.css">
+    <link rel="stylesheet" href="css/history.css">
 </head>
 <body>
-    <nav class="navbar">
-        <div class="container">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <a href="dashboard.html" class="navbar-brand">🎯 IP Expense Manager</a>
-                <div style="display: flex; align-items: center; gap: 20px;">
-                    <span style="color: white; font-size: 14px;" id="userInfo"></span>
-                    <button onclick="Auth.logout()" class="btn" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); font-size: 14px;">🚪 Выйти</button>
+    <div class="background-animation">
+        <div class="gradient-circle circle-1"></div>
+        <div class="gradient-circle circle-2"></div>
+        <div class="gradient-circle circle-3"></div>
+    </div>
+
+    <!-- Навбар -->
+    <nav class="main-navbar">
+        <div class="navbar-container">
+            <a href="dashboard.html" class="navbar-brand">
+                <div class="brand-logo">💼</div>
+                <span class="brand-text">IP Expense Manager</span>
+            </a>
+            
+            <button class="mobile-menu-btn">☰</button>
+            
+            <ul class="navbar-links">
+                <li><a href="dashboard.html" class="nav-link"><span class="nav-icon">📊</span> Дашборд</a></li>
+                <li><a href="tasks.html" class="nav-link"><span class="nav-icon">📋</span> Задачи</a></li>
+                <li><a href="templates.html" class="nav-link"><span class="nav-icon">🎯</span> Шаблоны</a></li>
+                <li><a href="cards.html" class="nav-link"><span class="nav-icon">💳</span> Карты</a></li>
+                <li><a href="analytics.html" class="nav-link"><span class="nav-icon">📈</span> Аналитика</a></li>
+                <li><a href="history.html" class="nav-link active"><span class="nav-icon">📜</span> История</a></li>
+            </ul>
+            
+            <div class="user-menu">
+                <div class="user-info">
+                    <span class="user-name" id="userName">Пользователь</span>
+                    <span class="user-role" id="userRole">Роль</span>
                 </div>
+                <button onclick="logout()" class="logout-btn">
+                    <span class="nav-icon">🚪</span>
+                    Выйти
+                </button>
             </div>
         </div>
     </nav>
 
-    <main class="container" style="padding: 30px 20px;">
-        <div class="glass-card animate-slide-in" style="padding: 24px;">
-            <!-- ЗАГОЛОВОК С КНОПКОЙ НАЗАД (ОБНОВЛЕНО) -->
-            <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px;">
-                <!-- Кнопка "Назад" будет добавлена автоматически через NavigationHelper -->
-                <div style="flex: 1;">
-                    <h1 style="margin-bottom: 8px; color: var(--primary);">📋 История изменений</h1>
-                    <p style="color: var(--text-light); margin: 0;">Аудит действий администраторов в системе</p>
-                </div>
-                <div style="display: flex; gap: 12px;">
-                    <button class="btn btn-outline" onclick="clearHistory()" id="clearHistoryBtn" style="display: none;">🗑️ Очистить историю</button>
-                    <button class="btn btn-primary" onclick="exportHistory()">📄 Экспорт</button>
-                </div>
+    <main class="history-container">
+        <div class="history-header">
+            <div>
+                <h1 class="page-title">📜 История изменений</h1>
+                <p class="page-subtitle">Аудит всех действий в системе</p>
             </div>
+            <div class="export-actions">
+                <button class="btn btn-secondary" onclick="exportHistory()">
+                    <span class="nav-icon">📥</span>
+                    Экспорт истории
+                </button>
+            </div>
+        </div>
 
-            <!-- ФИЛЬТРЫ -->
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px;">
-                <div class="form-group">
-                    <label class="form-label">👤 Пользователь</label>
-                    <select class="form-control form-select" id="userFilter" onchange="filterHistory()">
-                        <option value="">Все пользователи</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">📊 Тип действия</label>
-                    <select class="form-control form-select" id="actionFilter" onchange="filterHistory()">
-                        <option value="">Все действия</option>
-                        <option value="create">Создание</option>
-                        <option value="update">Изменение</option>
-                        <option value="delete">Удаление</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">📅 Период</label>
-                    <select class="form-control form-select" id="periodFilter" onchange="filterHistory()">
-                        <option value="all">За все время</option>
-                        <option value="today">Сегодня</option>
-                        <option value="week">За неделю</option>
-                        <option value="month">За месяц</option>
-                    </select>
-                </div>
+        <!-- Статистика -->
+        <div class="history-stats">
+            <div class="stat-item">
+                <div class="stat-value" id="totalActions">0</div>
+                <div class="stat-label">Всего действий</div>
             </div>
+            <div class="stat-item">
+                <div class="stat-value" id="todayActions">0</div>
+                <div class="stat-label">Сегодня</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="userActions">0</div>
+                <div class="stat-label">Ваши действия</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="taskChanges">0</div>
+                <div class="stat-label">Изменения задач</div>
+            </div>
+        </div>
 
-            <!-- ИСТОРИЯ ИЗМЕНЕНИЙ -->
-            <div id="historyList">
-                <div style="text-align: center; color: var(--text-light); padding: 60px;">
-                    <div style="font-size: 4rem; margin-bottom: 16px;">📋</div>
-                    <p>Загрузка истории изменений...</p>
-                </div>
+        <!-- Фильтры -->
+        <div class="history-filters">
+            <div class="filter-group">
+                <label class="filter-label" for="actionType">Тип действия</label>
+                <select class="form-select" id="actionType" onchange="filterHistory()">
+                    <option value="">Все действия</option>
+                    <option value="created">Создание</option>
+                    <option value="updated">Изменение</option>
+                    <option value="deleted">Удаление</option>
+                    <option value="completed">Завершение</option>
+                </select>
             </div>
+            
+            <div class="filter-group">
+                <label class="filter-label" for="dateRange">Период</label>
+                <select class="form-select" id="dateRange" onchange="filterHistory()">
+                    <option value="all">За все время</option>
+                    <option value="today">Сегодня</option>
+                    <option value="week">За неделю</option>
+                    <option value="month">За месяц</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label class="filter-label" for="userFilter">Пользователь</label>
+                <select class="form-select" id="userFilter" onchange="filterHistory()">
+                    <option value="">Все пользователи</option>
+                    <option value="current">Только мои действия</option>
+                    <!-- Пользователи будут загружены динамически -->
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label class="filter-label" for="searchHistory">Поиск</label>
+                <input type="text" class="form-input" id="searchHistory" placeholder="Поиск по описанию..." oninput="filterHistory()">
+            </div>
+        </div>
+
+        <!-- Таймлайн истории -->
+        <div class="history-timeline" id="historyTimeline">
+            <!-- История будет загружена через JavaScript -->
+        </div>
+
+        <!-- Состояние пустого списка -->
+        <div class="empty-state" id="emptyState" style="display: none;">
+            <div class="icon">📜</div>
+            <h3>История не найдена</h3>
+            <p>Попробуйте изменить параметры фильтрации</p>
+            <button class="btn btn-primary" onclick="clearFilters()">
+                <span class="nav-icon">🔄</span>
+                Сбросить фильтры
+            </button>
+        </div>
+
+        <!-- Кнопка загрузки еще -->
+        <div class="load-more">
+            <button class="btn btn-secondary" id="loadMoreBtn" onclick="loadMoreHistory()" style="display: none;">
+                <span class="nav-icon">⬇️</span>
+                Загрузить еще
+            </button>
         </div>
     </main>
 
-    <script src="js/data.js"></script>
-    <script src="js/utils.js"></script>
-    <script>
-        // ... (весь существующий JavaScript код остается без изменений)
-        
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('📋 Страница истории изменений загружается...');
-            
-            Auth.init();
-            if (!Auth.requireAuth()) return;
-            
-            // Только админы могут видеть историю изменений
-            if (!Auth.isAdmin()) {
-                Notification.error('Доступ к истории изменений ограничен');
-                setTimeout(() => {
-                    window.location.href = 'dashboard.html';
-                }, 2000);
-                return;
-            }
-            
-            updateUserInfo();
-            setupUI();
-            loadHistory();
-            
-            // ДОБАВЛЯЕМ ЭТУ СТРОЧКУ - автоматическое создание кнопки "Назад"
-            NavigationHelper.addBackButton('dashboard.html', '← Назад к дашборду');
-        });
-
-        // ... (остальной код остается без изменений)
-    </script>
+    <script src="js/navbar.js"></script>
+    <script src="js/history.js"></script>
 </body>
 </html>
