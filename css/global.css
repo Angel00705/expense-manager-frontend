@@ -186,7 +186,7 @@ body {
   font-size: 0.9rem;
 }
 
-/* ===== ФОРМЫ ===== */
+/* ===== БАЗОВЫЕ СТИЛИ ФОРМ (только самые основные) ===== */
 .form-input {
   width: 100%;
   padding: 1rem;
@@ -197,6 +197,7 @@ body {
   font-size: 1rem;
   transition: all 0.3s ease;
   font-family: inherit;
+  box-sizing: border-box;
 }
 
 .form-input:focus {
@@ -204,12 +205,14 @@ body {
   border-color: var(--primary);
   background: rgba(255, 255, 255, 0.12);
   box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.15);
-  transform: translateY(-1px);
 }
 
 .form-input::placeholder {
   color: var(--text-muted);
 }
+
+/* Специфические стили для селектов будут в отдельных файлах */
+/* УБРАЛ СТИЛИ ДЛЯ SELECT И ФИЛЬТРОВ - они будут в cards.css */
 
 .input-group {
   position: relative;
@@ -264,81 +267,6 @@ body {
     font-size: 1.1rem;
   }
 }
-/* ===== УЛУЧШЕННЫЕ СТИЛИ ДЛЯ ВСЕХ SELECT ===== */
-.form-input {
-    width: 100%;
-    padding: 0.75rem 1rem;
-    background: var(--bg-glass);
-    border: 2px solid var(--border);
-    border-radius: var(--radius);
-    color: var(--text-primary);
-    font-size: 0.9rem;
-    transition: all 0.3s ease;
-    font-family: inherit;
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2394a3b8' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 1rem center;
-    background-size: 12px;
-}
 
-.form-input:focus {
-    outline: none;
-    border-color: var(--primary);
-    background: rgba(255, 255, 255, 0.12);
-    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
-    transform: translateY(-1px);
-}
-
-.form-input::placeholder {
-    color: var(--text-muted);
-}
-
-/* Стили для select options */
-.form-input option {
-    background: var(--bg-secondary);
-    color: var(--text-primary);
-    padding: 0.75rem;
-    border: none;
-}
-
-.form-input option:hover {
-    background: var(--primary);
-    color: white;
-}
-
-/* Компактные версии для фильтров */
-.form-input.compact {
-    padding: 0.5rem 0.75rem;
-    font-size: 0.85rem;
-    height: 38px;
-    background-position: right 0.75rem center;
-}
-
-/* Группы форм для фильтров */
-.filter-group {
-    flex: 1;
-    min-width: 160px;
-}
-
-.filter-group label {
-    display: block;
-    margin-bottom: 0.4rem;
-    color: var(--text-secondary);
-    font-weight: 500;
-    font-size: 0.8rem;
-}
-
-/* Контейнеры фильтров */
-.cards-filters {
-    display: flex;
-    gap: 1rem;
-    align-items: end;
-    flex-wrap: wrap;
-    margin-bottom: 1.5rem;
-    padding: 1.25rem;
-    background: var(--bg-card);
-    backdrop-filter: blur(25px) saturate(180%);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-}
+/* УБРАЛ ВСЕ СТИЛИ ДЛЯ SELECT И ФИЛЬТРОВ ИЗ GLOBAL.CSS */
+/* Они теперь будут только в cards.css чтобы избежать конфликтов */

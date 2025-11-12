@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Бюджеты - IP Expense Manager</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><defs><linearGradient id='borderGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%238b5cf6'/><stop offset='50%' stop-color='%236d28d9'/><stop offset='100%' stop-color='%231e40af'/></linearGradient><linearGradient id='checkGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%23a78bfa'/><stop offset='100%' stop-color='%234f46e5'/></linearGradient><filter id='glow' x='-50%' y='-50%' width='200%' height='200%'><feGaussianBlur in='SourceGraphic' stdDeviation='1' result='blur'/><feMerge><feMergeNode in='blur'/><feMergeNode in='SourceGraphic'/></feMerge></filter></defs><circle cx='10' cy='10' r='9' fill='none' stroke='url(%23borderGrad)' stroke-width='1.5' opacity='0.9'/><path d='M6,10 L8.5,12.5 L14,7' stroke='url(%23checkGrad)' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round' filter='url(%23glow)'/></svg>">
+    
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/components/navbar.css">
+    <link rel="stylesheet" href="css/budgets.css">
+</head>
+<body>
+    <div class="background-animation">
+        <div class="gradient-circle circle-1"></div>
+        <div class="gradient-circle circle-2"></div>
+        <div class="gradient-circle circle-3"></div>
+    </div>
+
+    <!-- Навбар -->
+    <nav class="main-navbar">
+        <div class="navbar-container">
+            <a href="dashboard.html" class="navbar-brand">
+                <div class="brand-logo">💼</div>
+                <span class="brand-text">IP Expense Manager</span>
+            </a>
+            
+            <button class="mobile-menu-btn">☰</button>
+            
+            <ul class="navbar-links">
+                <li><a href="dashboard.html" class="nav-link"><span class="nav-icon">📊</span> Дашборд</a></li>
+                <li><a href="tasks.html" class="nav-link"><span class="nav-icon">📋</span> Задачи</a></li>
+                <li><a href="templates.html" class="nav-link"><span class="nav-icon">🎯</span> Шаблоны</a></li>
+                <li><a href="cards.html" class="nav-link"><span class="nav-icon">💳</span> Карты</a></li>
+                <li><a href="budgets.html" class="nav-link active"><span class="nav-icon">💰</span> Бюджеты</a></li>
+                <li><a href="analytics.html" class="nav-link"><span class="nav-icon">📈</span> Аналитика</a></li>
+                <li><a href="history.html" class="nav-link"><span class="nav-icon">📜</span> История</a></li>
+            </ul>
+            
+            <div class="user-menu">
+                <div class="user-info">
+                    <span class="user-name" id="userName">Пользователь</span>
+                    <span class="user-role" id="userRole">Роль</span>
+                </div>
+                <button onclick="logout()" class="logout-btn">
+                    <span class="nav-icon">🚪</span>
+                    Выйти
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="budgets-container">
+        <!-- Заголовок с экспортом слева -->
+        <div class="budgets-header">
+            <div class="export-controls">
+                <button class="btn btn-secondary" onclick="exportBudgetToCSV()">
+                    <span class="nav-icon">📊</span> CSV
+                </button>
+                <button class="btn btn-secondary" onclick="exportBudgetToExcel()">
+                    <span class="nav-icon">📈</span> Excel
+                </button>
+                <button class="btn btn-secondary" onclick="exportBudgetToPDF()">
+                    <span class="nav-icon">📄</span> PDF
+                </button>
+            </div>
+            <div class="header-main">
+                <div>
+                    <h1 class="page-title">💰 Бюджеты регионов</h1>
+                    <p class="page-subtitle">Управление месячными бюджетами по регионам и статьям расходов</p>
+                </div>
+                <div class="month-selector">
+                    <label>Период:</label>
+                    <select id="budgetMonth" class="form-input" onchange="changeBudgetMonth()">
+                        <option value="2025-11">Ноябрь 2025</option>
+                        <option value="2025-12">Декабрь 2025</option>
+                        <option value="2026-01">Январь 2026</option>
+                        <option value="2026-02">Февраль 2026</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Компактная статистика -->
+        <div class="budgets-stats-compact">
+            <div class="stat-compact">
+                <div class="stat-value">1 604 611 ₽</div>
+                <div class="stat-label">Общий бюджет</div>
+            </div>
+            <div class="stat-compact">
+                <div class="stat-value">742 211 ₽</div>
+                <div class="stat-label">Использовано</div>
+            </div>
+            <div class="stat-compact">
+                <div class="stat-value">862 400 ₽</div>
+                <div class="stat-label">Остаток</div>
+            </div>
+            <div class="stat-compact">
+                <div class="stat-value">6</div>
+                <div class="stat-label">Регионов</div>
+            </div>
+            <div class="stat-compact">
+                <div class="stat-value">28</div>
+                <div class="stat-label">ИП</div>
+            </div>
+        </div>
+
+        <!-- Основная таблица бюджетов -->
+        <div class="budgets-master-container">
+            <div class="master-table-header">
+                <h3>📋 Бюджет мероприятий по регионам и ИП <span id="currentMonthDisplay">(Ноябрь 2025)</span></h3>
+                <div class="table-controls">
+                    <button class="btn btn-sm" onclick="toggleAllRegions()">
+                        <span class="nav-icon">📊</span>
+                        <span id="toggleAllText">Развернуть все</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="master-table-wrapper">
+                <div class="master-table">
+                    <div class="table-header">
+                        <div class="region-cell">Регион / ИП</div>
+                        <div class="category-cell" title="Продукты">🛒</div>
+                        <div class="category-cell" title="Хоз. товары">🧹</div>
+                        <div class="category-cell" title="Медикаменты">💊</div>
+                        <div class="category-cell" title="Канцелярия">📎</div>
+                        <div class="category-cell" title="Кафе / кофейня">☕</div>
+                        <div class="category-cell" title="Полиграфия">🖨️</div>
+                        <div class="category-cell" title="Мероприятия">🎉</div>
+                        <div class="category-cell" title="Мелкий ремонт">🔧</div>
+                        <div class="category-cell" title="ЗП управляющего">💰</div>
+                        <div class="category-cell" title="АЗС">⛽</div>
+                        <div class="category-cell" title="Отправка товаров">📦</div>
+                        <div class="category-cell" title="Покупка регион">🏢</div>
+                        <div class="category-cell" title="Страхование">🛡️</div>
+                        <div class="category-cell" title="Благотворительность">❤️</div>
+                        <div class="category-cell" title="Техника">📱</div>
+                        <div class="category-cell" title="Упаковка">📦</div>
+                        <div class="category-cell" title="Клининг">🧽</div>
+                        <div class="category-cell" title="Чеки ККТ">🧾</div>
+                        <div class="category-cell" title="Каршеринг">🚗</div>
+                        <div class="category-cell" title="Аренда офиса">🏢</div>
+                        <div class="category-cell" title="Коммуналка">💡</div>
+                        <div class="category-cell" title="Интернет">🌐</div>
+                        <div class="category-cell" title="ЗП ИП">💼</div>
+                        <div class="total-cell">Итого</div>
+                    </div>
+                    <div class="table-body" id="masterTableBody">
+                        <!-- Данные будут загружены через JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Модальное окно редактирования бюджета -->
+    <div class="modal" id="editBudgetModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Редактировать бюджет</h3>
+                <button class="close-modal" onclick="closeEditModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <form id="editBudgetForm">
+                    <input type="hidden" id="editRegion">
+                    <input type="hidden" id="editCategory">
+                    <input type="hidden" id="editIp">
+                    <input type="hidden" id="editMonth">
+                    
+                    <div class="edit-info">
+                        <div><strong>Регион:</strong> <span id="editRegionDisplay"></span></div>
+                        <div><strong>ИП:</strong> <span id="editIpDisplay"></span></div>
+                        <div><strong>Статья:</strong> <span id="editCategoryDisplay"></span></div>
+                        <div><strong>Месяц:</strong> <span id="editMonthDisplay"></span></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Плановый бюджет (₽)</label>
+                        <input type="number" id="editPlanned" class="form-input" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Фактические расходы (₽)</label>
+                        <input type="number" id="editActual" class="form-input" required>
+                    </div>
+                    
+                    <div class="budget-summary">
+                        <div class="summary-item">
+                            <span>Остаток:</span>
+                            <span id="editRemaining">0 ₽</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Использовано:</span>
+                            <span id="editUsage">0%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Отмена</button>
+                        <button type="submit" class="btn btn-primary">Сохранить</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/navbar.js"></script>
+    <script src="js/budgets.js"></script>
+</body>
+</html>
