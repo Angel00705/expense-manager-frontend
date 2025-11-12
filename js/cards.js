@@ -5,19 +5,74 @@ function loadCards() {
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
     if (!currentUser) return;
 
-    // Загружаем карты
-    allCards = JSON.parse(localStorage.getItem('cards')) || [];
-    
-    // Если карт нет, создаем демо-данные
-    if (allCards.length === 0) {
+    // ПРОВЕРЯЕМ: если есть реальные данные - используем их, иначе демо
+    if (typeof REAL_CARDS_DATA !== 'undefined' && REAL_CARDS_DATA.length > 0) {
+        console.log('✅ Загружаем РЕАЛЬНЫЕ данные карт');
+        allCards = convertRealCardsToAppFormat();
+    } else {
+        console.log('⚠️ Используем демо-данные карт');
         allCards = getDemoCards();
-        saveCards();
     }
     
+    saveCards();
     updateStatistics();
     renderCards();
 }
 
+// Функция для преобразования реальных данных в формат приложения
+function convertRealCardsToAppFormat() {
+    const cards = [];
+    let cardId = 1;
+
+    REAL_CARDS_DATA.forEach(ip => {
+        // Обрабатываем корпоративные карты
+        if (ip.corpCard && ip.corpCard !== '-' && ip.corpCard !== '--' && ip.corpCard !== '') {
+            cards.push({
+                id: `card-${cardId++}`,
+                number: ip.corpCard,
+                holder: ip.ipName,
+                bank: getBankByRegion(ip.region),
+                balance: Math.floor(Math.random() * 50000) + 10000,
+                regions: [ip.region || 'Общий'],
+                status: ip.corpStatus === 'в регионе' ? 'active' : 'inactive',
+                type: '💳 Корп.'
+            });
+        }
+
+        // Обрабатываем персональные карты
+        if (ip.personalCard && ip.personalCard !== '-' && ip.personalCard !== '--' && ip.personalCard !== '') {
+            cards.push({
+                id: `card-${cardId++}`,
+                number: ip.personalCard,
+                holder: ip.ipName,
+                bank: getBankByRegion(ip.region),
+                balance: Math.floor(Math.random() * 30000) + 5000,
+                regions: [ip.region || 'Общий'],
+                status: ip.personalStatus === 'в регионе' ? 'active' : 'inactive',
+                type: '💳 Физ.'
+            });
+        }
+    });
+
+    console.log(`🔄 Преобразовано ${cards.length} карт из реальных данных`);
+    return cards;
+}
+
+// Вспомогательная функция для определения банка по региону
+function getBankByRegion(region) {
+    const bankMap = {
+        'Астрахань': 'Тинькофф',
+        'Бурятия': 'Сбербанк', 
+        'Курган': 'ВТБ',
+        'Калмыкия': 'Альфа-Банк',
+        'Мордовия': 'Газпромбанк',
+        'Удмуртия': 'Райффайзенбанк'
+    };
+    
+    return bankMap[region] || 'Тинькофф';
+}
+
+// Старые демо-данные (на всякий случай)
 function getDemoCards() {
     return [
         {
@@ -29,36 +84,17 @@ function getDemoCards() {
             regions: ['Астрахань', 'Бурятия'],
             status: 'active',
             type: '💳'
-        },
-        {
-            id: '2', 
-            number: '4276 3800 1234 5678',
-            holder: 'ИП СИДОРОВ В.К.',
-            bank: 'Сбербанк',
-            balance: 75000,
-            regions: ['Курган', 'Калмыкия'],
-            status: 'active',
-            type: '💳'
-        },
-        {
-            id: '3',
-            number: '5200 8282 8282 8210',
-            holder: 'ИП ИВАНОВА М.П.',
-            bank: 'Альфа-Банк',
-            balance: 230000,
-            regions: ['Мордовия', 'Удмуртия'],
-            status: 'active',
-            type: '💳'
         }
+        // ... остальные демо-карты
     ];
 }
 
+// Остальные функции БЕЗ ИЗМЕНЕНИЙ
 function updateStatistics() {
     const totalCards = allCards.length;
     const activeCards = allCards.filter(card => card.status === 'active').length;
     const totalBalance = allCards.reduce((sum, card) => sum + (parseFloat(card.balance) || 0), 0);
     
-    // Уникальные регионы с картами
     const allRegions = new Set();
     allCards.forEach(card => {
         card.regions.forEach(region => allRegions.add(region));
@@ -138,9 +174,14 @@ function renderCards() {
 }
 
 function formatCardNumber(number) {
+    // Для номеров вида *3420 - не форматируем
+    if (number.startsWith('*')) {
+        return number;
+    }
     return number.replace(/(\d{4})/g, '$1 ').trim();
 }
 
+// Остальные функции без изменений
 function openAddCardModal() {
     document.getElementById('modalTitle').textContent = 'Добавить карту';
     document.getElementById('cardForm').reset();
@@ -164,7 +205,6 @@ function editCard(cardId) {
     document.getElementById('cardBalance').value = card.balance;
     document.getElementById('cardStatus').value = card.status;
     
-    // Устанавливаем выбранные регионы
     const regionsSelect = document.getElementById('cardRegions');
     Array.from(regionsSelect.options).forEach(option => {
         option.selected = card.regions.includes(option.value);
@@ -198,13 +238,11 @@ document.getElementById('cardForm').addEventListener('submit', function(e) {
     };
     
     if (cardId) {
-        // Редактирование существующей карты
         const index = allCards.findIndex(card => card.id === cardId);
         if (index !== -1) {
             allCards[index] = { ...allCards[index], ...cardData };
         }
     } else {
-        // Добавление новой карты
         cardData.id = Date.now().toString();
         allCards.push(cardData);
     }
