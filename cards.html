@@ -18,37 +18,36 @@
     </div>
 
     <!-- Навбар -->
-    <!-- Навбар -->
-<nav class="main-navbar">
-    <div class="navbar-container">
-        <a href="dashboard.html" class="navbar-brand">
-            <div class="brand-logo">💼</div>
-            <span class="brand-text">IP Expense Manager</span>
-        </a>
-        
-        <button class="mobile-menu-btn">☰</button>
-        
-        <ul class="navbar-links">
-            <li><a href="dashboard.html" class="nav-link"><span class="nav-icon">📊</span> Дашборд</a></li>
-            <li><a href="tasks.html" class="nav-link"><span class="nav-icon">📋</span> Задачи</a></li>
-            <li><a href="templates.html" class="nav-link"><span class="nav-icon">🎯</span> Шаблоны</a></li>
-            <li><a href="cards.html" class="nav-link"><span class="nav-icon">💳</span> Карты</a></li>
-            <li><a href="analytics.html" class="nav-link"><span class="nav-icon">📈</span> Аналитика</a></li>
-            <li><a href="history.html" class="nav-link active"><span class="nav-icon">📜</span> История</a></li>
-        </ul>
-        
-        <div class="user-menu">
-            <div class="user-info">
-                <span class="user-name" id="userName">Пользователь</span>
-                <span class="user-role" id="userRole">Роль</span>
+    <nav class="main-navbar">
+        <div class="navbar-container">
+            <a href="dashboard.html" class="navbar-brand">
+                <div class="brand-logo">💼</div>
+                <span class="brand-text">IP Expense Manager</span>
+            </a>
+            
+            <button class="mobile-menu-btn">☰</button>
+            
+            <ul class="navbar-links">
+                <li><a href="dashboard.html" class="nav-link"><span class="nav-icon">📊</span> Дашборд</a></li>
+                <li><a href="tasks.html" class="nav-link"><span class="nav-icon">📋</span> Задачи</a></li>
+                <li><a href="templates.html" class="nav-link"><span class="nav-icon">🎯</span> Шаблоны</a></li>
+                <li><a href="cards.html" class="nav-link active"><span class="nav-icon">💳</span> Карты</a></li>
+                <li><a href="analytics.html" class="nav-link"><span class="nav-icon">📈</span> Аналитика</a></li>
+                <li><a href="history.html" class="nav-link"><span class="nav-icon">📜</span> История</a></li>
+            </ul>
+            
+            <div class="user-menu">
+                <div class="user-info">
+                    <span class="user-name" id="userName">Пользователь</span>
+                    <span class="user-role" id="userRole">Роль</span>
+                </div>
+                <button onclick="logout()" class="logout-btn">
+                    <span class="nav-icon">🚪</span>
+                    Выйти
+                </button>
             </div>
-            <button onclick="logout()" class="logout-btn">
-                <span class="nav-icon">🚪</span>
-                Выйти
-            </button>
         </div>
-    </div>
-</nav>
+    </nav>
 
     <main class="cards-container">
         <div class="cards-header">
@@ -59,6 +58,41 @@
             <button class="btn btn-primary" onclick="openAddCardModal()">
                 <span class="nav-icon">💳</span>
                 Добавить карту
+            </button>
+        </div>
+
+        <!-- Фильтры -->
+        <div class="cards-filters">
+            <div class="filter-group">
+                <label for="filterRegion">Регион</label>
+                <select id="filterRegion" class="form-input" onchange="filterCards()">
+                    <option value="">Все регионы</option>
+                    <option value="Астрахань">Астрахань</option>
+                    <option value="Бурятия">Бурятия</option>
+                    <option value="Курган">Курган</option>
+                    <option value="Калмыкия">Калмыкия</option>
+                    <option value="Мордовия">Мордовия</option>
+                    <option value="Удмуртия">Удмуртия</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="filterStatus">Статус</label>
+                <select id="filterStatus" class="form-input" onchange="filterCards()">
+                    <option value="">Все статусы</option>
+                    <option value="active">Активна</option>
+                    <option value="inactive">Неактивна</option>
+                    <option value="blocked">Заблокирована</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="searchCards">Поиск</label>
+                <input type="text" id="searchCards" class="form-input" placeholder="Поиск по номеру или ИП..." oninput="filterCards()">
+            </div>
+
+            <button class="btn btn-secondary btn-sm" onclick="resetFilters()" style="margin-top: 1.8rem;">
+                🗑️ Сбросить фильтры
             </button>
         </div>
 
@@ -100,118 +134,120 @@
     </main>
 
     <!-- Модальное окно добавления/редактирования карты -->
-    <!-- В cards.html ЗАМЕНЯЕМ всю форму -->
-<div class="modal-content">
-    <div class="modal-header">
-        <h3 id="modalTitle">Добавить карту</h3>
-        <button class="close-btn" onclick="closeCardModal()">×</button>
+    <div class="modal" id="cardModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Добавить карту</h3>
+                <button class="close-btn" onclick="closeCardModal()">×</button>
+            </div>
+            
+            <form id="cardForm">
+                <input type="hidden" id="cardId">
+                
+                <div class="form-group">
+                    <label for="cardType">Тип карты</label>
+                    <select id="cardType" class="form-input" required>
+                        <option value="">Выберите тип карты</option>
+                        <option value="corporate">💳 Корпоративная</option>
+                        <option value="personal">💳 Физическое лицо</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="cardNumber">Номер карты</label>
+                    <input type="text" id="cardNumber" class="form-input" placeholder="*1234" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="cardHolder">Держатель карты</label>
+                    <select id="cardHolder" class="form-input" required>
+                        <option value="">Выберите ИП</option>
+                        <option value="ИП Крутоусов">ИП Крутоусов</option>
+                        <option value="ИП Храмова">ИП Храмова</option>
+                        <option value="ИП Янгалышева А.">ИП Янгалышева А.</option>
+                        <option value="ИП НАЛИВАЙКО">ИП НАЛИВАЙКО</option>
+                        <option value="ИП КАШИРИН В.Г.">ИП КАШИРИН В.Г.</option>
+                        <option value="ИП Астанови Араз">ИП Астанови Араз</option>
+                        <option value="ИП Пинегин">ИП Пинегин</option>
+                        <option value="ИП Ровда А.Ю.">ИП Ровда А.Ю.</option>
+                        <option value="ИП ИЛЬЕНКО">ИП ИЛЬЕНКО</option>
+                        <option value="ИП Бондаренко Л.И.">ИП Бондаренко Л.И.</option>
+                        <option value="ИП Бобков">ИП Бобков</option>
+                        <option value="ИП Дюльгер">ИП Дюльгер</option>
+                        <option value="ИП Федчук">ИП Федчук</option>
+                        <option value="ИП КАРБЫШЕВ">ИП КАРБЫШЕВ</option>
+                        <option value="ИП ОВСЕЙКО">ИП ОВСЕЙКО</option>
+                        <option value="ИП РЯБЕНКО И.И">ИП РЯБЕНКО И.И</option>
+                        <option value="ИП Ибрагимов Ш">ИП Ибрагимов Ш</option>
+                        <option value="ИП Никифорова">ИП Никифорова</option>
+                        <option value="ИП Ярославцев Г.В.">ИП Ярославцев Г.В.</option>
+                        <option value="ИП Иванов">ИП Иванов</option>
+                        <option value="ИП Коротких">ИП Коротких</option>
+                        <option value="ИП Яковлева">ИП Яковлева</option>
+                        <option value="ИП Бадалов">ИП Бадалов</option>
+                        <option value="ИП Емельянов Г. И.">ИП Емельянов Г. И.</option>
+                        <option value="ИП Леонгард">ИП Леонгард</option>
+                        <option value="ИП Саинова">ИП Саинова</option>
+                        <option value="ИП Самсонов А.Д.">ИП Самсонов А.Д.</option>
+                        <option value="ИП Шефер">ИП Шефер</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="cardBank">Банк</label>
+                    <select id="cardBank" class="form-input" required>
+                        <option value="">Выберите банк</option>
+                        <option value="Тинькофф">Тинькофф</option>
+                        <option value="Сбербанк">Сбербанк</option>
+                        <option value="ВТБ">ВТБ</option>
+                        <option value="Альфа-Банк">Альфа-Банк</option>
+                        <option value="Газпромбанк">Газпромбанк</option>
+                        <option value="Райффайзенбанк">Райффайзенбанк</option>
+                        <option value="Модульбанк">Модульбанк</option>
+                        <option value="Т-Банк">Т-Банк</option>
+                        <option value="Открытие">Открытие</option>
+                        <option value="Россельхозбанк">Россельхозбанк</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="cardBalance">Баланс</label>
+                    <input type="number" id="cardBalance" class="form-input" placeholder="0.00" step="0.01" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="cardRegion">Регион</label>
+                    <select id="cardRegion" class="form-input" required>
+                        <option value="">Выберите регион</option>
+                        <option value="Астрахань">Астрахань</option>
+                        <option value="Бурятия">Бурятия</option>
+                        <option value="Курган">Курган</option>
+                        <option value="Калмыкия">Калмыкия</option>
+                        <option value="Мордовия">Мордовия</option>
+                        <option value="Удмуртия">Удмуртия</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="cardStatus">Статус</label>
+                    <select id="cardStatus" class="form-input" required>
+                        <option value="">Выберите статус</option>
+                        <option value="active">Активна</option>
+                        <option value="inactive">Неактивна</option>
+                        <option value="blocked">Заблокирована</option>
+                    </select>
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeCardModal()">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                </div>
+            </form>
+        </div>
     </div>
-    
-    <form id="cardForm">
-        <input type="hidden" id="cardId">
-        
-        <div class="form-group">
-            <label for="cardType">Тип карты</label>
-            <select id="cardType" class="form-input" required>
-                <option value="">Выберите тип карты</option>
-                <option value="corporate">💳 Корпоративная</option>
-                <option value="personal">💳 Физическое лицо</option>
-            </select>
-        </div>
-        
-        <div class="form-group">
-            <label for="cardNumber">Номер карты</label>
-            <input type="text" id="cardNumber" class="form-input" placeholder="*1234" required>
-        </div>
-        
-        <div class="form-group">
-            <label for="cardHolder">Держатель карты</label>
-            <select id="cardHolder" class="form-input" required>
-                <option value="">Выберите ИП</option>
-                <option value="ИП Крутоусов">ИП Крутоусов</option>
-                <option value="ИП Храмова">ИП Храмова</option>
-                <option value="ИП Янгалышева А.">ИП Янгалышева А.</option>
-                <option value="ИП НАЛИВАЙКО">ИП НАЛИВАЙКО</option>
-                <option value="ИП КАШИРИН В.Г.">ИП КАШИРИН В.Г.</option>
-                <option value="ИП Астанови Араз">ИП Астанови Араз</option>
-                <option value="ИП Пинегин">ИП Пинегин</option>
-                <option value="ИП Ровда А.Ю.">ИП Ровда А.Ю.</option>
-                <option value="ИП ИЛЬЕНКО">ИП ИЛЬЕНКО</option>
-                <option value="ИП Бондаренко Л.И.">ИП Бондаренко Л.И.</option>
-                <option value="ИП Бобков">ИП Бобков</option>
-                <option value="ИП Дюльгер">ИП Дюльгер</option>
-                <option value="ИП Федчук">ИП Федчук</option>
-                <option value="ИП КАРБЫШЕВ">ИП КАРБЫШЕВ</option>
-                <option value="ИП ОВСЕЙКО">ИП ОВСЕЙКО</option>
-                <option value="ИП РЯБЕНКО И.И">ИП РЯБЕНКО И.И</option>
-                <option value="ИП Ибрагимов Ш">ИП Ибрагимов Ш</option>
-                <option value="ИП Никифорова">ИП Никифорова</option>
-                <option value="ИП Ярославцев Г.В.">ИП Ярославцев Г.В.</option>
-                <option value="ИП Иванов">ИП Иванов</option>
-                <option value="ИП Коротких">ИП Коротких</option>
-                <option value="ИП Яковлева">ИП Яковлева</option>
-                <option value="ИП Бадалов">ИП Бадалов</option>
-                <option value="ИП Емельянов Г. И.">ИП Емельянов Г. И.</option>
-                <option value="ИП Леонгард">ИП Леонгард</option>
-                <option value="ИП Саинова">ИП Саинова</option>
-                <option value="ИП Самсонов А.Д.">ИП Самсонов А.Д.</option>
-                <option value="ИП Шефер">ИП Шефер</option>
-            </select>
-        </div>
-        
-        <div class="form-group">
-            <label for="cardBank">Банк</label>
-            <select id="cardBank" class="form-input" required>
-                <option value="">Выберите банк</option>
-                <option value="Тинькофф">Тинькофф</option>
-                <option value="Сбербанк">Сбербанк</option>
-                <option value="ВТБ">ВТБ</option>
-                <option value="Альфа-Банк">Альфа-Банк</option>
-                <option value="Газпромбанк">Газпромбанк</option>
-                <option value="Райффайзенбанк">Райффайзенбанк</option>
-                <option value="Модульбанк">Модульбанк</option>
-                <option value="Т-Банк">Т-Банк</option>
-                <option value="Открытие">Открытие</option>
-                <option value="Россельхозбанк">Россельхозбанк</option>
-            </select>
-        </div>
-        
-        <div class="form-group">
-            <label for="cardBalance">Баланс</label>
-            <input type="number" id="cardBalance" class="form-input" placeholder="0.00" step="0.01" required>
-        </div>
-        
-        <div class="form-group">
-            <label for="cardRegion">Регион</label>
-            <select id="cardRegion" class="form-input" required>
-                <option value="">Выберите регион</option>
-                <option value="Астрахань">Астрахань</option>
-                <option value="Бурятия">Бурятия</option>
-                <option value="Курган">Курган</option>
-                <option value="Калмыкия">Калмыкия</option>
-                <option value="Мордовия">Мордовия</option>
-                <option value="Удмуртия">Удмуртия</option>
-            </select>
-        </div>
-        
-        <div class="form-group">
-            <label for="cardStatus">Статус</label>
-            <select id="cardStatus" class="form-input" required>
-                <option value="">Выберите статус</option>
-                <option value="active">Активна</option>
-                <option value="inactive">Неактивна</option>
-                <option value="blocked">Заблокирована</option>
-            </select>
-        </div>
-        
-        <div class="modal-actions">
-            <button type="button" class="btn btn-secondary" onclick="closeCardModal()">Отмена</button>
-            <button type="submit" class="btn btn-primary">Сохранить</button>
-        </div>
-    </form>
-</div>
 
     <script src="data/real-cards-data.js"></script>
+    <script src="js/navbar.js"></script>
     <script src="js/cards.js"></script>
 </body>
 </html>

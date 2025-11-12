@@ -34,7 +34,7 @@ function convertRealCardsToAppFormat() {
                 bank: getBankByRegion(ip.region),
                 balance: Math.floor(Math.random() * 50000) + 10000,
                 regions: [ip.region],
-                status: getCardStatus(ip.corpStatus),
+                status: ip.corpStatus || 'inactive', // ИСПОЛЬЗУЕМ РЕАЛЬНЫЕ СТАТУСЫ ИЗ CSV
                 type: '💳 Корп.'
             });
         }
@@ -48,7 +48,7 @@ function convertRealCardsToAppFormat() {
                 bank: getBankByRegion(ip.region),
                 balance: Math.floor(Math.random() * 30000) + 5000,
                 regions: [ip.region],
-                status: getCardStatus(ip.personalStatus),
+                status: ip.personalStatus || 'inactive', // ИСПОЛЬЗУЕМ РЕАЛЬНЫЕ СТАТУСЫ ИЗ CSV
                 type: '💳 Физ.'
             });
         }
@@ -58,67 +58,82 @@ function convertRealCardsToAppFormat() {
     return cards;
 }
 
-// Функция для определения банка по региону
-function getBankByRegion(region) {
-    const bankMap = {
-        'Астрахань': 'Тинькофф',
-        'Бурятия': 'Сбербанк', 
-        'Курган': 'ВТБ',
-        'Калмыкия': 'Альфа-Банк',
-        'Мордовия': 'Газпромбанк',
-        'Удмуртия': 'Райффайзенбанк'
-    };
-    
-    return bankMap[region] || 'Тинькофф';
+// Функция для текстового отображения статуса (УДАЛИ СТАРУЮ И ДОБАВЬ ЭТУ)
+function getStatusText(status) {
+    // Возвращаем оригинальные статусы из CSV
+    return status || 'Неизвестно';
 }
 
-// Функция для преобразования статусов из CSV
-function getCardStatus(statusText) {
-    const statusMap = {
-        'в регионе': 'active',
-        'В ПВЗ Наливайко': 'active', 
-        'В ПВЗ Овсейко': 'active',
-        'В ПВЗ Леонгард': 'active',
-        'В ПВЗ Емельянов': 'active',
-        'В ПВЗ Шефер': 'active',
-        'Перевыпустить': 'blocked',
-        'У Никиты Р.': 'active',
-        '': 'inactive',
-        '-': 'inactive',
-        '--': 'inactive'
-    };
-    
-    return statusMap[statusText] || 'inactive';
-}
-
-// Старые демо-данные (на всякий случай)
-function getDemoCards() {
-    return [
-        {
-            id: '1',
-            number: '5536 9138 2356 2847',
-            holder: 'ИП ПЕТРОВ А.С.',
-            bank: 'Тинькофф',
-            balance: 150000,
-            regions: ['Астрахань'],
-            status: 'active',
-            type: '💳 Корп.'
-        }
-    ];
-}
-
+// ОБНОВЛЯЕМ функцию статистики для правильного подсчета регионов
 function updateStatistics(cards = null) {
     const cardsToCount = cards || allCards;
     const totalCards = cardsToCount.length;
-    const activeCards = cardsToCount.filter(card => card.status === 'active').length;
+    
+    // Считаем активные карты (те что не inactive)
+    const activeCards = cardsToCount.filter(card => 
+        card.status !== 'inactive' && card.status !== '' && card.status !== '-' && card.status !== '--'
+    ).length;
+    
     const totalBalance = cardsToCount.reduce((sum, card) => sum + (parseFloat(card.balance) || 0), 0);
+    
+    // Уникальные регионы (только 6 основных)
+    const uniqueRegions = new Set();
+    cardsToCount.forEach(card => {
+        if (card.regions[0] && card.regions[0] !== 'Общий') {
+            uniqueRegions.add(card.regions[0]);
+        }
+    });
+    const coveredRegions = uniqueRegions.size;
     
     document.getElementById('totalCards').textContent = totalCards;
     document.getElementById('activeCards').textContent = activeCards;
     document.getElementById('totalBalance').textContent = totalBalance.toLocaleString('ru-RU') + ' ₽';
-    document.getElementById('coveredRegions').textContent = new Set(cardsToCount.map(card => card.regions[0])).size;
+    document.getElementById('coveredRegions').textContent = coveredRegions;
 }
 
+// ОБНОВЛЯЕМ функцию фильтрации для работы с реальными статусами
+function filterCards() {
+    const regionFilter = document.getElementById('filterRegion').value;
+    const statusFilter = document.getElementById('filterStatus').value;
+    const searchFilter = document.getElementById('searchCards').value.toLowerCase();
+    
+    let filtered = allCards;
+    
+    // Фильтр по региону
+    if (regionFilter) {
+        filtered = filtered.filter(card => card.regions[0] === regionFilter);
+    }
+    
+    // Фильтр по статусу (работает с реальными статусами)
+    if (statusFilter) {
+        if (statusFilter === 'active') {
+            // Показываем все не-inactive статусы
+            filtered = filtered.filter(card => 
+                card.status !== 'inactive' && card.status !== '' && card.status !== '-' && card.status !== '--'
+            );
+        } else if (statusFilter === 'inactive') {
+            // Показываем только inactive
+            filtered = filtered.filter(card => 
+                card.status === 'inactive' || card.status === '' || card.status === '-' || card.status === '--'
+            );
+        } else {
+            filtered = filtered.filter(card => card.status === statusFilter);
+        }
+    }
+    
+    // Поиск по номеру карты или ИП
+    if (searchFilter) {
+        filtered = filtered.filter(card => 
+            card.number.toLowerCase().includes(searchFilter) ||
+            card.holder.toLowerCase().includes(searchFilter)
+        );
+    }
+    
+    renderCards(filtered);
+    updateStatistics(filtered);
+}
+
+// ОБНОВЛЯЕМ функцию renderCards для правильных статусов
 function renderCards(filteredCards = null) {
     const cardsGrid = document.getElementById('cardsGrid');
     const emptyState = document.getElementById('emptyState');
@@ -139,7 +154,7 @@ function renderCards(filteredCards = null) {
                     <div class="card-type">${card.type}</div>
                     <div class="card-number">${formatCardNumber(card.number)}</div>
                 </div>
-                <div class="card-status status-${card.status}">
+                <div class="card-status status-${card.status.replace(/\s+/g, '\\20')}">
                     ${getStatusText(card.status)}
                 </div>
             </div>
