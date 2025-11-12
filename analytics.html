@@ -51,161 +51,136 @@
     </nav>
 
     <main class="analytics-container">
+        <!-- 🎪 ЗАГОЛОВОК И ДЕЙСТВИЯ -->
         <div class="analytics-header">
             <div>
-                <h1 class="page-title">Аналитика</h1>
-                <p class="page-subtitle">Статистика и отчеты по финансовым показателям</p>
+                <h1 class="page-title">📊 Аналитика и отчеты</h1>
+                <p class="page-subtitle">Комплексная аналитика расходов и эффективности</p>
             </div>
-            <div class="export-actions">
-                <button class="btn btn-secondary" onclick="exportToCSV()">
-                    <span class="nav-icon">📥</span>
-                    Экспорт в CSV
-                </button>
-            </div>
-        </div>
-
-        <!-- Фильтры -->
-        <div class="analytics-filters">
-            <div class="filter-group">
-                <label class="filter-label" for="dateRange">Период</label>
-                <select class="filter-select" id="dateRange" onchange="updateCharts()">
-                    <option value="7days">Последние 7 дней</option>
-                    <option value="30days" selected>Последние 30 дней</option>
-                    <option value="90days">Последние 90 дней</option>
-                    <option value="year">Этот год</option>
-                    <option value="all">За все время</option>
-                </select>
-            </div>
-            
-            <div class="filter-group">
-                <label class="filter-label" for="regionFilter">Регион</label>
-                <select class="filter-select" id="regionFilter" onchange="updateCharts()">
-                    <option value="">Все регионы</option>
-                    <option value="Астрахань">Астрахань</option>
-                    <option value="Бурятия">Бурятия</option>
-                    <option value="Курган">Курган</option>
-                    <option value="Калмыкия">Калмыкия</option>
-                    <option value="Мордовия">Мордовия</option>
-                    <option value="Удмуртия">Удмуртия</option>
-                </select>
-            </div>
-            
-            <div class="filter-group">
-                <label class="filter-label" for="chartType">Тип графика</label>
-                <select class="filter-select" id="chartType" onchange="updateChartTypes()">
-                    <option value="bar">Столбчатые</option>
-                    <option value="line">Линейные</option>
-                    <option value="pie">Круговые</option>
-                </select>
-            </div>
-        </div>
-
-        <!-- KPI Карточки -->
-        <div class="kpi-grid">
-            <div class="kpi-card">
-                <div class="kpi-value" id="totalExpensesKpi">0 ₽</div>
-                <div class="kpi-label">Общие расходы</div>
-                <div class="kpi-trend trend-up" id="expensesTrend">↑ 12%</div>
-            </div>
-            <div class="kpi-card">
-                <div class="kpi-value" id="completedTasksKpi">0</div>
-                <div class="kpi-label">Завершено задач</div>
-                <div class="kpi-trend trend-up" id="tasksTrend">↑ 8%</div>
-            </div>
-            <div class="kpi-card">
-                <div class="kpi-value" id="activeIPsKpi">0</div>
-                <div class="kpi-label">Активных ИП</div>
-                <div class="kpi-trend trend-down" id="ipsTrend">↓ 3%</div>
-            </div>
-            <div class="kpi-card">
-                <div class="kpi-value" id="avgTaskCostKpi">0 ₽</div>
-                <div class="kpi-label">Средний чек</div>
-                <div class="kpi-trend trend-up" id="avgCostTrend">↑ 5%</div>
-            </div>
-        </div>
-
-        <!-- Сетка графиков -->
-        <div class="charts-grid">
-            <!-- График расходов по месяцам -->
-            <div class="chart-container">
-                <div class="chart-header">
-                    <h3 class="chart-title">Расходы по месяцам</h3>
-                    <div class="chart-actions">
-                        <button class="btn-icon" onclick="downloadChart('expensesChart')" title="Скачать график">
-                            📥
-                        </button>
-                    </div>
-                </div>
-                <div class="chart-wrapper">
-                    <canvas id="expensesChart"></canvas>
-                </div>
-            </div>
-
-            <!-- График распределения по регионам -->
-            <div class="chart-container">
-                <div class="chart-header">
-                    <h3 class="chart-title">Распределение по регионам</h3>
-                    <div class="chart-actions">
-                        <button class="btn-icon" onclick="downloadChart('regionsChart')" title="Скачать график">
-                            📥
-                        </button>
-                    </div>
-                </div>
-                <div class="chart-wrapper">
-                    <canvas id="regionsChart"></canvas>
-                </div>
-            </div>
-
-            <!-- График по статьям расходов -->
-            <div class="chart-container">
-                <div class="chart-header">
-                    <h3 class="chart-title">Статьи расходов</h3>
-                    <div class="chart-actions">
-                        <button class="btn-icon" onclick="downloadChart('categoriesChart')" title="Скачать график">
-                            📥
-                        </button>
-                    </div>
-                </div>
-                <div class="chart-wrapper">
-                    <canvas id="categoriesChart"></canvas>
-                </div>
-            </div>
-
-            <!-- График эффективности менеджеров -->
-            <div class="chart-container">
-                <div class="chart-header">
-                    <h3 class="chart-title">Эффективность менеджеров</h3>
-                    <div class="chart-actions">
-                        <button class="btn-icon" onclick="downloadChart('managersChart')" title="Скачать график">
-                            📥
-                        </button>
-                    </div>
-                </div>
-                <div class="chart-wrapper">
-                    <canvas id="managersChart"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <!-- Секция экспорта -->
-        <div class="export-section">
-            <div class="export-header">
-                <h3>Экспорт данных</h3>
-                <p>Вы можете выгрузить данные для дальнейшего анализа</p>
-            </div>
-            <div class="export-actions">
-                <button class="btn btn-secondary" onclick="exportToCSV()">
-                    <span class="nav-icon">📥</span>
-                    Экспорт в CSV
-                </button>
-                <button class="btn btn-secondary" onclick="generatePDFReport()">
+            <div class="dropdown">
+                <button class="btn btn-primary">
                     <span class="nav-icon">📄</span>
-                    PDF отчет
+                    Экспорт отчета
                 </button>
-                <button class="btn btn-secondary" onclick="printCharts()">
-                    <span class="nav-icon">🖨️</span>
-                    Печать отчетов
-                </button>
+                <div class="dropdown-content">
+                    <a href="#" onclick="exportToCSV()">📊 CSV</a>
+                    <a href="#" onclick="generatePDFReport()">📄 PDF</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 📈 КЛЮЧЕВЫЕ МЕТРИКИ -->
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-value" id="kpiTotalTasks">0</div>
+                <div class="metric-label">Всего задач</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="kpiCompletedTasks">0</div>
+                <div class="metric-label">Выполнено задач</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="kpiCompletionRate">0%</div>
+                <div class="metric-label">Процент выполнения</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="kpiAvgCompletionTime">0 дн.</div>
+                <div class="metric-label">Среднее время выполнения</div>
+            </div>
+        </div>
+
+        <!-- Панель действий -->
+        <div class="actions-bar">
+            <button class="btn btn-secondary" onclick="refreshAnalytics()">
+                <span class="nav-icon">🔄</span>
+                Обновить данные
+            </button>
+        </div>
+
+        <!-- 📊 СЕТКА ГРАФИКОВ -->
+        <div class="analytics-grid">
+            <!-- 📈 РАСХОДЫ ПО РЕГИОНАМ -->
+            <div class="chart-card analytics-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">💰 Расходы по регионам</h3>
+                </div>
+                <div class="chart-container">
+                    <canvas id="expensesByRegionChart"></canvas>
+                </div>
+            </div>
+
+            <!-- 👥 ЭФФЕКТИВНОСТЬ УПРАВЛЯЮЩИХ -->
+            <div class="chart-card analytics-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">👥 Эффективность управляющих</h3>
+                </div>
+                <div class="chart-container">
+                    <canvas id="managerPerformanceChart"></canvas>
+                </div>
+            </div>
+
+            <!-- 🎯 СТАТУСЫ ЗАДАЧ -->
+            <div class="chart-card analytics-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">🎯 Статусы задач</h3>
+                </div>
+                <div class="chart-container">
+                    <canvas id="taskStatusChart"></canvas>
+                </div>
+            </div>
+
+            <!-- 📊 РАСПРЕДЕЛЕНИЕ РАСХОДОВ -->
+            <div class="chart-card analytics-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">📊 Распределение расходов</h3>
+                </div>
+                <div class="chart-container">
+                    <canvas id="expenseDistributionChart"></canvas>
+                </div>
+            </div>
+
+            <!-- 💰 ПЛАН VS ФАКТ -->
+            <div class="chart-card analytics-card-wide">
+                <div class="chart-header">
+                    <h3 class="chart-title">💳 План vs Факт (ежемесячно)</h3>
+                </div>
+                <div class="chart-container">
+                    <canvas id="planVsActualChart"></canvas>
+                </div>
+            </div>
+
+            <!-- 📈 ТРЕНДЫ ПО МЕСЯЦАМ -->
+            <div class="chart-card analytics-card-wide">
+                <div class="chart-header">
+                    <h3 class="chart-title">📈 Тренды по месяцам</h3>
+                </div>
+                <div class="chart-container">
+                    <canvas id="monthlyTrendsChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- 👥 ТАБЛИЦА ЭФФЕКТИВНОСТИ УПРАВЛЯЮЩИХ -->
+        <div class="chart-card">
+            <div class="chart-header">
+                <h3 class="chart-title">📊 Детальная эффективность управляющих</h3>
+            </div>
+            <div style="overflow-x: auto;">
+                <table class="report-table">
+                    <thead>
+                        <tr>
+                            <th>Управляющий</th>
+                            <th>Всего задач</th>
+                            <th>Выполнено</th>
+                            <th>Процент выполнения</th>
+                            <th>Средняя сумма</th>
+                            <th>Регионы</th>
+                        </tr>
+                    </thead>
+                    <tbody id="managerPerformanceTable">
+                        <!-- Заполнится через JavaScript -->
+                    </tbody>
+                </table>
             </div>
         </div>
     </main>

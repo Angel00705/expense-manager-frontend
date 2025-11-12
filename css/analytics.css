@@ -14,34 +14,75 @@
     gap: 1rem;
 }
 
-.analytics-filters {
-    display: flex;
-    gap: 1rem;
+/* KPI Cards */
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
     margin-bottom: 2rem;
-    flex-wrap: wrap;
 }
 
-.filter-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+.metric-card {
+    background: var(--bg-card);
+    backdrop-filter: blur(25px) saturate(180%);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
 }
 
-.filter-label {
-    font-size: 0.9rem;
+.metric-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+}
+
+.metric-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-glow);
+    border-color: var(--primary);
+}
+
+.metric-value {
+    font-size: 2rem;
+    font-weight: 800;
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.5rem;
+    line-height: 1;
+}
+
+.metric-label {
     color: var(--text-secondary);
+    font-size: 0.9rem;
     font-weight: 500;
 }
 
-/* Charts Grid */
-.charts-grid {
+/* Analytics Grid */
+.analytics-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
     gap: 2rem;
     margin-bottom: 2rem;
 }
 
-.chart-container {
+.analytics-card {
+    grid-column: span 1;
+}
+
+.analytics-card-wide {
+    grid-column: 1 / -1;
+}
+
+.chart-card {
     background: var(--bg-card);
     backdrop-filter: blur(25px) saturate(180%);
     border: 1px solid var(--border);
@@ -52,7 +93,7 @@
     overflow: hidden;
 }
 
-.chart-container::before {
+.chart-card::before {
     content: '';
     position: absolute;
     top: 0;
@@ -62,7 +103,7 @@
     background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
 }
 
-.chart-container:hover {
+.chart-card:hover {
     transform: translateY(-3px);
     box-shadow: var(--shadow-glow);
     border-color: var(--border-light);
@@ -81,93 +122,97 @@
     color: var(--text-primary);
 }
 
-.chart-actions {
-    display: flex;
-    gap: 0.5rem;
-}
-
-.chart-wrapper {
+.chart-container {
     position: relative;
     height: 300px;
     width: 100%;
 }
 
-/* KPI Cards */
-.kpi-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 2rem;
+/* Report Table */
+.report-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
 }
 
-.kpi-card {
-    background: var(--bg-card);
-    backdrop-filter: blur(25px) saturate(180%);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 1.5rem;
-    text-align: center;
-    transition: all 0.3s ease;
+.report-table th {
+    background: var(--bg-glass);
+    color: var(--text-primary);
+    font-weight: 600;
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
 }
 
-.kpi-card:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-glow);
-    border-color: var(--primary);
-}
-
-.kpi-value {
-    font-size: 2rem;
-    font-weight: 800;
-    background: var(--gradient);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin-bottom: 0.5rem;
-}
-
-.kpi-label {
+.report-table td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border);
     color: var(--text-secondary);
-    font-size: 0.9rem;
-    font-weight: 500;
 }
 
-.kpi-trend {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.25rem;
-    font-size: 0.8rem;
-    margin-top: 0.5rem;
+.report-table tr:hover {
+    background: var(--bg-glass);
 }
 
-.trend-up {
-    color: #10b981;
+/* Progress Bar */
+.progress-bar {
+    width: 80px;
+    height: 8px;
+    background: var(--bg-glass);
+    border-radius: 4px;
+    overflow: hidden;
 }
 
-.trend-down {
-    color: #ef4444;
+.progress-fill {
+    height: 100%;
+    background: var(--gradient);
+    border-radius: 4px;
+    transition: width 0.3s ease;
 }
 
-/* Export Section */
-.export-section {
+/* Dropdown */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
     background: var(--bg-card);
-    backdrop-filter: blur(25px) saturate(180%);
+    backdrop-filter: blur(25px);
     border: 1px solid var(--border);
-    border-radius: var(--radius-xl);
-    padding: 1.5rem;
-    margin-top: 2rem;
+    border-radius: var(--radius);
+    min-width: 160px;
+    box-shadow: var(--shadow-lg);
+    z-index: 1000;
+    margin-top: 0.5rem;
+    right: 0;
 }
 
-.export-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
+.dropdown-content a {
+    color: var(--text-primary);
+    padding: 0.75rem 1rem;
+    text-decoration: none;
+    display: block;
+    transition: all 0.3s ease;
+    border-radius: var(--radius-sm);
 }
 
-.export-actions {
+.dropdown-content a:hover {
+    background: var(--bg-glass);
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+/* Actions Bar */
+.actions-bar {
     display: flex;
     gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
 }
 
 /* Responsive */
@@ -181,43 +226,47 @@
         align-items: stretch;
     }
     
-    .charts-grid {
+    .analytics-grid {
         grid-template-columns: 1fr;
     }
     
-    .chart-container {
-        padding: 1rem;
+    .analytics-card-wide {
+        grid-column: 1;
     }
     
-    .chart-wrapper {
+    .chart-container {
         height: 250px;
     }
     
-    .analytics-filters {
-        flex-direction: column;
+    .metrics-grid {
+        grid-template-columns: repeat(2, 1fr);
     }
     
-    .export-header {
-        flex-direction: column;
-        gap: 1rem;
+    .report-table {
+        font-size: 0.9rem;
     }
     
-    .export-actions {
-        width: 100%;
-        justify-content: stretch;
-    }
-    
-    .export-actions .btn {
-        flex: 1;
+    .report-table th,
+    .report-table td {
+        padding: 0.75rem 0.5rem;
     }
 }
 
 @media (max-width: 480px) {
-    .chart-wrapper {
+    .metrics-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .chart-container {
         height: 200px;
     }
     
-    .kpi-grid {
-        grid-template-columns: 1fr;
+    .actions-bar {
+        flex-direction: column;
+    }
+    
+    .actions-bar .btn {
+        width: 100%;
+        justify-content: center;
     }
 }
