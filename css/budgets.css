@@ -1,7 +1,7 @@
-/* budgets.css - КОМПАКТНАЯ И ФУНКЦИОНАЛЬНАЯ ВЕРСИЯ */
+/* budgets.css - УЛУЧШЕННАЯ ВЕРСИЯ С ФИКСИРОВАННОЙ ПРОКРУТКОЙ */
 
 .budgets-container {
-    max-width: 1800px;
+    max-width: 1900px;
     margin: 0 auto;
     padding: 1rem;
 }
@@ -42,9 +42,22 @@
     font-size: 0.9rem;
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    background: var(--bg-glass);
+    background: var(--bg-card);
     color: var(--text-primary);
     min-width: 150px;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.5rem center;
+    background-size: 1rem;
+    padding-right: 2rem;
+}
+
+.month-selector .form-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.1);
 }
 
 /* Выпадающее меню экспорта */
@@ -59,18 +72,20 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    position: relative;
+    z-index: 5;
 }
 
 .export-menu {
     position: absolute;
     top: 100%;
     right: 0;
-    margin-top: 0.5rem;
+    margin-top: 0.25rem;
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: var(--radius);
     padding: 0.5rem;
-    min-width: 120px;
+    min-width: 140px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
     backdrop-filter: blur(20px);
     display: none;
@@ -103,32 +118,39 @@
 /* Компактная статистика */
 .budgets-stats-compact {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
     gap: 1rem;
     margin-bottom: 1.5rem;
 }
 
 .stat-compact {
     background: var(--bg-glass);
-    padding: 1rem;
+    padding: 1.2rem 1rem;
     border-radius: var(--radius);
     border: 1px solid var(--border);
     text-align: center;
+    transition: all 0.3s ease;
+}
+
+.stat-compact:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .stat-compact .stat-value {
-    font-size: 1.1rem;
+    font-size: 1.3rem;
     font-weight: 700;
     color: var(--text-primary);
     margin-bottom: 0.25rem;
 }
 
 .stat-compact .stat-label {
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     color: var(--text-secondary);
+    font-weight: 500;
 }
 
-/* Основной контейнер таблицы */
+/* ОСНОВНОЙ КОНТЕЙНЕР ТАБЛИЦЫ - ПЕРЕРАБОТАН */
 .budgets-master-container {
     background: var(--bg-card);
     backdrop-filter: blur(25px) saturate(180%);
@@ -143,7 +165,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 1.5rem;
+    padding: 1.2rem 1.5rem;
     border-bottom: 1px solid var(--border);
     background: var(--bg-glass);
 }
@@ -151,7 +173,7 @@
 .master-table-header h3 {
     margin: 0;
     color: var(--text-primary);
-    font-size: 1.1rem;
+    font-size: 1.2rem;
 }
 
 #currentMonthDisplay {
@@ -165,44 +187,72 @@
     gap: 0.5rem;
 }
 
-/* Контейнер таблицы с прокруткой */
-.table-container {
-    overflow-x: auto;
-    max-width: 100%;
+/* НОВАЯ СИСТЕМА ПРОКРУТКИ */
+.table-scroll-container {
+    position: relative;
+    max-height: 70vh;
+    overflow: auto;
+    background: var(--bg-card);
 }
 
-.master-table {
-    min-width: 1600px;
-    width: 100%;
-}
-
-/* Заголовок таблицы */
-.table-header {
-    display: flex;
-    background: var(--bg-glass);
-    border-bottom: 2px solid var(--border);
+/* Фиксированный заголовок */
+.table-fixed-header {
     position: sticky;
     top: 0;
-    z-index: 10;
+    z-index: 25;
+    background: var(--bg-glass);
+    backdrop-filter: blur(20px);
+    border-bottom: 2px solid var(--border);
+}
+
+.table-header {
+    display: flex;
+    min-width: max-content;
     font-size: 0.75rem;
 }
 
-.region-cell {
-    min-width: 180px;
+/* Фиксированные ячейки */
+.sticky-cell {
+    position: sticky;
+    left: 0;
+    z-index: 20;
+    background: var(--bg-glass);
+    backdrop-filter: blur(20px);
+    border-right: 2px solid var(--border);
+    min-width: 200px;
     padding: 0.75rem;
     font-weight: 600;
     color: var(--text-primary);
-    background: var(--bg-glass);
-    position: sticky;
-    left: 0;
-    z-index: 5;
-    border-right: 1px solid var(--border);
     display: flex;
     align-items: center;
 }
 
-.category-cell {
-    min-width: 70px;
+.sticky-total {
+    position: sticky;
+    right: 0;
+    z-index: 20;
+    background: var(--bg-glass);
+    backdrop-filter: blur(20px);
+    border-left: 2px solid var(--border);
+    min-width: 90px;
+    padding: 0.6rem 0.4rem;
+    text-align: center;
+    font-weight: 700;
+    font-size: 0.8rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* Контейнер для категорий с горизонтальной прокруткой */
+.categories-container {
+    display: flex;
+    min-width: max-content;
+}
+
+/* Стили для категорий в заголовке */
+.category-header {
+    min-width: 80px;
     padding: 0.5rem 0.3rem;
     text-align: center;
     font-weight: 600;
@@ -213,78 +263,112 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 0.1rem;
+    gap: 0.2rem;
+    background: var(--bg-glass);
 }
 
 .category-name {
     font-size: 0.65rem;
     line-height: 1.1;
     white-space: nowrap;
+    font-weight: 600;
 }
 
-/* Строка региона */
-.region-row {
+.category-emoji {
+    font-size: 0.9rem;
+    margin-bottom: 0.1rem;
+}
+
+/* Тело таблицы с прокруткой */
+.table-scroll-body {
+    min-width: max-content;
+}
+
+/* Общие стили строк */
+.region-row,
+.ip-row,
+.total-row {
     display: flex;
+    min-width: max-content;
     border-bottom: 1px solid var(--border-light);
+    transition: background-color 0.2s ease;
+}
+
+.region-row {
     background: rgba(124, 58, 237, 0.03);
 }
 
-.region-name {
-    min-width: 180px;
-    padding: 0.75rem;
-    font-weight: 700;
-    color: var(--text-primary);
-    background: rgba(124, 58, 237, 0.08);
-    position: sticky;
-    left: 0;
-    z-index: 4;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.9rem;
-    border-right: 1px solid var(--border);
+.region-row:hover {
+    background: rgba(124, 58, 237, 0.06);
 }
 
-.region-name:hover {
-    background: rgba(124, 58, 237, 0.12);
-}
-
-/* Строка ИП */
 .ip-row {
-    display: flex;
-    border-bottom: 1px solid var(--border-light);
     background: var(--bg-card);
+}
+
+.ip-row:hover {
+    background: rgba(59, 130, 246, 0.03);
 }
 
 .ip-row.collapsed {
     display: none;
 }
 
-.ip-name {
-    min-width: 180px;
-    padding: 0.5rem 0.75rem 0.5rem 1.5rem;
-    color: var(--text-secondary);
-    background: var(--bg-card);
+.total-row {
+    background: var(--bg-secondary);
+    border-top: 2px solid var(--border-light);
+    font-weight: 700;
+}
+
+/* Стили ячеек региона и ИП */
+.region-name,
+.ip-name,
+.total-label {
+    min-width: 200px;
+    padding: 0.75rem;
     position: sticky;
     left: 0;
-    z-index: 3;
+    z-index: 15;
+    border-right: 2px solid var(--border);
     display: flex;
     align-items: center;
     gap: 0.5rem;
+}
+
+.region-name {
+    background: rgba(124, 58, 237, 0.08);
+    font-weight: 700;
+    color: var(--text-primary);
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.2s ease;
+}
+
+.region-name:hover {
+    background: rgba(124, 58, 237, 0.15);
+}
+
+.ip-name {
+    background: var(--bg-card);
+    color: var(--text-secondary);
     font-size: 0.8rem;
-    border-right: 1px solid var(--border);
+    padding-left: 2rem;
+}
+
+.total-label {
+    background: var(--bg-glass);
+    font-weight: 700;
 }
 
 /* Ячейки с бюджетами */
 .budget-cell {
-    min-width: 70px;
-    padding: 0.4rem 0.3rem;
+    min-width: 80px;
+    padding: 0.5rem 0.3rem;
     text-align: center;
     border-right: 1px solid var(--border-light);
     display: flex;
     flex-direction: column;
-    gap: 0.1rem;
+    gap: 0.15rem;
     font-size: 0.75rem;
     position: relative;
 }
@@ -302,12 +386,16 @@
 .budget-amount {
     font-weight: 600;
     color: var(--text-primary);
-    font-size: 0.7rem;
-    padding: 0.1rem 0.2rem;
-    border-radius: 3px;
+    font-size: 0.75rem;
+    padding: 0.15rem 0.2rem;
+    border-radius: 4px;
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    transition: all 0.2s ease;
     border: 1px solid transparent;
+    min-height: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .budget-amount.editable:hover {
@@ -325,22 +413,24 @@
     border: none;
     background: transparent;
     text-align: center;
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     font-weight: 600;
     color: var(--text-primary);
     outline: none;
+    padding: 0.1rem;
 }
 
 .budget-actual {
-    font-size: 0.65rem;
+    font-size: 0.7rem;
     color: var(--text-muted);
     padding: 0.1rem 0.2rem;
+    font-weight: 500;
 }
 
 .budget-remaining {
-    font-size: 0.6rem;
-    padding: 0.1rem 0.2rem;
-    border-radius: 2px;
+    font-size: 0.65rem;
+    padding: 0.15rem 0.2rem;
+    border-radius: 3px;
     margin-top: 0.1rem;
     font-weight: 600;
 }
@@ -362,17 +452,20 @@
 
 /* Итоговые ячейки */
 .total-cell {
-    min-width: 80px;
-    padding: 0.5rem 0.4rem;
+    min-width: 90px;
+    padding: 0.6rem 0.4rem;
     text-align: center;
     font-weight: 700;
     background: var(--bg-glass);
     border-right: 1px solid var(--border);
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 0.1rem;
+    gap: 0.15rem;
+    position: sticky;
+    right: 0;
+    z-index: 15;
 }
 
 .total-cell.region-total {
@@ -390,8 +483,8 @@
 
 /* Индикаторы статуса */
 .status-indicator {
-    width: 6px;
-    height: 6px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
     display: inline-block;
     margin-right: 0.5rem;
@@ -401,22 +494,69 @@
 .status-warning { background: #f59e0b; }
 .status-danger { background: #ef4444; }
 
-/* Итоговая строка */
-.total-row {
+/* Кнопка сохранения внизу */
+.save-budget-container {
+    position: sticky;
+    bottom: 0;
+    background: var(--bg-card);
+    border-top: 1px solid var(--border);
+    padding: 1.2rem 1.5rem;
     display: flex;
-    background: var(--bg-secondary);
-    border-top: 2px solid var(--border-light);
-    font-weight: 700;
+    justify-content: flex-end;
+    margin-top: 1rem;
+    backdrop-filter: blur(20px);
 }
 
-.total-label {
-    min-width: 180px;
-    padding: 0.75rem;
+.save-budget-btn {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    border: none;
+    padding: 0.85rem 1.8rem;
+    border-radius: var(--radius);
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.save-budget-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4);
+}
+
+.save-budget-btn.unsaved {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+    100% { transform: scale(1); }
+}
+
+/* Скрываем стандартный скроллбар и стилизуем его */
+.table-scroll-container::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.table-scroll-container::-webkit-scrollbar-track {
     background: var(--bg-glass);
-    position: sticky;
-    left: 0;
-    z-index: 3;
-    border-right: 1px solid var(--border);
+    border-radius: 4px;
+}
+
+.table-scroll-container::-webkit-scrollbar-thumb {
+    background: var(--primary);
+    border-radius: 4px;
+    opacity: 0.3;
+}
+
+.table-scroll-container::-webkit-scrollbar-thumb:hover {
+    opacity: 0.5;
 }
 
 /* Адаптивность */
@@ -445,11 +585,11 @@
     }
     
     .stat-compact {
-        padding: 0.75rem 0.5rem;
+        padding: 1rem 0.5rem;
     }
     
     .stat-compact .stat-value {
-        font-size: 1rem;
+        font-size: 1.1rem;
     }
     
     .master-table-header {
@@ -459,16 +599,29 @@
         padding: 1rem;
     }
     
-    .region-cell, .region-name, .ip-name, .total-label {
-        min-width: 150px;
+    .sticky-cell,
+    .region-name,
+    .ip-name,
+    .total-label {
+        min-width: 160px;
     }
     
-    .category-cell, .budget-cell {
-        min-width: 65px;
+    .category-header,
+    .budget-cell {
+        min-width: 70px;
     }
     
     .total-cell {
-        min-width: 75px;
+        min-width: 80px;
+    }
+    
+    .category-name {
+        font-size: 0.6rem;
+    }
+    
+    .budget-amount,
+    .budget-actual {
+        font-size: 0.7rem;
     }
 }
 
@@ -477,11 +630,17 @@
         grid-template-columns: repeat(2, 1fr);
     }
     
-    .category-cell, .budget-cell {
-        min-width: 60px;
+    .category-header,
+    .budget-cell {
+        min-width: 65px;
     }
     
-    .budget-amount, .budget-actual {
+    .category-name {
+        font-size: 0.55rem;
+    }
+    
+    .budget-amount,
+    .budget-actual {
         font-size: 0.65rem;
     }
 }

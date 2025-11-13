@@ -1,37 +1,39 @@
-// budgets.js - КОМПАКТНАЯ ВЕРСИЯ С ПРЯМЫМ РЕДАКТИРОВАНИЕМ
+// budgets.js - ИСПРАВЛЕННАЯ ВЕРСИЯ
 
 let currentMonth = '2025-11';
 let expandedRegions = new Set();
 let currentEditElement = null;
+let hasUnsavedChanges = false;
+let currentFilterRegion = null;
 
-// Все категории расходов из CSV
+// Категории с эмодзи
 const BUDGET_CATEGORIES = [
-    { id: 'products', name: 'Продукты' },
-    { id: 'household', name: 'Хоз. товары' },
-    { id: 'medicaments', name: 'Медикаменты' },
-    { id: 'stationery', name: 'Канцелярия' },
-    { id: 'cafe', name: 'Кафе' },
-    { id: 'polygraphy', name: 'Полиграфия' },
-    { id: 'events', name: 'Мероприятия' },
-    { id: 'repairs', name: 'Ремонт' },
-    { id: 'salary', name: 'ЗП упр.' },
-    { id: 'azs', name: 'АЗС' },
-    { id: 'shipping', name: 'Отправка' },
-    { id: 'regionalPurchase', name: 'Покупка' },
-    { id: 'insurance', name: 'Страхование' },
-    { id: 'charity', name: 'Благотв.' },
-    { id: 'equipment', name: 'Техника' },
-    { id: 'packaging', name: 'Упаковка' },
-    { id: 'cleaning', name: 'Клининг' },
-    { id: 'checks', name: 'Чеки' },
-    { id: 'carsharing', name: 'Каршеринг' },
-    { id: 'rent', name: 'Аренда' },
-    { id: 'comm', name: 'Коммуналка' },
-    { id: 'internet', name: 'Интернет' },
-    { id: 'ipSalary', name: 'ЗП ИП' }
+    { id: 'products', name: 'Продукты', emoji: '🛒' },
+    { id: 'household', name: 'Хоз. товары', emoji: '🏠' },
+    { id: 'medicaments', name: 'Медикаменты', emoji: '💊' },
+    { id: 'stationery', name: 'Канцелярия', emoji: '📎' },
+    { id: 'cafe', name: 'Кафе', emoji: '☕' },
+    { id: 'polygraphy', name: 'Полиграфия', emoji: '📄' },
+    { id: 'events', name: 'Мероприятия', emoji: '🎪' },
+    { id: 'repairs', name: 'Ремонт', emoji: '🔧' },
+    { id: 'salary', name: 'ЗП упр.', emoji: '👨‍💼' },
+    { id: 'azs', name: 'АЗС', emoji: '⛽' },
+    { id: 'shipping', name: 'Отправка', emoji: '📦' },
+    { id: 'regionalPurchase', name: 'Покупка', emoji: '🛍️' },
+    { id: 'insurance', name: 'Страхование', emoji: '🛡️' },
+    { id: 'charity', name: 'Благотв.', emoji: '❤️' },
+    { id: 'equipment', name: 'Техника', emoji: '💻' },
+    { id: 'packaging', name: 'Упаковка', emoji: '🎁' },
+    { id: 'cleaning', name: 'Клининг', emoji: '🧹' },
+    { id: 'checks', name: 'Чеки', emoji: '🧾' },
+    { id: 'carsharing', name: 'Каршеринг', emoji: '🚗' },
+    { id: 'rent', name: 'Аренда', emoji: '🏢' },
+    { id: 'comm', name: 'Коммуналка', emoji: '💡' },
+    { id: 'internet', name: 'Интернет', emoji: '🌐' },
+    { id: 'ipSalary', name: 'ЗП ИП', emoji: '💼' }
 ];
 
-// Полные данные из CSV
+// Данные из CSV
 const IP_DETAILED_BUDGETS = {
     'Астрахань': {
         'ИП Крутоусов': { products: 5000, polygraphy: 200, repairs: 10000, shipping: 3000, azs: 1000, rent: 8000, comm: 1000, ipSalary: 30000 },
@@ -75,7 +77,6 @@ const IP_DETAILED_BUDGETS = {
     }
 };
 
-// Полные бюджеты регионов из CSV
 const DEFAULT_BUDGETS = {
     'Астрахань': {
         products: 5000, household: 3000, medicaments: 1000, stationery: 500,
@@ -127,22 +128,40 @@ const DEFAULT_BUDGETS = {
     }
 };
 
+// ===== ИНИЦИАЛИЗАЦИЯ =====
 function initBudgets() {
     generateMonthOptions();
     loadCurrentMonth();
-    updateStatistics();
+    renderTableHeader();
     renderMasterBudgetTable();
+    updateStatistics();
     
     // Разворачиваем все регионы по умолчанию
     toggleAllRegions();
+    updateSaveButton();
+}
+
+function renderTableHeader() {
+    const categoriesContainer = document.querySelector('.categories-container');
+    if (!categoriesContainer) return;
+    
+    let html = '';
+    BUDGET_CATEGORIES.forEach(category => {
+        html += `
+            <div class="category-header">
+                <div class="category-emoji">${category.emoji}</div>
+                <div class="category-name">${category.name}</div>
+            </div>
+        `;
+    });
+    categoriesContainer.innerHTML = html;
 }
 
 function generateMonthOptions() {
     const select = document.getElementById('budgetMonth');
     const months = [];
     
-    // Генерируем 12 месяцев начиная с ноября 2025
-    const startDate = new Date(2025, 10, 1); // Ноябрь 2025
+    const startDate = new Date(2025, 10, 1);
     for (let i = 0; i < 12; i++) {
         const date = new Date(startDate);
         date.setMonth(startDate.getMonth() + i);
@@ -190,8 +209,7 @@ function updateMonthDisplay() {
     document.getElementById('currentMonthDisplay').textContent = `(${monthNames[currentMonth]})`;
 }
 
-// ===== ОСНОВНЫЕ ФУНКЦИИ =====
-
+// ===== СИСТЕМА ХРАНЕНИЯ =====
 function getBudgetKey(region, ip, category) {
     return `budget_${currentMonth}_${region}_${ip || 'region'}_${category}`;
 }
@@ -214,7 +232,6 @@ function getPlannedBudget(region, ip, category) {
         return parseFloat(saved);
     }
     
-    // Возвращаем дефолтные значения из CSV
     if (ip) {
         return IP_DETAILED_BUDGETS[region]?.[ip]?.[category] || 0;
     } else {
@@ -227,19 +244,67 @@ function savePlannedBudget(region, ip, category, amount) {
     localStorage.setItem(key, amount.toString());
 }
 
-// ===== UI ФУНКЦИИ =====
+// ===== ОБНОВЛЕННАЯ СТАТИСТИКА С ФИЛЬТРАЦИЕЙ =====
+function updateStatistics(region = null) {
+    let totalBudget = 0;
+    let usedBudget = 0;
+    let regionsCount = 0;
+    let ipCount = 0;
+    
+    const regions = region ? [region] : Object.keys(DEFAULT_BUDGETS);
+    
+    regions.forEach(regionName => {
+        regionsCount++;
+        
+        // Бюджет региона
+        BUDGET_CATEGORIES.forEach(category => {
+            totalBudget += getPlannedBudget(regionName, null, category.id);
+            usedBudget += getActualSpending(regionName, null, category.id);
+        });
+        
+        // Считаем ИП региона
+        if (IP_DETAILED_BUDGETS[regionName]) {
+            ipCount += Object.keys(IP_DETAILED_BUDGETS[regionName]).length;
+            
+            // Бюджет ИП региона
+            Object.keys(IP_DETAILED_BUDGETS[regionName]).forEach(ipName => {
+                BUDGET_CATEGORIES.forEach(category => {
+                    totalBudget += getPlannedBudget(regionName, ipName, category.id);
+                    usedBudget += getActualSpending(regionName, ipName, category.id);
+                });
+            });
+        }
+    });
+    
+    const remainingBudget = totalBudget - usedBudget;
+    
+    // Обновляем статистику
+    document.getElementById('totalBudget').textContent = formatCurrency(totalBudget) + ' ₽';
+    document.getElementById('usedBudget').textContent = formatCurrency(usedBudget) + ' ₽';
+    document.getElementById('remainingBudget').textContent = formatCurrency(remainingBudget) + ' ₽';
+    document.getElementById('regionsCount').textContent = regionsCount;
+    document.getElementById('ipCount').textContent = ipCount;
+    
+    // Обновляем заголовок если есть фильтр
+    const titleElement = document.querySelector('.master-table-header h3');
+    if (region && titleElement) {
+        titleElement.innerHTML = `Бюджет мероприятий по регионам и ИП <span id="currentMonthDisplay">(Ноябрь 2025)</span> <span style="color: var(--primary); font-weight: 600;">• ${region}</span>`;
+    } else if (titleElement) {
+        titleElement.innerHTML = `Бюджет мероприятий по регионам и ИП <span id="currentMonthDisplay">(Ноябрь 2025)</span>`;
+        updateMonthDisplay();
+    }
+}
 
+// ===== ОБНОВЛЕННОЕ ОТОБРАЖЕНИЕ ТАБЛИЦЫ =====
 function renderMasterBudgetTable() {
     const tableBody = document.getElementById('masterTableBody');
     if (!tableBody) return;
     
     let html = '';
     
-    // Рендерим данные по регионам
     Object.keys(DEFAULT_BUDGETS).forEach(region => {
         html += renderRegionRow(region);
         
-        // Рендерим ИП этого региона
         if (expandedRegions.has(region)) {
             const ipData = IP_DETAILED_BUDGETS[region];
             if (ipData) {
@@ -250,11 +315,8 @@ function renderMasterBudgetTable() {
         }
     });
     
-    // Итоговая строка
     html += renderTotalRow();
-    
     tableBody.innerHTML = html;
-    updateStatistics();
 }
 
 function renderRegionRow(region) {
@@ -347,6 +409,15 @@ function renderTotalRow() {
         Object.keys(DEFAULT_BUDGETS).forEach(region => {
             categoryTotal += getPlannedBudget(region, null, category.id);
             categoryActual += getActualSpending(region, null, category.id);
+            
+            // Добавляем ИП региона
+            const ipData = IP_DETAILED_BUDGETS[region];
+            if (ipData) {
+                Object.keys(ipData).forEach(ipName => {
+                    categoryTotal += getPlannedBudget(region, ipName, category.id);
+                    categoryActual += getActualSpending(region, ipName, category.id);
+                });
+            }
         });
         
         grandTotal += categoryTotal;
@@ -373,8 +444,7 @@ function renderTotalRow() {
     return row;
 }
 
-// ===== РЕДАКТИРОВАНИЕ В ЯЧЕЙКЕ =====
-
+// ===== ОБНОВЛЕННОЕ РЕДАКТИРОВАНИЕ =====
 function startEdit(element, region, ip, category, currentValue) {
     if (currentEditElement) {
         cancelEdit(currentEditElement);
@@ -382,20 +452,19 @@ function startEdit(element, region, ip, category, currentValue) {
     
     currentEditElement = { element, region, ip, category, originalValue: currentValue };
     
-    // Заменяем текст на input
     const input = document.createElement('input');
-    input.type = 'number';
-    input.value = currentValue;
-    input.min = 0;
-    input.step = 100;
+    input.type = 'text';
+    input.value = formatCurrency(currentValue);
     input.style.width = '100%';
-    input.style.border = 'none';
-    input.style.background = 'transparent';
+    input.style.border = '1px solid var(--primary)';
+    input.style.background = 'var(--bg-card)';
     input.style.textAlign = 'center';
-    input.style.fontSize = '0.7rem';
+    input.style.fontSize = '0.75rem';
     input.style.fontWeight = '600';
     input.style.color = 'var(--text-primary)';
     input.style.outline = 'none';
+    input.style.borderRadius = '3px';
+    input.style.padding = '0.15rem';
     
     element.innerHTML = '';
     element.appendChild(input);
@@ -404,14 +473,10 @@ function startEdit(element, region, ip, category, currentValue) {
     input.focus();
     input.select();
     
-    // Обработчики событий
     input.addEventListener('blur', () => finishEdit(input.value));
     input.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            finishEdit(input.value);
-        } else if (e.key === 'Escape') {
-            cancelEdit();
-        }
+        if (e.key === 'Enter') finishEdit(input.value);
+        if (e.key === 'Escape') cancelEdit();
     });
 }
 
@@ -419,21 +484,18 @@ function finishEdit(newValue) {
     if (!currentEditElement) return;
     
     const { element, region, ip, category, originalValue } = currentEditElement;
-    const numericValue = parseFloat(newValue) || 0;
+    const cleanValue = newValue.replace(/\s/g, '').replace(',', '.');
+    const numericValue = parseFloat(cleanValue) || 0;
     
     if (numericValue !== originalValue) {
-        // Сохраняем новое значение
+        hasUnsavedChanges = true;
+        updateSaveButton();
         savePlannedBudget(region, ip, category, numericValue);
-        showNotification('✅ Бюджет обновлен', 'success');
     }
     
-    // Восстанавливаем отображение
     element.innerHTML = formatCurrency(numericValue);
     element.classList.remove('editing');
-    
-    // Перерисовываем таблицу для обновления расчетов
-    renderMasterBudgetTable();
-    
+    updateStatistics();
     currentEditElement = null;
 }
 
@@ -441,16 +503,86 @@ function cancelEdit() {
     if (!currentEditElement) return;
     
     const { element, originalValue } = currentEditElement;
-    
-    // Восстанавливаем оригинальное значение
     element.innerHTML = formatCurrency(originalValue);
     element.classList.remove('editing');
-    
     currentEditElement = null;
 }
 
-// ===== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ =====
+// ===== УПРАВЛЕНИЕ РЕГИОНАМИ С ФИЛЬТРАЦИЕЙ =====
+function toggleRegion(region) {
+    if (expandedRegions.has(region)) {
+        expandedRegions.delete(region);
+        if (expandedRegions.size === 0) {
+            currentFilterRegion = null;
+            updateStatistics();
+        }
+    } else {
+        expandedRegions.add(region);
+        if (expandedRegions.size === 1) {
+            currentFilterRegion = region;
+            updateStatistics(region);
+        } else {
+            currentFilterRegion = null;
+            updateStatistics();
+        }
+    }
+    renderMasterBudgetTable();
+}
 
+function toggleAllRegions() {
+    if (expandedRegions.size === Object.keys(DEFAULT_BUDGETS).length) {
+        expandedRegions.clear();
+        document.getElementById('toggleAllText').textContent = 'Развернуть все';
+        currentFilterRegion = null;
+        updateStatistics();
+    } else {
+        Object.keys(DEFAULT_BUDGETS).forEach(region => expandedRegions.add(region));
+        document.getElementById('toggleAllText').textContent = 'Свернуть все';
+        currentFilterRegion = null;
+        updateStatistics();
+    }
+    renderMasterBudgetTable();
+}
+
+// ===== СИСТЕМА СОХРАНЕНИЯ =====
+function updateSaveButton() {
+    const saveBtn = document.querySelector('.save-budget-btn');
+    if (!saveBtn) return;
+    
+    if (hasUnsavedChanges) {
+        saveBtn.innerHTML = '<span class="nav-icon">💾</span> Сохранить изменения • Есть несохраненные';
+        saveBtn.classList.add('unsaved');
+    } else {
+        saveBtn.innerHTML = '<span class="nav-icon">💾</span> Все изменения сохранены';
+        saveBtn.classList.remove('unsaved');
+    }
+}
+
+function saveAllBudgets() {
+    if (!hasUnsavedChanges) {
+        showNotification('ℹ️ Нет изменений для сохранения', 'info');
+        return;
+    }
+    
+    hasUnsavedChanges = false;
+    updateSaveButton();
+    showNotification('✅ Все изменения бюджета сохранены', 'success');
+}
+
+// ===== ЭКСПОРТ =====
+function exportBudgetToCSV() {
+    showNotification('📊 Экспорт в CSV выполнен', 'success');
+}
+
+function exportBudgetToExcel() {
+    showNotification('📈 Экспорт в Excel выполнен', 'success');
+}
+
+function exportBudgetToPDF() {
+    showNotification('📄 Экспорт в PDF выполнен', 'success');
+}
+
+// ===== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ =====
 function formatCurrency(amount) {
     if (amount === 0) return '0';
     return new Intl.NumberFormat('ru-RU').format(amount);
@@ -465,61 +597,7 @@ function getBudgetStatus(planned, actual) {
     return { class: 'status-normal', text: 'В норме' };
 }
 
-function toggleRegion(region) {
-    if (expandedRegions.has(region)) {
-        expandedRegions.delete(region);
-    } else {
-        expandedRegions.add(region);
-    }
-    renderMasterBudgetTable();
-}
-
-function toggleAllRegions() {
-    if (expandedRegions.size === Object.keys(DEFAULT_BUDGETS).length) {
-        expandedRegions.clear();
-        document.getElementById('toggleAllText').textContent = 'Развернуть все';
-    } else {
-        Object.keys(DEFAULT_BUDGETS).forEach(region => expandedRegions.add(region));
-        document.getElementById('toggleAllText').textContent = 'Свернуть все';
-    }
-    renderMasterBudgetTable();
-}
-
-function updateStatistics() {
-    let totalBudget = 0;
-    let usedBudget = 0;
-    
-    Object.keys(DEFAULT_BUDGETS).forEach(region => {
-        BUDGET_CATEGORIES.forEach(category => {
-            totalBudget += getPlannedBudget(region, null, category.id);
-            usedBudget += getActualSpending(region, null, category.id);
-        });
-    });
-    
-    const remainingBudget = totalBudget - usedBudget;
-    
-    // Обновляем статистику
-    document.getElementById('totalBudget').textContent = formatCurrency(totalBudget) + ' ₽';
-    document.getElementById('usedBudget').textContent = formatCurrency(usedBudget) + ' ₽';
-    document.getElementById('remainingBudget').textContent = formatCurrency(remainingBudget) + ' ₽';
-}
-
-// ===== ЭКСПОРТ =====
-
-function exportBudgetToCSV() {
-    showNotification('📊 Экспорт в CSV выполнен', 'success');
-}
-
-function exportBudgetToExcel() {
-    showNotification('📈 Экспорт в Excel выполнен', 'success');
-}
-
-function exportBudgetToPDF() {
-    showNotification('📄 Экспорт в PDF выполнен', 'success');
-}
-
 function showNotification(message, type = 'info') {
-    // Временное решение - можно заменить на красивые уведомления
     alert(`${type === 'success' ? '✅' : type === 'warning' ? '⚠️' : '❌'} ${message}`);
 }
 

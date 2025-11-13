@@ -67,7 +67,7 @@
                     </div>
                     <div class="export-dropdown">
                         <button class="btn btn-secondary export-btn">
-                            <span class="nav-icon">📤</span>
+                            <span class="nav-icon">⬇️</span>
                             Экспорт
                         </button>
                         <div class="export-menu">
@@ -101,106 +101,40 @@
                 <div class="stat-label">Остаток</div>
             </div>
             <div class="stat-compact">
-                <div class="stat-value">6</div>
+                <div class="stat-value" id="regionsCount">6</div>
                 <div class="stat-label">Регионов</div>
             </div>
             <div class="stat-compact">
-                <div class="stat-value">28</div>
+                <div class="stat-value" id="ipCount">28</div>
                 <div class="stat-label">ИП</div>
             </div>
         </div>
 
         <!-- Основная таблица бюджетов -->
-        <div class="budgets-master-container">
-            <div class="master-table-header">
-                <h3>Бюджет мероприятий по регионам и ИП <span id="currentMonthDisplay">(Ноябрь 2025)</span></h3>
-                <div class="table-controls">
-                    <button class="btn btn-sm" onclick="toggleAllRegions()">
-                        <span id="toggleAllText">Развернуть все</span>
-                    </button>
-                </div>
-            </div>
-            
-            <div class="table-container">
-                <div class="master-table">
-                    <div class="table-header">
-                        <div class="region-cell">Регион / ИП</div>
-                        <div class="category-cell">
-                            <span class="category-name">Продукты</span>
-                        </div>
-                        <div class="category-cell">
-                            <span class="category-name">Хоз. товары</span>
-                        </div>
-                        <div class="category-cell">
-                            <span class="category-name">Медикаменты</span>
-                        </div>
-                        <div class="category-cell">
-                            <span class="category-name">Канцелярия</span>
-                        </div>
-                        <div class="category-cell">
-                            <span class="category-name">Кафе</span>
-                        </div>
-                        <div class="category-cell">
-                            <span class="category-name">Полиграфия</span>
-                        </div>
-                        <div class="category-cell">
-                            <span class="category-name">Мероприятия</span>
-                        </div>
-                        <div class="category-cell">
-                            <span class="category-name">Ремонт</span>
-                        </div>
-                        <div class="category-cell">
-                            <span class="category-name">ЗП упр.</span>
-                        </div>
-                        <div class="category-cell">
-                            <span class="category-name">АЗС</span>
-                        </div>
-                        <div class="category-cell">
-                            <span class="category-name">Отправка</span>
-                        </div>
-                        <div class="category-cell">
-                            <span class="category-name">Покупка</span>
-                        </div>
-                        <div class="category-cell">
-                            <span class="category-name">Страхование</span>
-                        </div>
-                        <div class="category-cell">
-                            <span class="category-name">Благотв.</span>
-                        </div>
-                        <div class="category-cell">
-                            <span class="category-name">Техника</span>
-                        </div>
-                        <div class="category-cell">
-                            <span class="category-name">Упаковка</span>
-                        </div>
-                        <div class="category-cell">
-                            <span class="category-name">Клининг</span>
-                        </div>
-                        <div class="category-cell">
-                            <span class="category-name">Чеки</span>
-                        </div>
-                        <div class="category-cell">
-                            <span class="category-name">Каршеринг</span>
-                        </div>
-                        <div class="category-cell">
-                            <span class="category-name">Аренда</span>
-                        </div>
-                        <div class="category-cell">
-                            <span class="category-name">Коммуналка</span>
-                        </div>
-                        <div class="category-cell">
-                            <span class="category-name">Интернет</span>
-                        </div>
-                        <div class="category-cell">
-                            <span class="category-name">ЗП ИП</span>
-                        </div>
-                        <div class="total-cell">Итого</div>
-                    </div>
-                    <div class="table-body" id="masterTableBody">
-                        <!-- Данные будут загружены через JavaScript -->
-                    </div>
-                </div>
-            </div>
+<div class="budgets-master-container">
+    <div class="master-table-header">
+        <h3>Бюджет мероприятий по регионам и ИП <span id="currentMonthDisplay">(Ноябрь 2025)</span></h3>
+        <div class="table-controls">
+            <button class="btn btn-sm" onclick="toggleAllRegions()">
+                <span id="toggleAllText">Развернуть все</span>
+            </button>
+        </div>
+    </div>
+    
+    <!-- КОМПАКТНАЯ ТАБЛИЦА БЕЗ ПРОКРУТКИ -->
+    <div class="compact-table-wrapper">
+        <div class="compact-table" id="compactTableBody">
+            <!-- Данные будут загружены через JavaScript -->
+        </div>
+    </div>
+</div>
+
+        <!-- Кнопка сохранения -->
+        <div class="save-budget-container">
+            <button class="save-budget-btn" onclick="saveAllBudgets()">
+                <span class="nav-icon">💾</span>
+                Сохранить все изменения
+            </button>
         </div>
     </main>
 
