@@ -1,38 +1,135 @@
-// budgets.js - КОМПАКТНАЯ ВЕРСИЯ С МУЛЬТИМЕСЯЧНОСТЬЮ
+// budgets.js - КОМПАКТНАЯ ВЕРСИЯ С ПРЯМЫМ РЕДАКТИРОВАНИЕМ
 
 let currentMonth = '2025-11';
 let expandedRegions = new Set();
+let currentEditElement = null;
 
-// Категории расходов (компактные)
+// Все категории расходов из CSV
 const BUDGET_CATEGORIES = [
-    { id: 'products', name: 'Продукты', icon: '🛒' },
-    { id: 'household', name: 'Хоз. товары', icon: '🧹' },
-    { id: 'medicaments', name: 'Медикаменты', icon: '💊' },
-    { id: 'stationery', name: 'Канцелярия', icon: '📎' },
-    { id: 'cafe', name: 'Кафе / кофейня', icon: '☕' },
-    { id: 'polygraphy', name: 'Полиграфия', icon: '🖨️' },
-    { id: 'events', name: 'Мероприятия', icon: '🎉' },
-    { id: 'repairs', name: 'Мелкий ремонт', icon: '🔧' },
-    { id: 'salary', name: 'ЗП управляющего', icon: '💰' },
-    { id: 'azs', name: 'АЗС', icon: '⛽' },
-    { id: 'shipping', name: 'Отправка товаров', icon: '📦' },
-    { id: 'regionalPurchase', name: 'Покупка регион', icon: '🏢' },
-    { id: 'insurance', name: 'Страхование', icon: '🛡️' },
-    { id: 'charity', name: 'Благотворительность', icon: '❤️' },
-    { id: 'equipment', name: 'Техника', icon: '📱' },
-    { id: 'packaging', name: 'Упаковка', icon: '📦' },
-    { id: 'cleaning', name: 'Клининг', icon: '🧽' },
-    { id: 'checks', name: 'Чеки ККТ', icon: '🧾' },
-    { id: 'carsharing', name: 'Каршеринг', icon: '🚗' },
-    { id: 'rent', name: 'Аренда офиса', icon: '🏢' },
-    { id: 'comm', name: 'Коммуналка', icon: '💡' },
-    { id: 'internet', name: 'Интернет', icon: '🌐' },
-    { id: 'ipSalary', name: 'ЗП ИП', icon: '💼' }
+    { id: 'products', name: 'Продукты' },
+    { id: 'household', name: 'Хоз. товары' },
+    { id: 'medicaments', name: 'Медикаменты' },
+    { id: 'stationery', name: 'Канцелярия' },
+    { id: 'cafe', name: 'Кафе' },
+    { id: 'polygraphy', name: 'Полиграфия' },
+    { id: 'events', name: 'Мероприятия' },
+    { id: 'repairs', name: 'Ремонт' },
+    { id: 'salary', name: 'ЗП упр.' },
+    { id: 'azs', name: 'АЗС' },
+    { id: 'shipping', name: 'Отправка' },
+    { id: 'regionalPurchase', name: 'Покупка' },
+    { id: 'insurance', name: 'Страхование' },
+    { id: 'charity', name: 'Благотв.' },
+    { id: 'equipment', name: 'Техника' },
+    { id: 'packaging', name: 'Упаковка' },
+    { id: 'cleaning', name: 'Клининг' },
+    { id: 'checks', name: 'Чеки' },
+    { id: 'carsharing', name: 'Каршеринг' },
+    { id: 'rent', name: 'Аренда' },
+    { id: 'comm', name: 'Коммуналка' },
+    { id: 'internet', name: 'Интернет' },
+    { id: 'ipSalary', name: 'ЗП ИП' }
 ];
 
+// Полные данные из CSV
+const IP_DETAILED_BUDGETS = {
+    'Астрахань': {
+        'ИП Крутоусов': { products: 5000, polygraphy: 200, repairs: 10000, shipping: 3000, azs: 1000, rent: 8000, comm: 1000, ipSalary: 30000 },
+        'ИП Храмова': { household: 3000, azs: 1000, shipping: 1000, rent: 10000, comm: 1000, ipSalary: 30000 },
+        'ИП Янгалышева': { stationery: 1000, salary: 15000, shipping: 1000, insurance: 5000, charity: 15000, checks: 10000, rent: 6700, comm: 1000, internet: 1950, ipSalary: 30000 },
+        'ИП Наливайко': { cafe: 500, shipping: 1000, rent: 7700, comm: 1000, ipSalary: 30000 },
+        'ИП Каширин': { cafe: 1500, events: 2000, rent: 9380, comm: 1000, ipSalary: 30000 }
+    },
+    'Бурятия': {
+        'ИП Астанови': { products: 5000, polygraphy: 200, events: 2000, rent: 10440, comm: 1000, internet: 4300, ipSalary: 45000 },
+        'ИП Пинегин': { household: 4000, repairs: 10000, azs: 1000, shipping: 1000, charity: 10000, rent: 8000, comm: 1000, internet: 3000, ipSalary: 30000 },
+        'ИП Ровда': { stationery: 1000, salary: 10000, shipping: 3000, insurance: 5000, rent: 14500, comm: 1000, internet: 4300, ipSalary: 30000 },
+        'ИП Ильенко': { cafe: 500, polygraphy: 1000, shipping: 1000, cleaning: 2000, rent: 17000, comm: 1000, internet: 4300, ipSalary: 30000 }
+    },
+    'Курган': {
+        'ИП Бондаренко': { products: 3000, polygraphy: 300, repairs: 10000, charity: 20000, checks: 10000, rent: 10600, comm: 1000, internet: 4000, ipSalary: 30000 },
+        'ИП Бобков': { household: 5000, salary: 15000, shipping: 3000, checks: 3000, rent: 10950, comm: 1000, internet: 3700, ipSalary: 30000 },
+        'ИП Дюльгер': { stationery: 1000, shipping: 1000, rent: 6000, comm: 1000, internet: 4062 },
+        'ИП Федчук': { cafe: 1000, shipping: 1000, insurance: 5000, checks: 10000, rent: 7500, comm: 1000, internet: 4000 },
+        'ИП Карбышев': { cafe: 2000, repairs: 15000, checks: 10000, rent: 11096, comm: 1000, internet: 3700 },
+        'ИП Овсейко': { events: 2500, medicaments: 1000, azs: 1000, checks: 2000, rent: 9350, comm: 1000, internet: 4000, ipSalary: 30000 },
+        'ИП Рябенко': { azs: 1500, shipping: 1000, checks: 10000, rent: 14000, comm: 1000, internet: 4000 }
+    },
+    'Калмыкия': {
+        'ИП Ибрагимов': { products: 3000, cafe: 1000, polygraphy: 200, repairs: 10000, salary: 10000, cleaning: 2000, rent: 15000, comm: 1000, internet: 4250 },
+        'ИП Никифорова': { household: 4000, stationery: 500, events: 1000, shipping: 3000, insurance: 5000, rent: 18000, comm: 1000, internet: 4250, ipSalary: 30000 },
+        'ИП Ярославцев': { medicaments: 1000, azs: 1000, shipping: 1000, rent: 10000, comm: 1000, internet: 4000, ipSalary: 30000 }
+    },
+    'Мордовия': {
+        'ИП Иванов': { repairs: 10000, shipping: 1000, rent: 9000, comm: 1000, internet: 3300 },
+        'ИП Коротких': { household: 3000, stationery: 500, cafe: 1000, events: 1500, azs: 1000, shipping: 3000, insurance: 5000, rent: 9090, comm: 1000, internet: 3702, ipSalary: 30000 },
+        'ИП Яковлева': { products: 4000, medicaments: 1000, polygraphy: 200, salary: 10000, shipping: 1000, cleaning: 2000, rent: 8000, comm: 1000, internet: 3702, ipSalary: 30000 }
+    },
+    'Удмуртия': {
+        'ИП Бадалов': { products: 5000, polygraphy: 300, repairs: 10000, azs: 1500, shipping: 1000, charity: 15000, rent: 11700, comm: 1000, internet: 4750, ipSalary: 30000 },
+        'ИП Емельнов': { household: 4000, shipping: 1000, insurance: 5000, rent: 7000, comm: 1000, internet: 3800, ipSalary: 30000 },
+        'ИП Леонгард': { stationery: 1000, azs: 1000, charity: 100000, checks: 6500, comm: 1000, internet: 5200, ipSalary: 30000 },
+        'ИП Саинова': { cafe: 1000, salary: 15000, shipping: 3000, cleaning: 2000, rent: 6486, comm: 1000, internet: 4750, ipSalary: 30000 },
+        'ИП Самсонов': { cafe: 2000, shipping: 1000, rent: 12418, comm: 1000, internet: 4750 },
+        'ИП Шефер': { events: 2500, shipping: 1000, rent: 14535, comm: 1000, internet: 3500, ipSalary: 30000 }
+    }
+};
+
+// Полные бюджеты регионов из CSV
+const DEFAULT_BUDGETS = {
+    'Астрахань': {
+        products: 5000, household: 3000, medicaments: 1000, stationery: 500,
+        cafe: 1500, polygraphy: 200, events: 2000, repairs: 10000,
+        salary: 15000, azs: 1000, shipping: 3000, regionalPurchase: 5000,
+        insurance: 5000, charity: 75000, equipment: 100000, packaging: 0,
+        cleaning: 2000, checks: 20000, carsharing: 3000, rent: 41780,
+        comm: 5000, internet: 1950, ipSalary: 150000
+    },
+    'Бурятия': {
+        products: 5000, household: 4000, medicaments: 1000, stationery: 500,
+        cafe: 1000, polygraphy: 200, events: 2000, repairs: 10000,
+        salary: 10000, azs: 1000, shipping: 3000, regionalPurchase: 4000,
+        insurance: 5000, charity: 0, equipment: 0, packaging: 0,
+        cleaning: 2000, checks: 0, carsharing: 0, rent: 49940,
+        comm: 4000, internet: 15900, ipSalary: 135000
+    },
+    'Курган': {
+        products: 3000, household: 5000, medicaments: 1000, stationery: 1000,
+        cafe: 2000, polygraphy: 300, events: 2500, repairs: 10000,
+        salary: 15000, azs: 1500, shipping: 3000, regionalPurchase: 7000,
+        insurance: 5000, charity: 0, equipment: 0, packaging: 0,
+        cleaning: 2000, checks: 40000, carsharing: 0, rent: 69496,
+        comm: 7000, internet: 27462, ipSalary: 90000
+    },
+    'Калмыкия': {
+        products: 3000, household: 4000, medicaments: 1000, stationery: 500,
+        cafe: 1000, polygraphy: 200, events: 1000, repairs: 10000,
+        salary: 10000, azs: 1000, shipping: 3000, regionalPurchase: 3000,
+        insurance: 5000, charity: 0, equipment: 0, packaging: 0,
+        cleaning: 2000, checks: 0, carsharing: 0, rent: 43000,
+        comm: 3000, internet: 12500, ipSalary: 60000
+    },
+    'Мордовия': {
+        products: 4000, household: 3000, medicaments: 1000, stationery: 500,
+        cafe: 1000, polygraphy: 200, events: 1500, repairs: 10000,
+        salary: 10000, azs: 1000, shipping: 3000, regionalPurchase: 3000,
+        insurance: 5000, charity: 0, equipment: 0, packaging: 0,
+        cleaning: 2000, checks: 0, carsharing: 0, rent: 26090,
+        comm: 3000, internet: 10704, ipSalary: 60000
+    },
+    'Удмуртия': {
+        products: 5000, household: 4000, medicaments: 1000, stationery: 1000,
+        cafe: 2000, polygraphy: 300, events: 2500, repairs: 10000,
+        salary: 15000, azs: 1500, shipping: 3000, regionalPurchase: 6000,
+        insurance: 5000, charity: 0, equipment: 0, packaging: 0,
+        cleaning: 2000, checks: 0, carsharing: 0, rent: 58639,
+        comm: 6000, internet: 26750, ipSalary: 150000
+    }
+};
+
 function initBudgets() {
+    generateMonthOptions();
     loadCurrentMonth();
-    setupEventListeners();
     updateStatistics();
     renderMasterBudgetTable();
     
@@ -40,8 +137,28 @@ function initBudgets() {
     toggleAllRegions();
 }
 
-function setupEventListeners() {
-    document.getElementById('editBudgetForm').addEventListener('submit', saveBudgetEdit);
+function generateMonthOptions() {
+    const select = document.getElementById('budgetMonth');
+    const months = [];
+    
+    // Генерируем 12 месяцев начиная с ноября 2025
+    const startDate = new Date(2025, 10, 1); // Ноябрь 2025
+    for (let i = 0; i < 12; i++) {
+        const date = new Date(startDate);
+        date.setMonth(startDate.getMonth() + i);
+        const year = date.getFullYear();
+        const month = date.getMonth() + 1;
+        const value = `${year}-${month.toString().padStart(2, '0')}`;
+        const monthNames = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 
+                           'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+        const display = `${monthNames[date.getMonth()]} ${year}`;
+        
+        months.push({ value, display });
+    }
+    
+    select.innerHTML = months.map(month => 
+        `<option value="${month.value}">${month.display}</option>`
+    ).join('');
 }
 
 function loadCurrentMonth() {
@@ -63,10 +180,12 @@ function changeBudgetMonth() {
 
 function updateMonthDisplay() {
     const monthNames = {
-        '2025-11': 'Ноябрь 2025',
-        '2025-12': 'Декабрь 2025', 
-        '2026-01': 'Январь 2026',
-        '2026-02': 'Февраль 2026'
+        '2025-11': 'Ноябрь 2025', '2025-12': 'Декабрь 2025',
+        '2026-01': 'Январь 2026', '2026-02': 'Февраль 2026',
+        '2026-03': 'Март 2026', '2026-04': 'Апрель 2026',
+        '2026-05': 'Май 2026', '2026-06': 'Июнь 2026',
+        '2026-07': 'Июль 2026', '2026-08': 'Август 2026', 
+        '2026-09': 'Сентябрь 2026', '2026-10': 'Октябрь 2026'
     };
     document.getElementById('currentMonthDisplay').textContent = `(${monthNames[currentMonth]})`;
 }
@@ -142,7 +261,7 @@ function renderRegionRow(region) {
     let row = `<div class="region-row" data-region="${region}">`;
     row += `<div class="region-name" onclick="toggleRegion('${region}')">`;
     row += `<span class="status-indicator status-normal"></span>`;
-    row += `<span>🏢 ${region}</span>`;
+    row += `<span>${region}</span>`;
     row += `<span style="margin-left: auto;">${expandedRegions.has(region) ? '📂' : '📁'}</span>`;
     row += `</div>`;
     
@@ -158,14 +277,10 @@ function renderRegionRow(region) {
         regionTotal += planned;
         regionActual += actual;
         
-        row += `<div class="budget-cell region-cell ${status.class}" onclick="openEditModal('${region}', null, '${category.id}')">`;
-        row += `<div class="budget-amount">${formatCompactCurrency(planned)}</div>`;
-        row += `<div class="budget-actual">${formatCompactCurrency(actual)}</div>`;
-        if (planned > 0) {
-            row += `<div class="budget-remaining ${status.class.replace('status-', 'remaining-')}">`;
-            row += formatCompactCurrency(remaining);
-            row += `</div>`;
-        }
+        row += `<div class="budget-cell region-cell">`;
+        row += `<div class="budget-amount editable" onclick="startEdit(this, '${region}', null, '${category.id}', ${planned})">${formatCurrency(planned)}</div>`;
+        row += `<div class="budget-actual">${formatCurrency(actual)}</div>`;
+        row += `<div class="budget-remaining ${status.class.replace('status-', 'remaining-')}">${formatCurrency(remaining)}</div>`;
         row += `</div>`;
     });
     
@@ -173,8 +288,8 @@ function renderRegionRow(region) {
     const regionStatus = getBudgetStatus(regionTotal, regionActual);
     
     row += `<div class="total-cell region-total" style="color: ${regionStatus.class === 'status-danger' ? '#ef4444' : regionStatus.class === 'status-warning' ? '#f59e0b' : '#10b981'}">`;
-    row += `<div>${formatCompactCurrency(regionTotal)}</div>`;
-    row += `<div style="font-size: 0.65rem;">${formatCompactCurrency(regionRemaining)}</div>`;
+    row += `<div>${formatCurrency(regionTotal)}</div>`;
+    row += `<div style="font-size: 0.65rem;">${formatCurrency(regionRemaining)}</div>`;
     row += `</div>`;
     
     row += `</div>`;
@@ -183,11 +298,12 @@ function renderRegionRow(region) {
 
 function renderIPRow(ipName, region) {
     let row = `<div class="ip-row ${expandedRegions.has(region) ? '' : 'collapsed'}" data-region="${region}">`;
-    row += `<div class="ip-name" onclick="openEditModal('${region}', '${ipName}', null)">`;
-    row += `<span>👤 ${ipName}</span>`;
+    row += `<div class="ip-name">`;
+    row += `<span>${ipName}</span>`;
     row += `</div>`;
     
     let ipTotal = 0;
+    let ipActual = 0;
     
     BUDGET_CATEGORIES.forEach(category => {
         const planned = getPlannedBudget(region, ipName, category.id);
@@ -196,20 +312,21 @@ function renderIPRow(ipName, region) {
         const status = getBudgetStatus(planned, actual);
         
         ipTotal += planned;
+        ipActual += actual;
         
-        row += `<div class="budget-cell ip-cell ${status.class}" onclick="openEditModal('${region}', '${ipName}', '${category.id}')">`;
-        row += `<div class="budget-amount">${formatCompactCurrency(planned)}</div>`;
-        row += `<div class="budget-actual">${formatCompactCurrency(actual)}</div>`;
-        if (planned > 0) {
-            row += `<div class="budget-remaining ${status.class.replace('status-', 'remaining-')}">`;
-            row += formatCompactCurrency(remaining);
-            row += `</div>`;
-        }
+        row += `<div class="budget-cell ip-cell">`;
+        row += `<div class="budget-amount editable" onclick="startEdit(this, '${region}', '${ipName}', '${category.id}', ${planned})">${formatCurrency(planned)}</div>`;
+        row += `<div class="budget-actual">${formatCurrency(actual)}</div>`;
+        row += `<div class="budget-remaining ${status.class.replace('status-', 'remaining-')}">${formatCurrency(remaining)}</div>`;
         row += `</div>`;
     });
     
-    row += `<div class="total-cell ip-total">`;
-    row += `<div>${formatCompactCurrency(ipTotal)}</div>`;
+    const ipRemaining = ipTotal - ipActual;
+    const ipStatus = getBudgetStatus(ipTotal, ipActual);
+    
+    row += `<div class="total-cell ip-total" style="color: ${ipStatus.class === 'status-danger' ? '#ef4444' : ipStatus.class === 'status-warning' ? '#f59e0b' : '#10b981'}">`;
+    row += `<div>${formatCurrency(ipTotal)}</div>`;
+    row += `<div style="font-size: 0.65rem;">${formatCurrency(ipRemaining)}</div>`;
     row += `</div>`;
     
     row += `</div>`;
@@ -218,7 +335,7 @@ function renderIPRow(ipName, region) {
 
 function renderTotalRow() {
     let row = `<div class="total-row">`;
-    row += `<div class="total-label">💰 ВСЕГО</div>`;
+    row += `<div class="total-label">ВСЕГО</div>`;
     
     let grandTotal = 0;
     let grandActual = 0;
@@ -237,9 +354,10 @@ function renderTotalRow() {
         
         const status = getBudgetStatus(categoryTotal, categoryActual);
         
-        row += `<div class="budget-cell total-cell ${status.class}">`;
-        row += `<div class="budget-amount">${formatCompactCurrency(categoryTotal)}</div>`;
-        row += `<div class="budget-actual">${formatCompactCurrency(categoryActual)}</div>`;
+        row += `<div class="budget-cell total-cell">`;
+        row += `<div class="budget-amount">${formatCurrency(categoryTotal)}</div>`;
+        row += `<div class="budget-actual">${formatCurrency(categoryActual)}</div>`;
+        row += `<div class="budget-remaining ${status.class.replace('status-', 'remaining-')}">${formatCurrency(categoryTotal - categoryActual)}</div>`;
         row += `</div>`;
     });
     
@@ -247,29 +365,95 @@ function renderTotalRow() {
     const grandStatus = getBudgetStatus(grandTotal, grandActual);
     
     row += `<div class="total-cell grand-total" style="color: ${grandStatus.class === 'status-danger' ? '#ef4444' : grandStatus.class === 'status-warning' ? '#f59e0b' : '#10b981'}">`;
-    row += `<div>${formatCompactCurrency(grandTotal)}</div>`;
-    row += `<div style="font-size: 0.7rem;">${formatCompactCurrency(grandRemaining)}</div>`;
+    row += `<div>${formatCurrency(grandTotal)}</div>`;
+    row += `<div style="font-size: 0.7rem;">${formatCurrency(grandRemaining)}</div>`;
     row += `</div>`;
     
     row += `</div>`;
     return row;
 }
 
-// ===== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ =====
+// ===== РЕДАКТИРОВАНИЕ В ЯЧЕЙКЕ =====
 
-function formatCompactCurrency(amount) {
-    if (amount === 0) return '0';
-    if (amount >= 1000000) {
-        return (amount / 1000000).toFixed(1) + 'м';
+function startEdit(element, region, ip, category, currentValue) {
+    if (currentEditElement) {
+        cancelEdit(currentEditElement);
     }
-    if (amount >= 1000) {
-        return (amount / 1000).toFixed(0) + 'к';
-    }
-    return amount.toString();
+    
+    currentEditElement = { element, region, ip, category, originalValue: currentValue };
+    
+    // Заменяем текст на input
+    const input = document.createElement('input');
+    input.type = 'number';
+    input.value = currentValue;
+    input.min = 0;
+    input.step = 100;
+    input.style.width = '100%';
+    input.style.border = 'none';
+    input.style.background = 'transparent';
+    input.style.textAlign = 'center';
+    input.style.fontSize = '0.7rem';
+    input.style.fontWeight = '600';
+    input.style.color = 'var(--text-primary)';
+    input.style.outline = 'none';
+    
+    element.innerHTML = '';
+    element.appendChild(input);
+    element.classList.add('editing');
+    
+    input.focus();
+    input.select();
+    
+    // Обработчики событий
+    input.addEventListener('blur', () => finishEdit(input.value));
+    input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            finishEdit(input.value);
+        } else if (e.key === 'Escape') {
+            cancelEdit();
+        }
+    });
 }
 
+function finishEdit(newValue) {
+    if (!currentEditElement) return;
+    
+    const { element, region, ip, category, originalValue } = currentEditElement;
+    const numericValue = parseFloat(newValue) || 0;
+    
+    if (numericValue !== originalValue) {
+        // Сохраняем новое значение
+        savePlannedBudget(region, ip, category, numericValue);
+        showNotification('✅ Бюджет обновлен', 'success');
+    }
+    
+    // Восстанавливаем отображение
+    element.innerHTML = formatCurrency(numericValue);
+    element.classList.remove('editing');
+    
+    // Перерисовываем таблицу для обновления расчетов
+    renderMasterBudgetTable();
+    
+    currentEditElement = null;
+}
+
+function cancelEdit() {
+    if (!currentEditElement) return;
+    
+    const { element, originalValue } = currentEditElement;
+    
+    // Восстанавливаем оригинальное значение
+    element.innerHTML = formatCurrency(originalValue);
+    element.classList.remove('editing');
+    
+    currentEditElement = null;
+}
+
+// ===== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ =====
+
 function formatCurrency(amount) {
-    return new Intl.NumberFormat('ru-RU').format(amount) + ' ₽';
+    if (amount === 0) return '0';
+    return new Intl.NumberFormat('ru-RU').format(amount);
 }
 
 function getBudgetStatus(planned, actual) {
@@ -302,56 +486,22 @@ function toggleAllRegions() {
 }
 
 function updateStatistics() {
-    // Статистика теперь статичная из CSV
-    // В реальном приложении здесь будет расчет из данных
-}
-
-// ===== РЕДАКТИРОВАНИЕ БЮДЖЕТА =====
-
-function openEditModal(region, ip, category) {
-    const planned = getPlannedBudget(region, ip, category);
-    const actual = getActualSpending(region, ip, category);
-    const remaining = planned - actual;
-    const usage = planned > 0 ? Math.round((actual / planned) * 100) : 0;
+    let totalBudget = 0;
+    let usedBudget = 0;
     
-    document.getElementById('editRegion').value = region;
-    document.getElementById('editIp').value = ip || '';
-    document.getElementById('editCategory').value = category;
-    document.getElementById('editMonth').value = currentMonth;
+    Object.keys(DEFAULT_BUDGETS).forEach(region => {
+        BUDGET_CATEGORIES.forEach(category => {
+            totalBudget += getPlannedBudget(region, null, category.id);
+            usedBudget += getActualSpending(region, null, category.id);
+        });
+    });
     
-    document.getElementById('editRegionDisplay').textContent = region;
-    document.getElementById('editIpDisplay').textContent = ip || 'Весь регион';
-    document.getElementById('editCategoryDisplay').textContent = BUDGET_CATEGORIES.find(c => c.id === category)?.name || category;
-    document.getElementById('editMonthDisplay').textContent = document.getElementById('currentMonthDisplay').textContent;
+    const remainingBudget = totalBudget - usedBudget;
     
-    document.getElementById('editPlanned').value = planned;
-    document.getElementById('editActual').value = actual;
-    document.getElementById('editRemaining').textContent = formatCurrency(remaining);
-    document.getElementById('editUsage').textContent = usage + '%';
-    
-    document.getElementById('editBudgetModal').style.display = 'flex';
-}
-
-function closeEditModal() {
-    document.getElementById('editBudgetModal').style.display = 'none';
-}
-
-function saveBudgetEdit(event) {
-    event.preventDefault();
-    
-    const region = document.getElementById('editRegion').value;
-    const ip = document.getElementById('editIp').value;
-    const category = document.getElementById('editCategory').value;
-    const planned = parseFloat(document.getElementById('editPlanned').value);
-    const actual = parseFloat(document.getElementById('editActual').value);
-    
-    // Сохраняем плановый бюджет и фактические расходы
-    savePlannedBudget(region, ip, category, planned);
-    saveActualSpending(region, ip, category, actual);
-    
-    closeEditModal();
-    renderMasterBudgetTable();
-    showNotification('✅ Бюджет успешно обновлен!', 'success');
+    // Обновляем статистику
+    document.getElementById('totalBudget').textContent = formatCurrency(totalBudget) + ' ₽';
+    document.getElementById('usedBudget').textContent = formatCurrency(usedBudget) + ' ₽';
+    document.getElementById('remainingBudget').textContent = formatCurrency(remainingBudget) + ' ₽';
 }
 
 // ===== ЭКСПОРТ =====
@@ -369,52 +519,9 @@ function exportBudgetToPDF() {
 }
 
 function showNotification(message, type = 'info') {
+    // Временное решение - можно заменить на красивые уведомления
     alert(`${type === 'success' ? '✅' : type === 'warning' ? '⚠️' : '❌'} ${message}`);
 }
-
-// Экспортируем функции для использования в других модулях
-window.BudgetManager = {
-    checkBudgetLimit: function(region, category, amount) {
-        const planned = getPlannedBudget(region, null, category);
-        const actual = getActualSpending(region, null, category);
-        const remaining = planned - actual;
-        const allowed = amount <= remaining;
-        
-        return {
-            allowed,
-            remaining,
-            planned,
-            actual,
-            message: allowed 
-                ? `✅ Доступно: ${formatCurrency(remaining)} из ${formatCurrency(planned)}`
-                : `❌ Превышен бюджет! Доступно: ${formatCurrency(remaining)} из ${formatCurrency(planned)}`
-        };
-    },
-    
-    reserveBudget: function(region, category, amount) {
-        const check = this.checkBudgetLimit(region, category, amount);
-        if (!check.allowed) return false;
-        
-        const currentActual = getActualSpending(region, null, category);
-        saveActualSpending(region, null, category, currentActual + amount);
-        
-        if (window.location.pathname.includes('budgets.html')) {
-            renderMasterBudgetTable();
-        }
-        
-        return true;
-    },
-    
-    releaseBudget: function(region, category, amount) {
-        const currentActual = getActualSpending(region, null, category);
-        const newActual = Math.max(0, currentActual - amount);
-        saveActualSpending(region, null, category, newActual);
-        
-        if (window.location.pathname.includes('budgets.html')) {
-            renderMasterBudgetTable();
-        }
-    }
-};
 
 // Инициализация при загрузке страницы
 document.addEventListener('DOMContentLoaded', initBudgets);
