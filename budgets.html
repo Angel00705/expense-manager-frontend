@@ -61,7 +61,7 @@
                 <div class="header-controls">
                     <div class="month-selector">
                         <label>Период:</label>
-                        <select id="budgetMonth" class="form-input" onchange="changeBudgetMonth()">
+                        <select id="budgetMonth" class="form-select">
                             <!-- Месяцы будут заполнены через JavaScript -->
                         </select>
                     </div>
@@ -89,7 +89,7 @@
         <!-- Компактная статистика -->
         <div class="budgets-stats-compact">
             <div class="stat-compact">
-                <div class="stat-value" id="totalBudget">1 604 611 ₽</div>
+                <div class="stat-value" id="totalBudget">0 ₽</div>
                 <div class="stat-label">Общий бюджет</div>
             </div>
             <div class="stat-compact">
@@ -97,37 +97,41 @@
                 <div class="stat-label">Использовано</div>
             </div>
             <div class="stat-compact">
-                <div class="stat-value" id="remainingBudget">1 604 611 ₽</div>
+                <div class="stat-value" id="remainingBudget">0 ₽</div>
                 <div class="stat-label">Остаток</div>
             </div>
             <div class="stat-compact">
-                <div class="stat-value" id="regionsCount">6</div>
+                <div class="stat-value" id="regionsCount">0</div>
                 <div class="stat-label">Регионов</div>
             </div>
             <div class="stat-compact">
-                <div class="stat-value" id="ipCount">28</div>
+                <div class="stat-value" id="ipCount">0</div>
                 <div class="stat-label">ИП</div>
             </div>
         </div>
 
         <!-- Основная таблица бюджетов -->
-<div class="budgets-master-container">
-    <div class="master-table-header">
-        <h3>Бюджет мероприятий по регионам и ИП <span id="currentMonthDisplay">(Ноябрь 2025)</span></h3>
-        <div class="table-controls">
-            <button class="btn btn-sm" onclick="toggleAllRegions()">
-                <span id="toggleAllText">Развернуть все</span>
-            </button>
+        <div class="budgets-master-container">
+            <div class="master-table-header">
+                <h3>Бюджет мероприятий по регионам и ИП <span id="currentMonthDisplay">(Ноябрь 2025)</span></h3>
+                <div class="table-controls">
+                    <button class="btn btn-sm" onclick="toggleAllRegions()">
+                        <span id="toggleAllText">Развернуть все</span>
+                    </button>
+                    <button class="btn btn-sm btn-secondary" onclick="resetBudgetData()">
+                        <span class="nav-icon">🔄</span>
+                        Сбросить данные
+                    </button>
+                </div>
+            </div>
+            
+            <!-- КОМПАКТНАЯ ТАБЛИЦА -->
+            <div class="compact-table-wrapper">
+                <table class="compact-table" id="budgetTable">
+                    <!-- Данные будут загружены через JavaScript -->
+                </table>
+            </div>
         </div>
-    </div>
-    
-    <!-- КОМПАКТНАЯ ТАБЛИЦА БЕЗ ПРОКРУТКИ -->
-    <div class="compact-table-wrapper">
-        <div class="compact-table" id="compactTableBody">
-            <!-- Данные будут загружены через JavaScript -->
-        </div>
-    </div>
-</div>
 
         <!-- Кнопка сохранения -->
         <div class="save-budget-container">
