@@ -1,4 +1,4 @@
-// budgets.js - ПОЛНОСТЬЮ ПЕРЕПИСАННЫЙ С ПРАВИЛЬНОЙ ЛОГИКОЙ
+// budgets.js - ПОЛНОСТЬЮ ИСПРАВЛЕННАЯ ВЕРСИЯ
 
 let currentMonth = '2025-11';
 let expandedRegions = new Set();
