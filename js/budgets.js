@@ -1,9 +1,10 @@
-// budgets.js - ПОЛНАЯ ИСПРАВЛЕННАЯ ВЕРСИЯ С ПРАВИЛЬНЫМ ОТОБРАЖЕНИЕМ
+// budgets.js - ПОЛНАЯ ИСПРАВЛЕННАЯ ВЕРСИЯ С ПРАВИЛЬНОЙ СТАТИСТИКОЙ
 
 let currentMonth = '2025-11';
 let expandedRegions = new Set();
 let currentEditElement = null;
 let hasUnsavedChanges = false;
+let isToggleAllMode = false; // Флаг для режима "Развернуть/Свернуть все"
 
 // Глобальные данные
 let MASTER_BUDGETS = {};
@@ -193,7 +194,8 @@ function renderMasterBudgetTable() {
     
     // Первая строка заголовка - группы (объединенные ячейки)
     html += '<tr>';
-    html += '<th class="region-header">Регион / ИП</th>';
+    // ОБЪЕДИНЯЕМ РЕГИОН/ИП В ОДНУ ЯЧЕЙКУ
+    html += '<th class="region-header" rowspan="2">Регион / ИП</th>';
     
     // Основные (4 категории)
     html += '<th class="group-header" colspan="4">Основные</th>';
@@ -208,17 +210,16 @@ function renderMasterBudgetTable() {
     // Прочее (4 категории)
     html += '<th class="group-header" colspan="4">Прочее</th>';
     
-    html += '<th class="total-header">Итого</th>';
+    // ОБЪЕДИНЯЕМ ИТОГО В ОДНУ ЯЧЕЙКУ
+    html += '<th class="total-header" rowspan="2">Итого</th>';
     html += '</tr>';
     
     // Вторая строка заголовка - категории
     html += '<tr>';
-    html += '<th class="region-header"></th>';
     
     // Все категории в правильном порядке
     html += getCategoryHeaders();
     
-    html += '<th class="total-header">Всего</th>';
     html += '</tr>';
     html += '</thead>';
     
@@ -533,7 +534,7 @@ function renderTotalRow() {
     return row;
 }
 
-// ===== ОБНОВЛЁННАЯ СТАТИСТИКА =====
+// ===== ИСПРАВЛЕННАЯ СТАТИСТИКА =====
 
 function updateStatistics() {
     const allCategories = getAllCategories();
@@ -542,6 +543,7 @@ function updateStatistics() {
     let regionsCount = 0;
     let ipCount = 0;
     
+    // Определяем активные регионы для статистики
     const activeRegions = getActiveRegionsForStatistics();
     
     activeRegions.forEach(regionName => {
@@ -578,10 +580,16 @@ function updateStatistics() {
 }
 
 function getActiveRegionsForStatistics() {
+    // Если включен режим "Развернуть/Свернуть все" - показываем ВСЕ регионы
+    if (isToggleAllMode) {
+        return Object.keys(MASTER_BUDGETS);
+    }
+    
     // Если есть развернутые регионы - показываем только их
     if (expandedRegions.size > 0) {
         return Array.from(expandedRegions);
     }
+    
     // Иначе показываем все регионы
     return Object.keys(MASTER_BUDGETS);
 }
@@ -589,6 +597,9 @@ function getActiveRegionsForStatistics() {
 // ===== ИСПРАВЛЕННАЯ ЛОГИКА СВОРАЧИВАНИЯ =====
 
 function toggleRegion(region) {
+    // При обычном клике на регион выключаем режим "Развернуть/Свернуть все"
+    isToggleAllMode = false;
+    
     if (expandedRegions.has(region)) {
         expandedRegions.delete(region);
     } else {
@@ -599,7 +610,9 @@ function toggleRegion(region) {
 }
 
 function toggleAllRegions() {
-    // ИСПРАВЛЕНА ЛОГИКА: по умолчанию ВСЕ регионы развернуты
+    // Включаем режим "Развернуть/Свернуть все"
+    isToggleAllMode = true;
+    
     if (expandedRegions.size === Object.keys(MASTER_BUDGETS).length) {
         // Если все развернуты - сворачиваем все
         expandedRegions.clear();
@@ -635,6 +648,7 @@ function startEdit(element, region, ip, category, currentValue) {
         font-size: 0.7rem;
         font-weight: 600;
         outline: none;
+        padding: 0.2rem;
     `;
     
     element.innerHTML = '';
@@ -772,77 +786,6 @@ function exportBudgetToPDF() {
     showNotification('📄 Экспорт в PDF выполнен', 'success');
 }
 
-// ===== ФУНКЦИИ ПРОВЕРКИ И ВАЛИДАЦИИ =====
-
-function validateBudgetData() {
-    console.log('🔍 Проверка данных бюджетов...');
-    
-    const regions = Object.keys(MASTER_BUDGETS);
-    console.log('Регионы:', regions);
-    
-    regions.forEach(region => {
-        const regionData = MASTER_BUDGETS[region];
-        console.log(`Регион ${region}:`, regionData);
-        
-        // Проверяем ИП региона
-        const ipData = MASTER_IP_BUDGETS[region];
-        if (ipData) {
-            console.log(`ИП в ${region}:`, Object.keys(ipData));
-        }
-    });
-    
-    console.log('✅ Проверка данных завершена');
-}
-
-function validateCalculations() {
-    console.log('🧮 Проверка расчетов...');
-    
-    const allCategories = getAllCategories();
-    let calculatedTotal = 0;
-    let calculatedActual = 0;
-    
-    // Проверяем расчеты по регионам
-    Object.keys(MASTER_BUDGETS).forEach(region => {
-        let regionTotal = 0;
-        let regionActual = 0;
-        
-        allCategories.forEach(category => {
-            const planned = getPlannedBudget(region, null, category.id);
-            const actual = getActualSpending(region, null, category.id);
-            
-            regionTotal += planned;
-            regionActual += actual;
-            calculatedTotal += planned;
-            calculatedActual += actual;
-        });
-        
-        console.log(`Регион ${region}: план=${regionTotal}, факт=${regionActual}`);
-        
-        // Проверяем ИП региона
-        if (MASTER_IP_BUDGETS[region]) {
-            Object.keys(MASTER_IP_BUDGETS[region]).forEach(ipName => {
-                let ipTotal = 0;
-                let ipActual = 0;
-                
-                allCategories.forEach(category => {
-                    const planned = getPlannedBudget(region, ipName, category.id);
-                    const actual = getActualSpending(region, ipName, category.id);
-                    
-                    ipTotal += planned;
-                    ipActual += actual;
-                    calculatedTotal += planned;
-                    calculatedActual += actual;
-                });
-                
-                console.log(`  ИП ${ipName}: план=${ipTotal}, факт=${ipActual}`);
-            });
-        }
-    });
-    
-    console.log(`📊 ОБЩИЕ ИТОГИ: план=${calculatedTotal}, факт=${calculatedActual}`);
-    console.log('✅ Проверка расчетов завершена');
-}
-
 // ===== ИНИЦИАЛИЗАЦИЯ =====
 
 function initBudgets() {
@@ -863,12 +806,6 @@ function initBudgets() {
         
         // Обновляем текст кнопки
         document.getElementById('toggleAllText').textContent = 'Свернуть все';
-        
-        // Проверяем данные и расчеты
-        setTimeout(() => {
-            validateBudgetData();
-            validateCalculations();
-        }, 300);
         
         console.log('✅ Таблица бюджетов успешно инициализирована');
     }, 100);

@@ -1,4 +1,4 @@
-/* budgets.css - ИСПРАВЛЕННАЯ ВЕРСИЯ БЕЗ СКРОЛЛА ТАБЛИЦЫ */
+/* budgets.css - ИСПРАВЛЕННАЯ ВЕРСИЯ С ПРАВИЛЬНОЙ ФИКСИРОВАННОЙ ШАПКОЙ */
 
 .budgets-container {
     max-width: 100%;
@@ -43,7 +43,7 @@
     gap: 0.5rem;
 }
 
-/* ФИКСИРОВАННАЯ ШАПКА БЕЗ ПОЛУПРОЗРАЧНОСТИ */
+/* ФИКСИРОВАННАЯ ШАПКА БЕЗ СКРОЛЛА ТАБЛИЦЫ */
 .compact-table-wrapper.with-fixed-header {
     position: relative;
     overflow: visible; /* УБИРАЕМ СКРОЛЛ ТАБЛИЦЫ */
@@ -56,9 +56,11 @@
     z-index: 100;
 }
 
-.compact-table-wrapper.with-fixed-header thead tr:first-child th {
-    background: var(--bg-card); /* ПЛОТНЫЙ ФОН ДЛЯ ШАПКИ */
-    backdrop-filter: none; /* УБИРАЕМ РАЗМЫТИЕ ДЛЯ ЧЁТКОСТИ */
+.compact-table-wrapper.with-fixed-header thead th {
+    background: var(--bg-card) !important; /* ПЛОТНЫЙ ФОН ДЛЯ ШАПКИ */
+    backdrop-filter: none !important;
+    border-bottom: 2px solid var(--border);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .compact-table {
@@ -73,24 +75,25 @@
     padding: 0.6rem 0.3rem;
     text-align: center;
     border: 1px solid var(--border-light);
-    background: var(--bg-card); /* ПЛОТНЫЙ ФОН */
+    background: var(--bg-card);
     font-weight: 600;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    backdrop-filter: none; /* УБИРАЕМ РАЗМЫТИЕ */
+    backdrop-filter: none;
 }
 
+/* ОБЪЕДИНЕННАЯ ЯЧЕЙКА РЕГИОН/ИП */
 .compact-table .region-header {
     width: 180px;
-    text-align: left;
-    padding-left: 1rem;
-    background: var(--bg-card); /* ПЛОТНЫЙ ФОН */
+    text-align: center;
+    background: var(--bg-card);
+    vertical-align: middle;
 }
 
 /* ОБЪЕДИНЕННЫЕ ЗАГОЛОВКИ ГРУПП */
 .compact-table .group-header {
-    background: linear-gradient(135deg, rgba(124, 58, 237, 0.25), rgba(59, 130, 246, 0.25)); /* БОЛЕЕ ПЛОТНЫЙ */
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.25), rgba(59, 130, 246, 0.25));
     font-weight: 700;
     font-size: 0.8rem;
     backdrop-filter: none;
@@ -99,7 +102,7 @@
 .compact-table .category-header {
     width: 70px;
     padding: 0.4rem 0.2rem;
-    background: var(--bg-card); /* ПЛОТНЫЙ ФОН */
+    background: var(--bg-card);
 }
 
 .category-name {
@@ -118,13 +121,15 @@
     margin-bottom: 0.1rem;
 }
 
+/* ОБЪЕДИНЕННАЯ ЯЧЕЙКА ИТОГО */
 .compact-table .total-header {
     width: 90px;
-    background: var(--bg-card); /* ПЛОТНЫЙ ФОН */
+    background: var(--bg-card);
     font-weight: 700;
+    vertical-align: middle;
 }
 
-/* СТРОКИ ТАБЛИЦЫ */
+/* СТРОКИ ТАБЛИЦЫ - БЕЗ СКРОЛЛА */
 .compact-table td {
     padding: 0.3rem 0.2rem;
     border: 1px solid var(--border-light);
@@ -132,7 +137,7 @@
     vertical-align: middle;
     height: 70px;
     white-space: nowrap;
-    overflow: hidden;
+    overflow: visible; /* УБИРАЕМ СКРОЛЛ */
 }
 
 /* ВЫДЕЛЕННЫЕ ЯЧЕЙКИ РЕГИОНОВ */
@@ -149,17 +154,21 @@
     height: 70px;
     border-right: 1px solid var(--border-light);
     font-size: 0.9rem;
+    overflow: visible; /* УБИРАЕМ СКРОЛЛ */
 }
 
 .region-name {
     font-size: 0.85rem;
     flex: 1;
     font-weight: 700;
+    overflow: visible; /* УБИРАЕМ СКРОЛЛ */
+    white-space: normal; /* РАЗРЕШАЕМ ПЕРЕНОС ТЕКСТА */
 }
 
 .expand-icon {
     font-size: 0.8rem;
     opacity: 0.7;
+    flex-shrink: 0;
 }
 
 /* ЯЧЕЙКИ ИП - МЕНЕЕ ВЫДЕЛЕННЫЕ */
@@ -176,11 +185,14 @@
     align-items: center;
     font-weight: 500;
     opacity: 0.9;
+    overflow: visible; /* УБИРАЕМ СКРОЛЛ */
 }
 
 .ip-name {
     font-size: 0.75rem;
     font-weight: 500;
+    overflow: visible; /* УБИРАЕМ СКРОЛЛ */
+    white-space: normal; /* РАЗРЕШАЕМ ПЕРЕНОС ТЕКСТА */
 }
 
 .compact-table .total-cell {
@@ -188,6 +200,7 @@
     background: var(--bg-glass);
     font-weight: 700;
     border-left: 1px solid var(--border-light);
+    overflow: visible; /* УБИРАЕМ СКРОЛЛ */
 }
 
 /* ЦВЕТА РЕГИОНОВ - БОЛЕЕ ВЫРАЗИТЕЛЬНЫЕ */
@@ -226,7 +239,7 @@
     font-weight: 800;
 }
 
-/* ДИЗАЙН ЯЧЕЕК С БЮДЖЕТАМИ */
+/* ДИЗАЙН ЯЧЕЕК С БЮДЖЕТАМИ - БЕЗ СКРОЛЛА */
 .budget-cell-content {
     display: flex;
     flex-direction: column;
@@ -235,6 +248,7 @@
     justify-content: center;
     height: 60px;
     padding: 0.2rem 0.1rem;
+    overflow: visible; /* УБИРАЕМ СКРОЛЛ */
 }
 
 .budget-amount {
@@ -252,6 +266,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: visible; /* УБИРАЕМ СКРОЛЛ */
 }
 
 .budget-amount.editable:hover {
@@ -277,6 +292,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: visible; /* УБИРАЕМ СКРОЛЛ */
 }
 
 .budget-remaining {
@@ -289,6 +305,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: visible; /* УБИРАЕМ СКРОЛЛ */
 }
 
 .remaining-normal {
@@ -304,21 +321,6 @@
 .remaining-danger {
     background: rgba(239, 68, 68, 0.2);
     color: #ef4444;
-}
-
-/* ИТОГОВЫЕ ЯЧЕЙКИ */
-.total-amount {
-    font-size: 0.8rem;
-    font-weight: 700;
-    color: var(--text-primary);
-    margin-bottom: 0.15rem;
-}
-
-.total-remaining {
-    font-size: 0.7rem;
-    font-weight: 600;
-    padding: 0.15rem 0.25rem;
-    border-radius: 3px;
 }
 
 /* СТАТИСТИКА */
@@ -521,35 +523,4 @@
 .btn-sm {
     padding: 0.4rem 0.8rem;
     font-size: 0.8rem;
-}
-
-/* АДАПТИВНОСТЬ */
-@media (max-width: 768px) {
-    .budgets-container {
-        padding: 0.5rem;
-    }
-    
-    .header-main {
-        flex-direction: column;
-        gap: 1rem;
-    }
-    
-    .header-controls {
-        width: 100%;
-        justify-content: space-between;
-    }
-    
-    .compact-table .region-header,
-    .compact-table .region-cell,
-    .compact-table .ip-cell {
-        width: 120px;
-    }
-    
-    .compact-table .category-header {
-        width: 60px;
-    }
-    
-    .compact-table .total-header {
-        width: 70px;
-    }
 }
