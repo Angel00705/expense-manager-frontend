@@ -1,10 +1,10 @@
-// budgets.js - ПОЛНАЯ ИСПРАВЛЕННАЯ ВЕРСИЯ С ПРАВИЛЬНОЙ СТАТИСТИКОЙ
+// budgets.js - ПОЛНОСТЬЮ ПЕРЕПИСАННЫЙ С ПРАВИЛЬНОЙ ЛОГИКОЙ
 
 let currentMonth = '2025-11';
 let expandedRegions = new Set();
 let currentEditElement = null;
 let hasUnsavedChanges = false;
-let isToggleAllMode = false; // Флаг для режима "Развернуть/Свернуть все"
+let isToggleAllMode = false;
 
 // Глобальные данные
 let MASTER_BUDGETS = {};
@@ -427,7 +427,7 @@ function renderIPRow(ipName, region) {
     
     let row = `<tr class="ip-row" data-region="${region}">`;
     
-    // Ячейка ИП - МЕНЕЕ ВЫДЕЛЕННАЯ
+    // Ячейка ИП - МЕНЕЕ ВЫДЕЛЕННЫЕ
     row += `<td class="ip-cell">`;
     row += `<span class="ip-name">${ipName}</span>`;
     row += `</td>`;
@@ -534,9 +534,13 @@ function renderTotalRow() {
     return row;
 }
 
-// ===== ИСПРАВЛЕННАЯ СТАТИСТИКА =====
+// ===== ИСПРАВЛЕННАЯ ЛОГИКА СТАТИСТИКИ =====
 
 function updateStatistics() {
+    console.log("🔄 Обновление статистики...");
+    console.log("Режим isToggleAllMode:", isToggleAllMode);
+    console.log("Развернутые регионы:", Array.from(expandedRegions));
+
     const allCategories = getAllCategories();
     let totalBudget = 0;
     let usedBudget = 0;
@@ -545,7 +549,8 @@ function updateStatistics() {
     
     // Определяем активные регионы для статистики
     const activeRegions = getActiveRegionsForStatistics();
-    
+    console.log("Активные регионы для статистики:", activeRegions);
+
     activeRegions.forEach(regionName => {
         regionsCount++;
         
@@ -577,51 +582,85 @@ function updateStatistics() {
     document.getElementById('remainingBudget').textContent = formatCurrency(remainingBudget) + ' ₽';
     document.getElementById('regionsCount').textContent = regionsCount;
     document.getElementById('ipCount').textContent = ipCount;
+
+    console.log("📊 Итоговая статистика:", {
+        totalBudget: formatCurrency(totalBudget) + ' ₽',
+        usedBudget: formatCurrency(usedBudget) + ' ₽', 
+        remainingBudget: formatCurrency(remainingBudget) + ' ₽',
+        regionsCount,
+        ipCount
+    });
 }
 
 function getActiveRegionsForStatistics() {
-    // Если включен режим "Развернуть/Свернуть все" - показываем ВСЕ регионы
+    console.log("🔍 Определение активных регионов для статистики:");
+    console.log("- isToggleAllMode:", isToggleAllMode);
+    console.log("- expandedRegions size:", expandedRegions.size);
+    console.log("- Все регионы:", Object.keys(MASTER_BUDGETS));
+    
+    // Режим "Развернуть/Свернуть все" - ВСЕ регионы
     if (isToggleAllMode) {
+        console.log("✅ Режим 'Развернуть/Свернуть все' - ВСЕ регионы");
         return Object.keys(MASTER_BUDGETS);
     }
     
     // Если есть развернутые регионы - показываем только их
     if (expandedRegions.size > 0) {
+        console.log("✅ Есть развернутые регионы - только они");
         return Array.from(expandedRegions);
     }
     
-    // Иначе показываем все регионы
+    // Если нет развернутых регионов - показываем все регионы (только заголовки)
+    console.log("✅ Нет развернутых регионов - ВСЕ регионы (только заголовки)");
     return Object.keys(MASTER_BUDGETS);
 }
 
 // ===== ИСПРАВЛЕННАЯ ЛОГИКА СВОРАЧИВАНИЯ =====
 
 function toggleRegion(region) {
-    // При обычном клике на регион выключаем режим "Развернуть/Свернуть все"
+    console.log(`🎯 Клик по региону: ${region}`);
+    console.log(`До: expandedRegions =`, Array.from(expandedRegions));
+    
+    // При обычном клике на регион ВЫКЛЮЧАЕМ режим "Развернуть/Свернуть все"
     isToggleAllMode = false;
+    console.log(`isToggleAllMode установлен в: ${isToggleAllMode}`);
     
     if (expandedRegions.has(region)) {
         expandedRegions.delete(region);
+        console.log(`❌ Регион ${region} свернут`);
     } else {
         expandedRegions.add(region);
+        console.log(`✅ Регион ${region} развернут`);
     }
+    
+    console.log(`После: expandedRegions =`, Array.from(expandedRegions));
+    
     renderMasterBudgetTable();
     updateStatistics();
 }
 
 function toggleAllRegions() {
-    // Включаем режим "Развернуть/Свернуть все"
+    console.log(`🎯 Кнопка 'Развернуть/Свернуть все'`);
+    console.log(`До: expandedRegions =`, Array.from(expandedRegions));
+    
+    // ВКЛЮЧАЕМ режим "Развернуть/Свернуть все"
     isToggleAllMode = true;
+    console.log(`isToggleAllMode установлен в: ${isToggleAllMode}`);
     
     if (expandedRegions.size === Object.keys(MASTER_BUDGETS).length) {
         // Если все развернуты - сворачиваем все
         expandedRegions.clear();
         document.getElementById('toggleAllText').textContent = 'Развернуть все';
+        console.log(`❌ Все регионы свернуты`);
     } else {
         // Иначе - разворачиваем все
         Object.keys(MASTER_BUDGETS).forEach(region => expandedRegions.add(region));
         document.getElementById('toggleAllText').textContent = 'Свернуть все';
+        console.log(`✅ Все регионы развернуты`);
     }
+    
+    console.log(`После: expandedRegions =`, Array.from(expandedRegions));
+    
     renderMasterBudgetTable();
     updateStatistics();
 }
@@ -797,6 +836,7 @@ function initBudgets() {
     
     // ПО УМОЛЧАНИЮ ВСЕ РЕГИОНЫ РАЗВЕРНУТЫ
     Object.keys(MASTER_BUDGETS).forEach(region => expandedRegions.add(region));
+    isToggleAllMode = true; // По умолчанию включен режим "все развернуты"
     
     // Даем время на отрисовку DOM
     setTimeout(() => {
