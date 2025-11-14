@@ -118,15 +118,11 @@
                     <button class="btn btn-sm" onclick="toggleAllRegions()">
                         <span id="toggleAllText">Развернуть все</span>
                     </button>
-                    <button class="btn btn-sm btn-secondary" onclick="resetBudgetData()">
-                        <span class="nav-icon">🔄</span>
-                        Сбросить данные
-                    </button>
                 </div>
             </div>
             
-            <!-- КОМПАКТНАЯ ТАБЛИЦА -->
-            <div class="compact-table-wrapper">
+            <!-- КОМПАКТНАЯ ТАБЛИЦА С ФИКСИРОВАННОЙ ШАПКОЙ -->
+            <div class="compact-table-wrapper with-fixed-header">
                 <table class="compact-table" id="budgetTable">
                     <!-- Данные будут загружены через JavaScript -->
                 </table>

@@ -1,12 +1,11 @@
-// budgets.js - ФИНАЛЬНАЯ ВЕРСИЯ (CSV только для инициализации)
+// budgets.js - ПОЛНАЯ ИСПРАВЛЕННАЯ ВЕРСИЯ С ПРАВИЛЬНЫМ ОТОБРАЖЕНИЕМ
 
 let currentMonth = '2025-11';
 let expandedRegions = new Set();
 let currentEditElement = null;
 let hasUnsavedChanges = false;
-let currentFilterRegion = null;
 
-// Глобальные данные (инициализируются из CSV один раз)
+// Глобальные данные
 let MASTER_BUDGETS = {};
 let MASTER_IP_BUDGETS = {};
 
@@ -67,126 +66,17 @@ const BUDGET_CATEGORIES_GROUPED = [
     }
 ];
 
-// Цвета для регионов
-const REGION_COLORS = [
-    'region-0', // Астрахань - фиолетовый
-    'region-1', // Бурятия - синий  
-    'region-2', // Курган - зеленый
-    'region-3', // Калмыкия - оранжевый
-    'region-4', // Мордовия - розовый
-    'region-5'  // Удмуртия - пурпурный
-];
-
-// ===== ОСНОВНЫЕ ФУНКЦИИ =====
-
-function getAllCategories() {
-    const allCategories = [];
-    BUDGET_CATEGORIES_GROUPED.forEach(group => {
-        allCategories.push(...group.categories);
-    });
-    return allCategories;
-}
-
-// ===== СИСТЕМА ИНИЦИАЛИЗАЦИИ ДАННЫХ =====
-
-function initializeBudgetData() {
-    console.log('🎯 Инициализация данных бюджетов...');
-    
-    // Проверяем, были ли данные уже инициализированы
-    const isInitialized = localStorage.getItem('budget_data_initialized');
-    
-    if (!isInitialized && window.csvData) {
-        console.log('📥 Первоначальная загрузка данных из CSV...');
-        // Первый запуск - загружаем из CSV
-        const parsedData = parseBudgetCSV(window.csvData);
-        MASTER_BUDGETS = parsedData.regions;
-        MASTER_IP_BUDGETS = parsedData.ipDetailed;
-        
-        // Сохраняем мастер-данные в LocalStorage
-        localStorage.setItem('master_budgets', JSON.stringify(MASTER_BUDGETS));
-        localStorage.setItem('master_ip_budgets', JSON.stringify(MASTER_IP_BUDGETS));
-        localStorage.setItem('budget_data_initialized', 'true');
-        
-        console.log('✅ Данные инициализированы из CSV');
-    } else {
-        console.log('📋 Загрузка данных из LocalStorage...');
-        // Последующие запуски - загружаем из LocalStorage
-        const savedMasterBudgets = localStorage.getItem('master_budgets');
-        const savedMasterIPBudgets = localStorage.getItem('master_ip_budgets');
-        
-        if (savedMasterBudgets && savedMasterIPBudgets) {
-            MASTER_BUDGETS = JSON.parse(savedMasterBudgets);
-            MASTER_IP_BUDGETS = JSON.parse(savedMasterIPBudgets);
-            console.log('✅ Данные загружены из LocalStorage');
-        } else {
-            // Резервный вариант - используем статические данные
-            console.warn('⚠️ Данные не найдены, используем статические');
-            MASTER_BUDGETS = getStaticBudgets();
-            MASTER_IP_BUDGETS = getStaticIPBudgets();
-        }
-    }
-    
-    console.log('📊 Загружено:', {
-        регионов: Object.keys(MASTER_BUDGETS).length,
-        ИП: Object.keys(MASTER_IP_BUDGETS).reduce((acc, region) => acc + Object.keys(MASTER_IP_BUDGETS[region]).length, 0)
-    });
-}
-
-function getStaticBudgets() {
-    return {
-        'Астрахань': {
-            products: 5000, household: 3000, medicaments: 1000, stationery: 500,
-            cafe: 1500, polygraphy: 200, events: 2000, repairs: 10000,
-            salary: 15000, azs: 1000, shipping: 3000, regionalPurchase: 5000,
-            insurance: 5000, charity: 75000, equipment: 100000, packaging: 0,
-            cleaning: 2000, checks: 20000, carsharing: 3000, rent: 41780,
-            comm: 5000, internet: 1950, ipSalary: 150000
-        },
-        'Бурятия': {
-            products: 5000, household: 4000, medicaments: 1000, stationery: 500,
-            cafe: 1000, polygraphy: 200, events: 2000, repairs: 10000,
-            salary: 10000, azs: 1000, shipping: 3000, regionalPurchase: 4000,
-            insurance: 5000, charity: 0, equipment: 0, packaging: 0,
-            cleaning: 2000, checks: 0, carsharing: 0, rent: 49940,
-            comm: 4000, internet: 15900, ipSalary: 135000
-        },
-        'Курган': {
-            products: 3000, household: 5000, medicaments: 1000, stationery: 1000,
-            cafe: 2000, polygraphy: 300, events: 2500, repairs: 10000,
-            salary: 15000, azs: 1500, shipping: 3000, regionalPurchase: 7000,
-            insurance: 5000, charity: 0, equipment: 0, packaging: 0,
-            cleaning: 2000, checks: 40000, carsharing: 0, rent: 69496,
-            comm: 7000, internet: 27462, ipSalary: 90000
-        },
-        'Калмыкия': {
-            products: 3000, household: 4000, medicaments: 1000, stationery: 500,
-            cafe: 1000, polygraphy: 200, events: 1000, repairs: 10000,
-            salary: 10000, azs: 1000, shipping: 3000, regionalPurchase: 3000,
-            insurance: 5000, charity: 0, equipment: 0, packaging: 0,
-            cleaning: 2000, checks: 0, carsharing: 0, rent: 43000,
-            comm: 3000, internet: 12500, ipSalary: 60000
-        },
-        'Мордовия': {
-            products: 4000, household: 3000, medicaments: 1000, stationery: 500,
-            cafe: 1000, polygraphy: 200, events: 1500, repairs: 10000,
-            salary: 10000, azs: 1000, shipping: 3000, regionalPurchase: 3000,
-            insurance: 5000, charity: 0, equipment: 0, packaging: 0,
-            cleaning: 2000, checks: 0, carsharing: 0, rent: 26090,
-            comm: 3000, internet: 10704, ipSalary: 60000
-        },
-        'Удмуртия': {
-            products: 5000, household: 4000, medicaments: 1000, stationery: 1000,
-            cafe: 2000, polygraphy: 300, events: 2500, repairs: 10000,
-            salary: 15000, azs: 1500, shipping: 3000, regionalPurchase: 6000,
-            insurance: 5000, charity: 0, equipment: 0, packaging: 0,
-            cleaning: 2000, checks: 0, carsharing: 0, rent: 58639,
-            comm: 6000, internet: 26750, ipSalary: 150000
-        }
-    };
-}
-
-function getStaticIPBudgets() {
-    return {
+// Статические данные
+const STATIC_DATA = {
+    regions: {
+        'Астрахань': { products: 5000, household: 3000, medicaments: 1000, stationery: 500, cafe: 1500, polygraphy: 200, events: 2000, repairs: 10000, salary: 15000, azs: 1000, shipping: 3000, regionalPurchase: 5000, insurance: 5000, charity: 75000, equipment: 100000, packaging: 0, cleaning: 2000, checks: 20000, carsharing: 3000, rent: 41780, comm: 5000, internet: 1950, ipSalary: 150000 },
+        'Бурятия': { products: 5000, household: 4000, medicaments: 1000, stationery: 500, cafe: 1000, polygraphy: 200, events: 2000, repairs: 10000, salary: 10000, azs: 1000, shipping: 3000, regionalPurchase: 4000, insurance: 5000, charity: 0, equipment: 0, packaging: 0, cleaning: 2000, checks: 0, carsharing: 0, rent: 49940, comm: 4000, internet: 15900, ipSalary: 135000 },
+        'Курган': { products: 3000, household: 5000, medicaments: 1000, stationery: 1000, cafe: 2000, polygraphy: 300, events: 2500, repairs: 10000, salary: 15000, azs: 1500, shipping: 3000, regionalPurchase: 7000, insurance: 5000, charity: 0, equipment: 0, packaging: 0, cleaning: 2000, checks: 40000, carsharing: 0, rent: 69496, comm: 7000, internet: 27462, ipSalary: 90000 },
+        'Калмыкия': { products: 3000, household: 4000, medicaments: 1000, stationery: 500, cafe: 1000, polygraphy: 200, events: 1000, repairs: 10000, salary: 10000, azs: 1000, shipping: 3000, regionalPurchase: 3000, insurance: 5000, charity: 0, equipment: 0, packaging: 0, cleaning: 2000, checks: 0, carsharing: 0, rent: 43000, comm: 3000, internet: 12500, ipSalary: 60000 },
+        'Мордовия': { products: 4000, household: 3000, medicaments: 1000, stationery: 500, cafe: 1000, polygraphy: 200, events: 1500, repairs: 10000, salary: 10000, azs: 1000, shipping: 3000, regionalPurchase: 3000, insurance: 5000, charity: 0, equipment: 0, packaging: 0, cleaning: 2000, checks: 0, carsharing: 0, rent: 26090, comm: 3000, internet: 10704, ipSalary: 60000 },
+        'Удмуртия': { products: 5000, household: 4000, medicaments: 1000, stationery: 1000, cafe: 2000, polygraphy: 300, events: 2500, repairs: 10000, salary: 15000, azs: 1500, shipping: 3000, regionalPurchase: 6000, insurance: 5000, charity: 0, equipment: 0, packaging: 0, cleaning: 2000, checks: 0, carsharing: 0, rent: 58639, comm: 6000, internet: 26750, ipSalary: 150000 }
+    },
+    ip: {
         'Астрахань': {
             'ИП Крутоусов': { products: 5000, polygraphy: 200, repairs: 10000, shipping: 3000, azs: 1000, rent: 8000, comm: 1000, ipSalary: 30000 },
             'ИП Храмова': { household: 3000, azs: 1000, shipping: 1000, rent: 10000, comm: 1000, ipSalary: 30000 },
@@ -227,10 +117,34 @@ function getStaticIPBudgets() {
             'ИП Самсонов': { cafe: 2000, shipping: 1000, rent: 12418, comm: 1000, internet: 4750 },
             'ИП Шефер': { events: 2500, shipping: 1000, rent: 14535, comm: 1000, internet: 3500, ipSalary: 30000 }
         }
-    };
+    }
+};
+
+// ===== ОСНОВНЫЕ ФУНКЦИИ =====
+
+function getAllCategories() {
+    const allCategories = [];
+    BUDGET_CATEGORIES_GROUPED.forEach(group => {
+        allCategories.push(...group.categories);
+    });
+    return allCategories;
 }
 
-// ===== СИСТЕМА ХРАНЕНИЯ (работа с пользовательскими изменениями) =====
+// ===== СИСТЕМА ИНИЦИАЛИЗАЦИИ =====
+
+function initializeBudgetData() {
+    console.log('🎯 Инициализация данных бюджетов...');
+    
+    MASTER_BUDGETS = STATIC_DATA.regions;
+    MASTER_IP_BUDGETS = STATIC_DATA.ip;
+    
+    console.log('✅ Данные инициализированы:', {
+        регионов: Object.keys(MASTER_BUDGETS).length,
+        ИП: Object.keys(MASTER_IP_BUDGETS).reduce((acc, region) => acc + Object.keys(MASTER_IP_BUDGETS[region]).length, 0)
+    });
+}
+
+// ===== СИСТЕМА ХРАНЕНИЯ =====
 
 function getBudgetKey(region, ip, category) {
     return `budget_${currentMonth}_${region}_${ip || 'region'}_${category}`;
@@ -241,13 +155,7 @@ function getActualSpending(region, ip, category) {
     return parseFloat(localStorage.getItem(key)) || 0;
 }
 
-function saveActualSpending(region, ip, category, amount) {
-    const key = getBudgetKey(region, ip, category) + '_actual';
-    localStorage.setItem(key, amount.toString());
-}
-
 function getPlannedBudget(region, ip, category) {
-    // Сначала проверяем пользовательские изменения
     const key = getBudgetKey(region, ip, category) + '_planned';
     const saved = localStorage.getItem(key);
     
@@ -255,7 +163,6 @@ function getPlannedBudget(region, ip, category) {
         return parseFloat(saved);
     }
     
-    // Если пользовательских изменений нет, используем мастер-данные
     if (ip) {
         return MASTER_IP_BUDGETS[region]?.[ip]?.[category] || 0;
     } else {
@@ -266,213 +173,215 @@ function getPlannedBudget(region, ip, category) {
 function savePlannedBudget(region, ip, category, amount) {
     const key = getBudgetKey(region, ip, category) + '_planned';
     localStorage.setItem(key, amount.toString());
-}
-
-// ===== CSV ПАРСИНГ (только для первоначальной загрузки) =====
-
-function parseBudgetCSV(csvText) {
-    console.log('🔍 Парсинг CSV для инициализации...');
-    
-    const regionsData = {};
-    const ipData = {};
-    const lines = csvText.split('\n').filter(line => line.trim() !== '');
-    
-    // Парсим общие бюджеты регионов
-    parseRegionsBudget(lines.slice(1, 7), regionsData);
-    
-    // Парсим детальные данные по ИП
-    parseIPData(lines.slice(14, 42), ipData);
-    
-    console.log('✅ Парсинг завершен');
-    
-    return {
-        regions: regionsData,
-        ipDetailed: ipData
-    };
-}
-
-function parseRegionsBudget(regionLines, regionsData) {
-    const categories = [
-        'products', 'household', 'medicaments', 'stationery',
-        'cafe', 'polygraphy', 'events', 'repairs',
-        'salary', 'azs', 'shipping', 'regionalPurchase',
-        'insurance', 'charity', 'equipment', 'packaging',
-        'cleaning', 'checks', 'carsharing', 'rent',
-        'comm', 'internet', 'ipSalary'
-    ];
-
-    regionLines.forEach(line => {
-        const cols = parseCSVLine(line);
-        if (cols.length > 1 && cols[0] && !cols[0].includes('Итого')) {
-            const regionName = cols[0].trim();
-            const budget = {};
-            
-            categories.forEach((category, index) => {
-                if (cols[index + 2]) {
-                    budget[category] = parseCurrency(cols[index + 2]);
-                }
-            });
-            
-            regionsData[regionName] = budget;
-        }
-    });
-}
-
-function parseIPData(ipLines, ipData) {
-    ipLines.forEach(line => {
-        const cols = parseCSVLine(line);
-        if (cols.length > 2 && cols[0] && cols[0].startsWith('ИП')) {
-            const ipName = cols[0].trim();
-            const region = cols[1] ? cols[1].trim() : '';
-            
-            if (region && ipName) {
-                if (!ipData[region]) {
-                    ipData[region] = {};
-                }
-                
-                const ipBudget = parseIPBudget(cols);
-                ipData[region][ipName] = ipBudget;
-            }
-        }
-    });
-}
-
-function parseIPBudget(columns) {
-    const budget = {};
-    const categoryMapping = {
-        2: 'products',      3: 'household',    4: 'medicaments',   5: 'stationery',
-        6: 'cafe',          7: 'polygraphy',   8: 'events',        9: 'repairs',
-        10: 'salary',       11: 'azs',         12: 'shipping',     13: 'regionalPurchase',
-        14: 'insurance',    15: 'charity',     16: 'equipment',    17: 'packaging',
-        18: 'cleaning',     19: 'checks',      20: 'carsharing',   21: 'rent',
-        22: 'comm',         23: 'internet',    24: 'ipSalary'
-    };
-
-    Object.entries(categoryMapping).forEach(([colIndex, category]) => {
-        const value = columns[parseInt(colIndex)];
-        if (value && value.trim() && value !== '?') {
-            const numericValue = parseCurrency(value);
-            if (numericValue > 0) {
-                budget[category] = numericValue;
-            }
-        }
-    });
-
-    return budget;
-}
-
-function parseCurrency(value) {
-    if (!value || value === '?' || value === '-') return 0;
-    
-    const cleanValue = value.toString()
-        .replace(/\s/g, '')
-        .replace(',', '.')
-        .replace(/[^\d.-]/g, '');
-    
-    return parseFloat(cleanValue) || 0;
-}
-
-function parseCSVLine(line) {
-    const result = [];
-    let current = '';
-    let inQuotes = false;
-    
-    for (let i = 0; i < line.length; i++) {
-        const char = line[i];
-        
-        if (char === '"') {
-            inQuotes = !inQuotes;
-        } else if (char === ',' && !inQuotes) {
-            result.push(current.trim());
-            current = '';
-        } else {
-            current += char;
-        }
-    }
-    
-    result.push(current.trim());
-    return result;
+    hasUnsavedChanges = true;
+    updateSaveButton();
 }
 
 // ===== ФУНКЦИИ РЕНДЕРИНГА =====
 
 function renderMasterBudgetTable() {
-    const tableBody = document.getElementById('compactTableBody');
-    if (!tableBody) {
-        console.error('Элемент compactTableBody не найден!');
+    const table = document.getElementById('budgetTable');
+    if (!table) {
+        console.error('Элемент budgetTable не найден!');
         return;
     }
     
-    tableBody.innerHTML = '';
+    table.innerHTML = '';
     
-    let html = '<div class="compact-table">';
+    // Создаем заголовок таблицы с ОБЪЕДИНЕННЫМИ ЯЧЕЙКАМИ
+    let html = '<thead>';
     
-    // Основной заголовок с группами
-    html += '<div class="table-header-row">';
-    html += '<div class="compact-header-cell region-cell">Регион / ИП</div>';
+    // Первая строка заголовка - группы (объединенные ячейки)
+    html += '<tr>';
+    html += '<th class="region-header">Регион / ИП</th>';
     
-    BUDGET_CATEGORIES_GROUPED.forEach(group => {
-        html += `<div class="compact-header-cell group-header" style="width: ${group.categories.length * 70}px; min-width: ${group.categories.length * 70}px;">`;
-        html += `<div class="group-name">${group.group}</div>`;
-        html += '</div>';
-    });
+    // Основные (4 категории)
+    html += '<th class="group-header" colspan="4">Основные</th>';
+    // Бизнес (4 категории)
+    html += '<th class="group-header" colspan="4">Бизнес</th>';
+    // Транспорт (3 категории)
+    html += '<th class="group-header" colspan="3">Транспорт</th>';
+    // Финансы (4 категории)
+    html += '<th class="group-header" colspan="4">Финансы</th>';
+    // Офис (4 категории)
+    html += '<th class="group-header" colspan="4">Офис</th>';
+    // Прочее (4 категории)
+    html += '<th class="group-header" colspan="4">Прочее</th>';
     
-    html += '<div class="compact-header-cell total-cell">Итого</div>';
-    html += '</div>';
+    html += '<th class="total-header">Итого</th>';
+    html += '</tr>';
     
-    // Подзаголовок с категориями
-    html += '<div class="table-subheader-row">';
-    html += '<div class="compact-header-cell region-cell"></div>';
+    // Вторая строка заголовка - категории
+    html += '<tr>';
+    html += '<th class="region-header"></th>';
     
-    BUDGET_CATEGORIES_GROUPED.forEach(group => {
-        group.categories.forEach(category => {
-            html += `
-                <div class="compact-header-cell category-header">
-                    <div class="category-emoji">${category.emoji}</div>
-                    <div class="category-name">${category.name}</div>
-                </div>
-            `;
-        });
-    });
+    // Все категории в правильном порядке
+    html += getCategoryHeaders();
     
-    html += '<div class="compact-header-cell total-cell">Всего</div>';
-    html += '</div>';
+    html += '<th class="total-header">Всего</th>';
+    html += '</tr>';
+    html += '</thead>';
+    
+    // Тело таблицы
+    html += '<tbody>';
     
     // Строки регионов
     Object.keys(MASTER_BUDGETS).forEach((region, index) => {
-        html += renderCompactRegionRow(region, index);
+        html += renderRegionRow(region, index);
         
+        // Строки ИП (если регион развернут)
         if (expandedRegions.has(region)) {
             const ipData = MASTER_IP_BUDGETS[region];
             if (ipData) {
                 Object.keys(ipData).forEach(ipName => {
-                    html += renderCompactIPRow(ipName, region);
+                    html += renderIPRow(ipName, region);
                 });
             }
         }
     });
     
     // Итоговая строка
-    html += renderCompactTotalRow();
-    html += '</div>';
+    html += renderTotalRow();
+    html += '</tbody>';
     
-    tableBody.innerHTML = html;
+    table.innerHTML = html;
     
-    setTimeout(adjustTableWidth, 100);
+    updateStatistics();
 }
 
-function renderCompactRegionRow(region, index) {
-    const regionClass = REGION_COLORS[index % REGION_COLORS.length];
+// Вспомогательная функция для заголовков категорий
+function getCategoryHeaders() {
+    let headers = '';
+    
+    // Основные
+    headers += `
+        <th class="category-header">
+            <div class="category-emoji">🛒</div>
+            <div class="category-name">Продукты</div>
+        </th>
+        <th class="category-header">
+            <div class="category-emoji">🏠</div>
+            <div class="category-name">Хоз. товары</div>
+        </th>
+        <th class="category-header">
+            <div class="category-emoji">💊</div>
+            <div class="category-name">Медикаменты</div>
+        </th>
+        <th class="category-header">
+            <div class="category-emoji">📎</div>
+            <div class="category-name">Канцелярия</div>
+        </th>
+    `;
+    
+    // Бизнес
+    headers += `
+        <th class="category-header">
+            <div class="category-emoji">☕</div>
+            <div class="category-name">Кафе</div>
+        </th>
+        <th class="category-header">
+            <div class="category-emoji">📄</div>
+            <div class="category-name">Полиграфия</div>
+        </th>
+        <th class="category-header">
+            <div class="category-emoji">🎪</div>
+            <div class="category-name">Мероприятия</div>
+        </th>
+        <th class="category-header">
+            <div class="category-emoji">🔧</div>
+            <div class="category-name">Ремонт</div>
+        </th>
+    `;
+    
+    // Транспорт
+    headers += `
+        <th class="category-header">
+            <div class="category-emoji">⛽</div>
+            <div class="category-name">АЗС</div>
+        </th>
+        <th class="category-header">
+            <div class="category-emoji">📦</div>
+            <div class="category-name">Отправка</div>
+        </th>
+        <th class="category-header">
+            <div class="category-emoji">🚗</div>
+            <div class="category-name">Каршеринг</div>
+        </th>
+    `;
+    
+    // Финансы
+    headers += `
+        <th class="category-header">
+            <div class="category-emoji">👨‍💼</div>
+            <div class="category-name">ЗП упр.</div>
+        </th>
+        <th class="category-header">
+            <div class="category-emoji">💼</div>
+            <div class="category-name">ЗП ИП</div>
+        </th>
+        <th class="category-header">
+            <div class="category-emoji">🛡️</div>
+            <div class="category-name">Страхование</div>
+        </th>
+        <th class="category-header">
+            <div class="category-emoji">❤️</div>
+            <div class="category-name">Благотв.</div>
+        </th>
+    `;
+    
+    // Офис
+    headers += `
+        <th class="category-header">
+            <div class="category-emoji">🏢</div>
+            <div class="category-name">Аренда</div>
+        </th>
+        <th class="category-header">
+            <div class="category-emoji">💡</div>
+            <div class="category-name">Коммуналка</div>
+        </th>
+        <th class="category-header">
+            <div class="category-emoji">🌐</div>
+            <div class="category-name">Интернет</div>
+        </th>
+        <th class="category-header">
+            <div class="category-emoji">🧹</div>
+            <div class="category-name">Клининг</div>
+        </th>
+    `;
+    
+    // Прочее
+    headers += `
+        <th class="category-header">
+            <div class="category-emoji">🛍️</div>
+            <div class="category-name">Покупка</div>
+        </th>
+        <th class="category-header">
+            <div class="category-emoji">💻</div>
+            <div class="category-name">Техника</div>
+        </th>
+        <th class="category-header">
+            <div class="category-emoji">🎁</div>
+            <div class="category-name">Упаковка</div>
+        </th>
+        <th class="category-header">
+            <div class="category-emoji">🧾</div>
+            <div class="category-name">Чеки</div>
+        </th>
+    `;
+    
+    return headers;
+}
+
+function renderRegionRow(region, index) {
     const allCategories = getAllCategories();
     
-    let row = `<div class="compact-row region-row ${regionClass}" data-region="${region}">`;
+    let row = `<tr class="region-row region-${index % 6}" data-region="${region}">`;
     
-    // Ячейка региона
-    row += `<div class="compact-cell region-cell" onclick="toggleRegion('${region}')">`;
-    row += `<span class="status-indicator status-normal"></span>`;
+    // Ячейка региона - ВЫДЕЛЕННАЯ
+    row += `<td class="region-cell" onclick="toggleRegion('${region}')">`;
     row += `<span class="region-name">${region}</span>`;
     row += `<span class="expand-icon">${expandedRegions.has(region) ? '📂' : '📁'}</span>`;
-    row += `</div>`;
+    row += `</td>`;
     
     let regionTotal = 0;
     let regionActual = 0;
@@ -487,37 +396,40 @@ function renderCompactRegionRow(region, index) {
         regionTotal += planned;
         regionActual += actual;
         
-        row += `<div class="compact-cell">`;
+        row += `<td>`;
         row += `<div class="budget-cell-content">`;
         row += `<div class="budget-amount editable" onclick="startEdit(this, '${region}', null, '${category.id}', ${planned})">${formatCurrency(planned)}</div>`;
         row += `<div class="budget-actual">${formatCurrency(actual)}</div>`;
-        row += `<div class="budget-remaining ${status.class.replace('status-', 'remaining-')}">${formatCurrency(remaining)}</div>`;
+        row += `<div class="budget-remaining ${status.class}">${formatCurrency(remaining)}</div>`;
         row += `</div>`;
-        row += `</div>`;
+        row += `</td>`;
     });
     
-    // Итоговая ячейка региона
+    // Итоговая ячейка региона - ВСЕ 3 СТРОЧКИ
     const regionRemaining = regionTotal - regionActual;
     const regionStatus = getBudgetStatus(regionTotal, regionActual);
     
-    row += `<div class="compact-cell total-cell region-total ${regionStatus.class}">`;
-    row += `<div class="total-amount">${formatCurrency(regionTotal)}</div>`;
-    row += `<div class="total-remaining ${regionStatus.class.replace('status-', 'remaining-')}">${formatCurrency(regionRemaining)}</div>`;
+    row += `<td class="total-cell">`;
+    row += `<div class="budget-cell-content">`;
+    row += `<div class="budget-amount">${formatCurrency(regionTotal)}</div>`;
+    row += `<div class="budget-actual">${formatCurrency(regionActual)}</div>`;
+    row += `<div class="budget-remaining ${regionStatus.class}">${formatCurrency(regionRemaining)}</div>`;
     row += `</div>`;
+    row += `</td>`;
     
-    row += `</div>`;
+    row += `</tr>`;
     return row;
 }
 
-function renderCompactIPRow(ipName, region) {
+function renderIPRow(ipName, region) {
     const allCategories = getAllCategories();
     
-    let row = `<div class="compact-row ip-row ${expandedRegions.has(region) ? '' : 'collapsed'}" data-region="${region}">`;
+    let row = `<tr class="ip-row" data-region="${region}">`;
     
-    // Ячейка ИП
-    row += `<div class="compact-cell ip-cell">`;
+    // Ячейка ИП - МЕНЕЕ ВЫДЕЛЕННАЯ
+    row += `<td class="ip-cell">`;
     row += `<span class="ip-name">${ipName}</span>`;
-    row += `</div>`;
+    row += `</td>`;
     
     let ipTotal = 0;
     let ipActual = 0;
@@ -532,187 +444,107 @@ function renderCompactIPRow(ipName, region) {
         ipTotal += planned;
         ipActual += actual;
         
-        row += `<div class="compact-cell">`;
+        row += `<td>`;
         row += `<div class="budget-cell-content">`;
-        row += `<div class="budget-amount editable" onclick="startEdit(this, '${region}', '${ipName}', '${category.id}', ${planned})" title="${category.name}: ${formatCurrency(planned)}">${formatCurrency(planned)}</div>`;
+        row += `<div class="budget-amount editable" onclick="startEdit(this, '${region}', '${ipName}', '${category.id}', ${planned})">${formatCurrency(planned)}</div>`;
         row += `<div class="budget-actual">${formatCurrency(actual)}</div>`;
-        row += `<div class="budget-remaining ${status.class.replace('status-', 'remaining-')}">${formatCurrency(remaining)}</div>`;
+        row += `<div class="budget-remaining ${status.class}">${formatCurrency(remaining)}</div>`;
         row += `</div>`;
-        row += `</div>`;
+        row += `</td>`;
     });
     
-    // Итоговая ячейка ИП
+    // Итоговая ячейка ИП - ВСЕ 3 СТРОЧКИ
     const ipRemaining = ipTotal - ipActual;
     const ipStatus = getBudgetStatus(ipTotal, ipActual);
     
-    row += `<div class="compact-cell total-cell ip-total ${ipStatus.class}">`;
-    row += `<div class="total-amount">${formatCurrency(ipTotal)}</div>`;
-    row += `<div class="total-remaining ${ipStatus.class.replace('status-', 'remaining-')}">${formatCurrency(ipRemaining)}</div>`;
+    row += `<td class="total-cell">`;
+    row += `<div class="budget-cell-content">`;
+    row += `<div class="budget-amount">${formatCurrency(ipTotal)}</div>`;
+    row += `<div class="budget-actual">${formatCurrency(ipActual)}</div>`;
+    row += `<div class="budget-remaining ${ipStatus.class}">${formatCurrency(ipRemaining)}</div>`;
     row += `</div>`;
+    row += `</td>`;
     
-    row += `</div>`;
+    row += `</tr>`;
     return row;
 }
 
-function renderCompactTotalRow() {
+function renderTotalRow() {
     const allCategories = getAllCategories();
     
-    let row = `<div class="compact-row total-row">`;
+    let row = `<tr class="total-row">`;
     
-    // Ячейка заголовка
-    row += `<div class="compact-cell total-label">ВСЕГО</div>`;
+    // Ячейка заголовка - СИЛЬНО ВЫДЕЛЕННАЯ
+    row += `<td class="region-cell"><strong>ВСЕГО</strong></td>`;
     
     let grandTotal = 0;
     let grandActual = 0;
-    let categoryTotals = {};
     
-    // Считаем итоги по категориям
+    // ПРАВИЛЬНЫЙ РАСЧЁТ ИТОГОВ
     allCategories.forEach(category => {
         let categoryTotal = 0;
         let categoryActual = 0;
         
+        // Суммируем по всем регионам
         Object.keys(MASTER_BUDGETS).forEach(region => {
+            // Бюджет региона (всегда учитываем)
             categoryTotal += getPlannedBudget(region, null, category.id);
             categoryActual += getActualSpending(region, null, category.id);
             
-            const ipData = MASTER_IP_BUDGETS[region];
-            if (ipData) {
-                Object.keys(ipData).forEach(ipName => {
+            // Бюджет ИП региона (учитываем только если регион развернут)
+            if (expandedRegions.has(region) && MASTER_IP_BUDGETS[region]) {
+                Object.keys(MASTER_IP_BUDGETS[region]).forEach(ipName => {
                     categoryTotal += getPlannedBudget(region, ipName, category.id);
                     categoryActual += getActualSpending(region, ipName, category.id);
                 });
             }
         });
         
-        categoryTotals[category.id] = { planned: categoryTotal, actual: categoryActual };
+        const remaining = categoryTotal - categoryActual;
+        const status = getBudgetStatus(categoryTotal, categoryActual);
+        
         grandTotal += categoryTotal;
         grandActual += categoryActual;
-    });
-    
-    // Ячейки категорий с итогами
-    allCategories.forEach(category => {
-        const categoryData = categoryTotals[category.id];
-        const remaining = categoryData.planned - categoryData.actual;
-        const status = getBudgetStatus(categoryData.planned, categoryData.actual);
         
-        row += `<div class="compact-cell">`;
+        row += `<td>`;
         row += `<div class="budget-cell-content">`;
-        row += `<div class="budget-amount total-category">${formatCurrency(categoryData.planned)}</div>`;
-        row += `<div class="budget-actual">${formatCurrency(categoryData.actual)}</div>`;
-        row += `<div class="budget-remaining ${status.class.replace('status-', 'remaining-')}">${formatCurrency(remaining)}</div>`;
+        // ВСЕ 3 СТРОЧКИ В ИТОГАХ
+        row += `<div class="budget-amount total-category">${formatCurrency(categoryTotal)}</div>`;
+        row += `<div class="budget-actual">${formatCurrency(categoryActual)}</div>`;
+        row += `<div class="budget-remaining ${status.class}">${formatCurrency(remaining)}</div>`;
         row += `</div>`;
-        row += `</div>`;
+        row += `</td>`;
     });
     
-    // Итоговая ячейка
+    // Итоговая ячейка - ВСЕ 3 СТРОЧКИ
     const grandRemaining = grandTotal - grandActual;
     const grandStatus = getBudgetStatus(grandTotal, grandActual);
     
-    row += `<div class="compact-cell total-cell grand-total ${grandStatus.class}">`;
-    row += `<div class="total-amount">${formatCurrency(grandTotal)}</div>`;
-    row += `<div class="total-remaining ${grandStatus.class.replace('status-', 'remaining-')}">${formatCurrency(grandRemaining)}</div>`;
+    row += `<td class="total-cell">`;
+    row += `<div class="budget-cell-content">`;
+    // ВСЕ 3 СТРОЧКИ В ИТОГОВОЙ ЯЧЕЙКЕ
+    row += `<div class="budget-amount">${formatCurrency(grandTotal)}</div>`;
+    row += `<div class="budget-actual">${formatCurrency(grandActual)}</div>`;
+    row += `<div class="budget-remaining ${grandStatus.class}">${formatCurrency(grandRemaining)}</div>`;
     row += `</div>`;
+    row += `</td>`;
     
-    row += `</div>`;
+    row += `</tr>`;
     return row;
 }
 
-// ===== ИНИЦИАЛИЗАЦИЯ =====
+// ===== ОБНОВЛЁННАЯ СТАТИСТИКА =====
 
-async function initBudgets() {
-    console.log('🎯 Инициализация системы бюджетов...');
-    
-    // Инициализируем данные (CSV только при первом запуске)
-    initializeBudgetData();
-    
-    // Инициализируем интерфейс
-    generateMonthOptions();
-    loadCurrentMonth();
-    renderMasterBudgetTable();
-    updateStatistics();
-    updateSaveButton();
-    
-    // Развернуть все регионы по умолчанию
-    setTimeout(() => {
-        toggleAllRegions();
-        adjustTableWidth();
-    }, 100);
-}
-
-// ===== ФУНКЦИИ УПРАВЛЕНИЯ =====
-
-function generateMonthOptions() {
-    const select = document.getElementById('budgetMonth');
-    if (!select) return;
-    
-    const months = [];
-    const startDate = new Date(2025, 10, 1);
-    
-    for (let i = 0; i < 12; i++) {
-        const date = new Date(startDate);
-        date.setMonth(startDate.getMonth() + i);
-        const year = date.getFullYear();
-        const month = date.getMonth() + 1;
-        const value = `${year}-${month.toString().padStart(2, '0')}`;
-        const monthNames = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 
-                           'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
-        const display = `${monthNames[date.getMonth()]} ${year}`;
-        
-        months.push({ value, display });
-    }
-    
-    select.innerHTML = months.map(month => 
-        `<option value="${month.value}">${month.display}</option>`
-    ).join('');
-}
-
-function loadCurrentMonth() {
-    const savedMonth = localStorage.getItem('currentBudgetMonth');
-    if (savedMonth) {
-        currentMonth = savedMonth;
-        const select = document.getElementById('budgetMonth');
-        if (select) select.value = currentMonth;
-    }
-    updateMonthDisplay();
-}
-
-function changeBudgetMonth() {
-    const select = document.getElementById('budgetMonth');
-    if (!select) return;
-    
-    currentMonth = select.value;
-    localStorage.setItem('currentBudgetMonth', currentMonth);
-    updateMonthDisplay();
-    renderMasterBudgetTable();
-    updateStatistics();
-}
-
-function updateMonthDisplay() {
-    const monthNames = {
-        '2025-11': 'Ноябрь 2025', '2025-12': 'Декабрь 2025',
-        '2026-01': 'Январь 2026', '2026-02': 'Февраль 2026',
-        '2026-03': 'Март 2026', '2026-04': 'Апрель 2026',
-        '2026-05': 'Май 2026', '2026-06': 'Июнь 2026',
-        '2026-07': 'Июль 2026', '2026-08': 'Август 2026', 
-        '2026-09': 'Сентябрь 2026', '2026-10': 'Октябрь 2026'
-    };
-    
-    const displayElement = document.getElementById('currentMonthDisplay');
-    if (displayElement) {
-        displayElement.textContent = `(${monthNames[currentMonth] || currentMonth})`;
-    }
-}
-
-function updateStatistics(region = null) {
+function updateStatistics() {
     const allCategories = getAllCategories();
     let totalBudget = 0;
     let usedBudget = 0;
     let regionsCount = 0;
     let ipCount = 0;
     
-    const regions = region ? [region] : Object.keys(MASTER_BUDGETS);
+    const activeRegions = getActiveRegionsForStatistics();
     
-    regions.forEach(regionName => {
+    activeRegions.forEach(regionName => {
         regionsCount++;
         
         // Бюджет региона
@@ -721,8 +553,8 @@ function updateStatistics(region = null) {
             usedBudget += getActualSpending(regionName, null, category.id);
         });
         
-        // Считаем ИП региона
-        if (MASTER_IP_BUDGETS[regionName]) {
+        // Считаем ИП региона (только если регион развернут)
+        if (expandedRegions.has(regionName) && MASTER_IP_BUDGETS[regionName]) {
             ipCount += Object.keys(MASTER_IP_BUDGETS[regionName]).length;
             
             // Бюджет ИП региона
@@ -738,121 +570,104 @@ function updateStatistics(region = null) {
     const remainingBudget = totalBudget - usedBudget;
     
     // Обновляем статистику
-    const totalBudgetElement = document.getElementById('totalBudget');
-    const usedBudgetElement = document.getElementById('usedBudget');
-    const remainingBudgetElement = document.getElementById('remainingBudget');
-    const regionsCountElement = document.getElementById('regionsCount');
-    const ipCountElement = document.getElementById('ipCount');
-    
-    if (totalBudgetElement) totalBudgetElement.textContent = formatCurrency(totalBudget) + ' ₽';
-    if (usedBudgetElement) usedBudgetElement.textContent = formatCurrency(usedBudget) + ' ₽';
-    if (remainingBudgetElement) remainingBudgetElement.textContent = formatCurrency(remainingBudget) + ' ₽';
-    if (regionsCountElement) regionsCountElement.textContent = regionsCount;
-    if (ipCountElement) ipCountElement.textContent = ipCount;
+    document.getElementById('totalBudget').textContent = formatCurrency(totalBudget) + ' ₽';
+    document.getElementById('usedBudget').textContent = formatCurrency(usedBudget) + ' ₽';
+    document.getElementById('remainingBudget').textContent = formatCurrency(remainingBudget) + ' ₽';
+    document.getElementById('regionsCount').textContent = regionsCount;
+    document.getElementById('ipCount').textContent = ipCount;
 }
 
-function startEdit(element, region, ip, category, currentValue) {
-    if (currentEditElement) {
-        cancelEdit();
+function getActiveRegionsForStatistics() {
+    // Если есть развернутые регионы - показываем только их
+    if (expandedRegions.size > 0) {
+        return Array.from(expandedRegions);
     }
-    
-    currentEditElement = { element, region, ip, category, originalValue: currentValue };
-    
-    const input = document.createElement('input');
-    input.type = 'text';
-    input.value = formatCurrency(currentValue);
-    input.style.width = '100%';
-    input.style.border = '1px solid var(--primary)';
-    input.style.background = 'var(--bg-card)';
-    input.style.textAlign = 'center';
-    input.style.fontSize = '0.7rem';
-    input.style.fontWeight = '600';
-    input.style.color = 'var(--text-primary)';
-    input.style.outline = 'none';
-    input.style.borderRadius = '3px';
-    input.style.padding = '0.1rem';
-    
-    element.innerHTML = '';
-    element.appendChild(input);
-    element.classList.add('editing');
-    
-    input.focus();
-    input.select();
-    
-    input.addEventListener('blur', () => finishEdit(input.value));
-    input.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') finishEdit(input.value);
-        if (e.key === 'Escape') cancelEdit();
-    });
+    // Иначе показываем все регионы
+    return Object.keys(MASTER_BUDGETS);
 }
 
-function finishEdit(newValue) {
-    if (!currentEditElement) return;
-    
-    const { element, region, ip, category, originalValue } = currentEditElement;
-    const cleanValue = newValue.replace(/\s/g, '').replace(',', '.');
-    const numericValue = parseFloat(cleanValue) || 0;
-    
-    if (numericValue !== originalValue) {
-        hasUnsavedChanges = true;
-        updateSaveButton();
-        savePlannedBudget(region, ip, category, numericValue);
-    }
-    
-    element.innerHTML = formatCurrency(numericValue);
-    element.classList.remove('editing');
-    
-    // Перерендерим всю таблицу для обновления итогов
-    renderMasterBudgetTable();
-    updateStatistics();
-    currentEditElement = null;
-}
-
-function cancelEdit() {
-    if (!currentEditElement) return;
-    
-    const { element, originalValue } = currentEditElement;
-    element.innerHTML = formatCurrency(originalValue);
-    element.classList.remove('editing');
-    currentEditElement = null;
-}
+// ===== ИСПРАВЛЕННАЯ ЛОГИКА СВОРАЧИВАНИЯ =====
 
 function toggleRegion(region) {
     if (expandedRegions.has(region)) {
         expandedRegions.delete(region);
-        if (expandedRegions.size === 0) {
-            currentFilterRegion = null;
-            updateStatistics();
-        }
     } else {
         expandedRegions.add(region);
-        if (expandedRegions.size === 1) {
-            currentFilterRegion = region;
-            updateStatistics(region);
-        } else {
-            currentFilterRegion = null;
-            updateStatistics();
-        }
     }
     renderMasterBudgetTable();
+    updateStatistics();
 }
 
 function toggleAllRegions() {
+    // ИСПРАВЛЕНА ЛОГИКА: по умолчанию ВСЕ регионы развернуты
     if (expandedRegions.size === Object.keys(MASTER_BUDGETS).length) {
+        // Если все развернуты - сворачиваем все
         expandedRegions.clear();
-        const toggleText = document.getElementById('toggleAllText');
-        if (toggleText) toggleText.textContent = 'Развернуть все';
-        currentFilterRegion = null;
-        updateStatistics();
+        document.getElementById('toggleAllText').textContent = 'Развернуть все';
     } else {
+        // Иначе - разворачиваем все
         Object.keys(MASTER_BUDGETS).forEach(region => expandedRegions.add(region));
-        const toggleText = document.getElementById('toggleAllText');
-        if (toggleText) toggleText.textContent = 'Свернуть все';
-        currentFilterRegion = null;
-        updateStatistics();
+        document.getElementById('toggleAllText').textContent = 'Свернуть все';
     }
     renderMasterBudgetTable();
+    updateStatistics();
 }
+
+// ===== ФУНКЦИИ РЕДАКТИРОВАНИЯ =====
+
+function startEdit(element, region, ip, category, currentValue) {
+    if (currentEditElement) {
+        finishEdit();
+    }
+    
+    currentEditElement = element;
+    element.classList.add('editing');
+    
+    const input = document.createElement('input');
+    input.type = 'number';
+    input.value = currentValue;
+    input.className = 'budget-edit-input';
+    input.style.cssText = `
+        width: 100%;
+        border: none;
+        background: transparent;
+        text-align: center;
+        font-size: 0.7rem;
+        font-weight: 600;
+        outline: none;
+    `;
+    
+    element.innerHTML = '';
+    element.appendChild(input);
+    input.focus();
+    input.select();
+    
+    // Обработчики для завершения редактирования
+    input.addEventListener('blur', () => finishEdit(region, ip, category, input.value));
+    input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            finishEdit(region, ip, category, input.value);
+        }
+    });
+}
+
+function finishEdit(region, ip, category, newValue) {
+    if (!currentEditElement) return;
+    
+    if (region && category && newValue !== undefined) {
+        const numericValue = parseFloat(newValue) || 0;
+        savePlannedBudget(region, ip, category, numericValue);
+        currentEditElement.textContent = formatCurrency(numericValue);
+    }
+    
+    currentEditElement.classList.remove('editing');
+    currentEditElement = null;
+    
+    // Перерисовываем таблицу для обновления итогов
+    renderMasterBudgetTable();
+}
+
+// ===== СИСТЕМА СОХРАНЕНИЯ =====
 
 function updateSaveButton() {
     const saveBtn = document.querySelector('.save-budget-btn');
@@ -875,7 +690,74 @@ function saveAllBudgets() {
     
     hasUnsavedChanges = false;
     updateSaveButton();
-    showNotification('✅ Все изменения бюджета сохранены', 'success');
+    showNotification('✅ Все изменения сохранены', 'success');
+}
+
+// ===== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ =====
+
+function generateMonthOptions() {
+    const select = document.getElementById('budgetMonth');
+    if (!select) return;
+    
+    const months = [
+        '2025-11', '2025-12', '2026-01', '2026-02', '2026-03',
+        '2026-04', '2026-05', '2026-06', '2026-07', '2026-08',
+        '2026-09', '2026-10', '2026-11', '2026-12'
+    ];
+    
+    const monthNames = {
+        '2025-11': 'Ноябрь 2025', '2025-12': 'Декабрь 2025',
+        '2026-01': 'Январь 2026', '2026-02': 'Февраль 2026',
+        '2026-03': 'Март 2026', '2026-04': 'Апрель 2026',
+        '2026-05': 'Май 2026', '2026-06': 'Июнь 2026',
+        '2026-07': 'Июль 2026', '2026-08': 'Август 2026',
+        '2026-09': 'Сентябрь 2026', '2026-10': 'Октябрь 2026',
+        '2026-11': 'Ноябрь 2026', '2026-12': 'Декабрь 2026'
+    };
+    
+    select.innerHTML = '';
+    months.forEach(month => {
+        const option = document.createElement('option');
+        option.value = month;
+        option.textContent = monthNames[month];
+        if (month === currentMonth) {
+            option.selected = true;
+        }
+        select.appendChild(option);
+    });
+    
+    select.addEventListener('change', function() {
+        currentMonth = this.value;
+        document.getElementById('currentMonthDisplay').textContent = `(${monthNames[currentMonth]})`;
+        renderMasterBudgetTable();
+        updateStatistics();
+    });
+}
+
+function loadCurrentMonth() {
+    const savedMonth = localStorage.getItem('currentBudgetMonth');
+    if (savedMonth) {
+        currentMonth = savedMonth;
+    }
+    document.getElementById('currentMonthDisplay').textContent = '(Ноябрь 2025)';
+}
+
+function formatCurrency(amount) {
+    if (amount === 0) return '0';
+    return new Intl.NumberFormat('ru-RU').format(Math.round(amount));
+}
+
+function getBudgetStatus(planned, actual) {
+    if (planned === 0) return { class: 'remaining-normal', text: 'Нет бюджета' };
+    
+    const usage = actual / planned;
+    if (usage >= 1) return { class: 'remaining-danger', text: 'Превышен' };
+    if (usage >= 0.8) return { class: 'remaining-warning', text: 'Почти исчерпан' };
+    return { class: 'remaining-normal', text: 'В норме' };
+}
+
+function showNotification(message, type = 'info') {
+    alert(`${type === 'success' ? '✅' : type === 'warning' ? '⚠️' : '❌'} ${message}`);
 }
 
 function exportBudgetToCSV() {
@@ -890,60 +772,110 @@ function exportBudgetToPDF() {
     showNotification('📄 Экспорт в PDF выполнен', 'success');
 }
 
-function formatCurrency(amount) {
-    if (amount === 0) return '0';
-    return new Intl.NumberFormat('ru-RU').format(Math.round(amount));
-}
+// ===== ФУНКЦИИ ПРОВЕРКИ И ВАЛИДАЦИИ =====
 
-function getBudgetStatus(planned, actual) {
-    if (planned === 0) return { class: 'status-normal', text: 'Нет бюджета' };
+function validateBudgetData() {
+    console.log('🔍 Проверка данных бюджетов...');
     
-    const usage = actual / planned;
-    if (usage >= 1) return { class: 'status-danger', text: 'Превышен' };
-    if (usage >= 0.8) return { class: 'status-warning', text: 'Почти исчерпан' };
-    return { class: 'status-normal', text: 'В норме' };
-}
-
-function showNotification(message, type = 'info') {
-    alert(`${type === 'success' ? '✅' : type === 'warning' ? '⚠️' : '❌'} ${message}`);
-}
-
-function adjustTableWidth() {
-    const tableWrapper = document.querySelector('.compact-table-wrapper');
-    const table = document.querySelector('.compact-table');
+    const regions = Object.keys(MASTER_BUDGETS);
+    console.log('Регионы:', regions);
     
-    if (table && tableWrapper) {
-        const headerCells = document.querySelectorAll('.compact-header-cell');
-        let totalWidth = 0;
+    regions.forEach(region => {
+        const regionData = MASTER_BUDGETS[region];
+        console.log(`Регион ${region}:`, regionData);
         
-        headerCells.forEach(cell => {
-            totalWidth += cell.offsetWidth;
+        // Проверяем ИП региона
+        const ipData = MASTER_IP_BUDGETS[region];
+        if (ipData) {
+            console.log(`ИП в ${region}:`, Object.keys(ipData));
+        }
+    });
+    
+    console.log('✅ Проверка данных завершена');
+}
+
+function validateCalculations() {
+    console.log('🧮 Проверка расчетов...');
+    
+    const allCategories = getAllCategories();
+    let calculatedTotal = 0;
+    let calculatedActual = 0;
+    
+    // Проверяем расчеты по регионам
+    Object.keys(MASTER_BUDGETS).forEach(region => {
+        let regionTotal = 0;
+        let regionActual = 0;
+        
+        allCategories.forEach(category => {
+            const planned = getPlannedBudget(region, null, category.id);
+            const actual = getActualSpending(region, null, category.id);
+            
+            regionTotal += planned;
+            regionActual += actual;
+            calculatedTotal += planned;
+            calculatedActual += actual;
         });
         
-        table.style.minWidth = totalWidth + 'px';
-    }
+        console.log(`Регион ${region}: план=${regionTotal}, факт=${regionActual}`);
+        
+        // Проверяем ИП региона
+        if (MASTER_IP_BUDGETS[region]) {
+            Object.keys(MASTER_IP_BUDGETS[region]).forEach(ipName => {
+                let ipTotal = 0;
+                let ipActual = 0;
+                
+                allCategories.forEach(category => {
+                    const planned = getPlannedBudget(region, ipName, category.id);
+                    const actual = getActualSpending(region, ipName, category.id);
+                    
+                    ipTotal += planned;
+                    ipActual += actual;
+                    calculatedTotal += planned;
+                    calculatedActual += actual;
+                });
+                
+                console.log(`  ИП ${ipName}: план=${ipTotal}, факт=${ipActual}`);
+            });
+        }
+    });
+    
+    console.log(`📊 ОБЩИЕ ИТОГИ: план=${calculatedTotal}, факт=${calculatedActual}`);
+    console.log('✅ Проверка расчетов завершена');
 }
 
-// Функция для сброса данных (только для разработки)
-function resetBudgetData() {
-    if (confirm('⚠️ Вы уверены, что хотите сбросить все данные к первоначальным значениям из CSV? Это действие нельзя отменить.')) {
-        localStorage.removeItem('budget_data_initialized');
-        localStorage.removeItem('master_budgets');
-        localStorage.removeItem('master_ip_budgets');
+// ===== ИНИЦИАЛИЗАЦИЯ =====
+
+function initBudgets() {
+    console.log('🎯 Инициализация системы бюджетов...');
+    
+    initializeBudgetData();
+    generateMonthOptions();
+    loadCurrentMonth();
+    
+    // ПО УМОЛЧАНИЮ ВСЕ РЕГИОНЫ РАЗВЕРНУТЫ
+    Object.keys(MASTER_BUDGETS).forEach(region => expandedRegions.add(region));
+    
+    // Даем время на отрисовку DOM
+    setTimeout(() => {
+        renderMasterBudgetTable();
+        updateStatistics();
+        updateSaveButton();
         
-        // Удаляем все пользовательские изменения
-        Object.keys(localStorage).forEach(key => {
-            if (key.startsWith('budget_')) {
-                localStorage.removeItem(key);
-            }
-        });
+        // Обновляем текст кнопки
+        document.getElementById('toggleAllText').textContent = 'Свернуть все';
         
-        showNotification('✅ Данные сброшены к первоначальным значениям', 'success');
+        // Проверяем данные и расчеты
         setTimeout(() => {
-            location.reload();
-        }, 1000);
-    }
+            validateBudgetData();
+            validateCalculations();
+        }, 300);
+        
+        console.log('✅ Таблица бюджетов успешно инициализирована');
+    }, 100);
 }
 
 // Инициализация при загрузке страницы
-document.addEventListener('DOMContentLoaded', initBudgets);
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 Загрузка страницы бюджетов...');
+    initBudgets();
+});
