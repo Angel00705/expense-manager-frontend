@@ -64,6 +64,29 @@ function logout() {
         window.location.href = 'index.html';
     }
 }
+// В конец navbar.js добавляем:
+function setupNavigationByRole() {
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+    if (!user) return;
+    
+    if (user.role === 'manager') {
+        // Скрываем лишние пункты для управляющих
+        const hiddenItems = ['templates', 'cards', 'budgets', 'analytics', 'history'];
+        hiddenItems.forEach(item => {
+            const navItem = document.querySelector(`a[href="${item}.html"]`);
+            if (navItem) {
+                navItem.parentElement.style.display = 'none';
+            }
+        });
+    }
+}
 
+// Вызываем в конце initNavbar:
+function initNavbar() {
+    // ... существующий код
+    
+    // Настраиваем навигацию по ролям
+    setupNavigationByRole();
+}
 // Инициализируем навбар при загрузке
 document.addEventListener('DOMContentLoaded', initializeNavbar);

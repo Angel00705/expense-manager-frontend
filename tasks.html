@@ -6,13 +6,11 @@
     <title>Задачи - IP Expense Manager</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><defs><linearGradient id='borderGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%238b5cf6'/><stop offset='50%' stop-color='%236d28d9'/><stop offset='100%' stop-color='%231e40af'/></linearGradient><linearGradient id='checkGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%23a78bfa'/><stop offset='100%' stop-color='%234f46e5'/></linearGradient><filter id='glow' x='-50%' y='-50%' width='200%' height='200%'><feGaussianBlur in='SourceGraphic' stdDeviation='1' result='blur'/><feMerge><feMergeNode in='blur'/><feMergeNode in='SourceGraphic'/></feMerge></filter></defs><circle cx='10' cy='10' r='9' fill='none' stroke='url(%23borderGrad)' stroke-width='1.5' opacity='0.9'/><path d='M6,10 L8.5,12.5 L14,7' stroke='url(%23checkGrad)' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round' filter='url(%23glow)'/></svg>">
     
-    <!-- Подключаем стили -->
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/components/navbar.css">
     <link rel="stylesheet" href="css/tasks.css">
 </head>
 <body>
-    <!-- Анимированный фон -->
     <div class="background-animation">
         <div class="gradient-circle circle-1"></div>
         <div class="gradient-circle circle-2"></div>
@@ -20,128 +18,584 @@
     </div>
 
     <!-- Навбар -->
-    <!-- Навбар -->
-<nav class="main-navbar">
-    <div class="navbar-container">
-        <a href="dashboard.html" class="navbar-brand">
-            <div class="brand-logo">💼</div>
-            <span class="brand-text">IP Expense Manager</span>
-        </a>
-        
-        <button class="mobile-menu-btn">☰</button>
-        
-        <ul class="navbar-links">
-            <li><a href="dashboard.html" class="nav-link"><span class="nav-icon">📊</span> Дашборд</a></li>
-            <li><a href="tasks.html" class="nav-link"><span class="nav-icon">📋</span> Задачи</a></li>
-            <li><a href="templates.html" class="nav-link"><span class="nav-icon">🎯</span> Шаблоны</a></li>
-            <li><a href="cards.html" class="nav-link"><span class="nav-icon">💳</span> Карты</a></li>
-            <li><a href="analytics.html" class="nav-link"><span class="nav-icon">📈</span> Аналитика</a></li>
-            <li><a href="history.html" class="nav-link active"><span class="nav-icon">📜</span> История</a></li>
-        </ul>
-        
-        <div class="user-menu">
-            <div class="user-info">
-                <span class="user-name" id="userName">Пользователь</span>
-                <span class="user-role" id="userRole">Роль</span>
+    <nav class="main-navbar">
+        <div class="navbar-container">
+            <a href="dashboard.html" class="navbar-brand">
+                <div class="brand-logo">💼</div>
+                <span class="brand-text">IP Expense Manager</span>
+            </a>
+            
+            <button class="mobile-menu-btn">☰</button>
+            
+            <ul class="navbar-links">
+                <li><a href="dashboard.html" class="nav-link"><span class="nav-icon">📊</span> Дашборд</a></li>
+                <li><a href="tasks.html" class="nav-link active"><span class="nav-icon">📋</span> Задачи</a></li>
+                <li><a href="templates.html" class="nav-link"><span class="nav-icon">🎯</span> Шаблоны</a></li>
+                <li><a href="cards.html" class="nav-link"><span class="nav-icon">💳</span> Карты</a></li>
+                <li><a href="budgets.html" class="nav-link"><span class="nav-icon">💰</span> Бюджеты</a></li>
+                <li><a href="analytics.html" class="nav-link"><span class="nav-icon">📈</span> Аналитика</a></li>
+                <li><a href="history.html" class="nav-link"><span class="nav-icon">📜</span> История</a></li>
+            </ul>
+            
+            <div class="user-menu">
+                <div class="user-info">
+                    <span class="user-name" id="userName">Пользователь</span>
+                    <span class="user-role" id="userRole">Роль</span>
+                </div>
+                <button onclick="logout()" class="logout-btn">
+                    <span class="nav-icon">🚪</span>
+                    Выйти
+                </button>
             </div>
-            <button onclick="logout()" class="logout-btn">
-                <span class="nav-icon">🚪</span>
-                Выйти
-            </button>
         </div>
-    </div>
-</nav>
+    </nav>
 
-    <!-- Основной контент -->
     <main class="tasks-container">
-       <div class="tasks-header">
-    <div>
-        <h1 class="page-title">Задачи</h1>
-        <p class="page-subtitle">Управление финансовыми задачами по регионам</p>
-    </div>
-    <div class="header-actions">
-        <a href="templates.html" class="btn btn-secondary">
-            <span class="nav-icon">🎯</span>
-            Из шаблона
-        </a>
-        <a href="create-task.html" class="btn btn-primary">
-            <span class="nav-icon">➕</span>
-            Новая задача
-        </a>
-    </div>
-</div>
-        <!-- Панель инструментов -->
-        <div class="tools-bar">
-            <div class="search-box">
-                <div class="input-group">
-                    <div class="input-icon">🔍</div>
-                    <input type="text" class="form-input" id="searchInput" placeholder="Поиск по названию или описанию...">
+        <div class="tasks-layout">
+            
+            <!-- Основной контент -->
+            <div class="tasks-main-content">
+                <!-- Информационная панель для управляющих -->
+                <div class="manager-info-panel manager-only" id="managerInfoPanel" style="display: none;">
+                    <h4>👋 Добро пожаловать, <span id="managerUserName"></span>!</h4>
+                    <p>Вы работаете с регионом: <strong id="managerRegionName"></strong>. Здесь вы можете отмечать выполнение задач и вводить фактические суммы расходов.</p>
+                </div>
+
+                <!-- Заголовок с вкладками -->
+                <div class="tasks-header">
+                    <div class="header-main">
+                        <div>
+                            <h1 class="page-title">Задачи</h1>
+                            <p class="page-subtitle" id="pageSubtitle">Управление финансовыми задачами</p>
+                        </div>
+                        <div class="header-actions" id="headerActions">
+                            <!-- Будет меняться в зависимости от вкладки -->
+                        </div>
+                    </div>
+                    
+                    <!-- Вкладки -->
+                    <div class="tasks-tabs">
+                        <button class="tab-btn active" data-tab="month-plan" id="tabMonthPlan">
+                            <span class="nav-icon">📅</span>
+                            План месяца
+                        </button>
+                        <button class="tab-btn" data-tab="my-tasks" id="tabMyTasks">
+                            <span class="nav-icon">📋</span>
+                            Мои задачи
+                        </button>
+                        <button class="tab-btn" data-tab="all-tasks" id="tabAllTasks">
+                            <span class="nav-icon">👁️</span>
+                            Все задачи
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Контент вкладки "План месяца" -->
+                <div class="tab-content active" id="month-plan-content">
+                    <div class="plan-controls">
+                        <div class="control-group">
+                            <div class="region-selector">
+                                <label>Регион:</label>
+                                <select id="planRegion" class="form-select">
+                                    <option value="Курган">Курган</option>
+                                    <option value="Астрахань">Астрахань</option>
+                                    <option value="Бурятия">Бурятия</option>
+                                    <option value="Калмыкия">Калмыкия</option>
+                                    <option value="Мордовия">Мордовия</option>
+                                    <option value="Удмуртия">Удмуртия</option>
+                                </select>
+                            </div>
+                            <div class="month-selector">
+                                <label>Месяц:</label>
+                                <select id="planMonth" class="form-select">
+                                    <option value="2024-11">Ноябрь 2024</option>
+                                    <option value="2024-12">Декабрь 2024</option>
+                                    <option value="2025-01">Январь 2025</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="control-actions">
+                            <button class="btn btn-secondary" onclick="toggleAllWeeks()">
+                                <span class="nav-icon">📂</span>
+                                <span id="toggleAllText">Развернуть все</span>
+                            </button>
+                            <button class="btn btn-primary" onclick="saveMonthlyPlan()">
+                                <span class="nav-icon">💾</span>
+                                Сохранить план
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Статистика плана -->
+                    <div class="plan-stats">
+                        <div class="stat-card">
+                            <div class="stat-value" id="monthBudget">0 ₽</div>
+                            <div class="stat-label">Бюджет месяца</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="monthPlan">0 ₽</div>
+                            <div class="stat-label">План месяца</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="monthRemaining">0 ₽</div>
+                            <div class="stat-label">Остаток</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="weeksPlanned">0/4</div>
+                            <div class="stat-label">Недель с планом</div>
+                        </div>
+                    </div>
+
+                    <!-- Понедельное планирование -->
+                    <div class="monthly-planning">
+                        <!-- Неделя 1 -->
+                        <div class="week-section" data-week="1">
+                            <div class="week-header" onclick="toggleWeek(1)">
+                                <div class="week-title">
+                                    <span class="expand-icon">▶️</span>
+                                    <h3>📌 НЕДЕЛЯ 1 (1-7 ноября)</h3>
+                                </div>
+                                <div class="week-summary">
+                                    <span class="week-total">План: <strong id="week1Total">0 ₽</strong></span>
+                                    <span class="week-progress">
+                                        <span class="progress-text">Выполнено: 0%</span>
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: 0%"></div>
+                                        </div>
+                                    </span>
+                                    <button class="btn btn-sm" onclick="event.stopPropagation(); addTaskToWeek(1)">
+                                        <span class="nav-icon">➕</span>
+                                        Добавить
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="week-content" style="display: none;">
+                                <div class="week-tasks">
+                                    <table class="week-table">
+                                        <thead>
+                                            <tr>
+                                                <th width="30"></th>
+                                                <th width="120">Категория</th>
+                                                <th>Описание задачи</th>
+                                                <th width="120">ИП</th>
+                                                <th width="100">План</th>
+                                                <th width="100">Факт</th>
+                                                <th width="80">Статус</th>
+                                                <th width="100">Действия</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="week1Tasks">
+                                            <!-- Задачи будут через JS -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Неделя 2 -->
+                        <div class="week-section" data-week="2">
+                            <div class="week-header" onclick="toggleWeek(2)">
+                                <div class="week-title">
+                                    <span class="expand-icon">▶️</span>
+                                    <h3>📌 НЕДЕЛЯ 2 (8-14 ноября)</h3>
+                                </div>
+                                <div class="week-summary">
+                                    <span class="week-total">План: <strong id="week2Total">0 ₽</strong></span>
+                                    <span class="week-progress">
+                                        <span class="progress-text">Выполнено: 0%</span>
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: 0%"></div>
+                                        </div>
+                                    </span>
+                                    <button class="btn btn-sm" onclick="event.stopPropagation(); addTaskToWeek(2)">
+                                        <span class="nav-icon">➕</span>
+                                        Добавить
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="week-content" style="display: none;">
+                                <div class="week-tasks">
+                                    <table class="week-table">
+                                        <thead>
+                                            <tr>
+                                                <th width="30"></th>
+                                                <th width="120">Категория</th>
+                                                <th>Описание задачи</th>
+                                                <th width="120">ИП</th>
+                                                <th width="100">План</th>
+                                                <th width="100">Факт</th>
+                                                <th width="80">Статус</th>
+                                                <th width="100">Действия</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="week2Tasks">
+                                            <!-- Задачи будут через JS -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Неделя 3 -->
+                        <div class="week-section" data-week="3">
+                            <div class="week-header" onclick="toggleWeek(3)">
+                                <div class="week-title">
+                                    <span class="expand-icon">▶️</span>
+                                    <h3>📌 НЕДЕЛЯ 3 (15-21 ноября)</h3>
+                                </div>
+                                <div class="week-summary">
+                                    <span class="week-total">План: <strong id="week3Total">0 ₽</strong></span>
+                                    <span class="week-progress">
+                                        <span class="progress-text">Выполнено: 0%</span>
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: 0%"></div>
+                                        </div>
+                                    </span>
+                                    <button class="btn btn-sm" onclick="event.stopPropagation(); addTaskToWeek(3)">
+                                        <span class="nav-icon">➕</span>
+                                        Добавить
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="week-content" style="display: none;">
+                                <div class="week-tasks">
+                                    <table class="week-table">
+                                        <thead>
+                                            <tr>
+                                                <th width="30"></th>
+                                                <th width="120">Категория</th>
+                                                <th>Описание задачи</th>
+                                                <th width="120">ИП</th>
+                                                <th width="100">План</th>
+                                                <th width="100">Факт</th>
+                                                <th width="80">Статус</th>
+                                                <th width="100">Действия</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="week3Tasks">
+                                            <!-- Задачи будут через JS -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Неделя 4 -->
+                        <div class="week-section" data-week="4">
+                            <div class="week-header" onclick="toggleWeek(4)">
+                                <div class="week-title">
+                                    <span class="expand-icon">▶️</span>
+                                    <h3>📌 НЕДЕЛЯ 4 (22-30 ноября)</h3>
+                                </div>
+                                <div class="week-summary">
+                                    <span class="week-total">План: <strong id="week4Total">0 ₽</strong></span>
+                                    <span class="week-progress">
+                                        <span class="progress-text">Выполнено: 0%</span>
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: 0%"></div>
+                                        </div>
+                                    </span>
+                                    <button class="btn btn-sm" onclick="event.stopPropagation(); addTaskToWeek(4)">
+                                        <span class="nav-icon">➕</span>
+                                        Добавить
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="week-content" style="display: none;">
+                                <div class="week-tasks">
+                                    <table class="week-table">
+                                        <thead>
+                                            <tr>
+                                                <th width="30"></th>
+                                                <th width="120">Категория</th>
+                                                <th>Описание задачи</th>
+                                                <th width="120">ИП</th>
+                                                <th width="100">План</th>
+                                                <th width="100">Факт</th>
+                                                <th width="80">Статус</th>
+                                                <th width="100">Действия</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="week4Tasks">
+                                            <!-- Задачи будут через JS -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Итоги месяца -->
+                    <div class="month-summary">
+                        <div class="summary-card">
+                            <h4>💰 ИТОГО ЗА МЕСЯЦ</h4>
+                            <div class="total-amount" id="monthTotal">0 ₽</div>
+                            <div class="weeks-breakdown">
+                                <div class="week-breakdown">
+                                    <span>Неделя 1:</span>
+                                    <span id="week1Breakdown">0 ₽ (0%)</span>
+                                </div>
+                                <div class="week-breakdown">
+                                    <span>Неделя 2:</span>
+                                    <span id="week2Breakdown">0 ₽ (0%)</span>
+                                </div>
+                                <div class="week-breakdown">
+                                    <span>Неделя 3:</span>
+                                    <span id="week3Breakdown">0 ₽ (0%)</span>
+                                </div>
+                                <div class="week-breakdown">
+                                    <span>Неделя 4:</span>
+                                    <span id="week4Breakdown">0 ₽ (0%)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Контент вкладки "Мои задачи" -->
+                <div class="tab-content" id="my-tasks-content">
+                    <div class="my-tasks-controls">
+                        <div class="search-box">
+                            <div class="input-group">
+                                <div class="input-icon">🔍</div>
+                                <input type="text" class="form-input" id="myTasksSearch" placeholder="Поиск по задачам...">
+                            </div>
+                        </div>
+                        <div class="filter-group">
+                            <select class="filter-select" id="myTasksStatus">
+                                <option value="">Все статусы</option>
+                                <option value="pending">В работе</option>
+                                <option value="completed">Завершено</option>
+                            </select>
+                            <select class="filter-select" id="myTasksWeek">
+                                <option value="">Все недели</option>
+                                <option value="1">Неделя 1</option>
+                                <option value="2">Неделя 2</option>
+                                <option value="3">Неделя 3</option>
+                                <option value="4">Неделя 4</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="my-tasks-grid" id="myTasksGrid">
+                        <!-- Задачи управляющего -->
+                    </div>
+
+                    <div class="empty-state" id="myTasksEmpty" style="display: none;">
+                        <div class="icon">📋</div>
+                        <h3>Нет задач</h3>
+                        <p>На этой неделе у вас нет запланированных задач</p>
+                    </div>
+                </div>
+
+                <!-- Контент вкладки "Все задачи" -->
+                <div class="tab-content" id="all-tasks-content">
+                    <div class="tools-bar">
+                        <div class="search-box">
+                            <div class="input-group">
+                                <div class="input-icon">🔍</div>
+                                <input type="text" class="form-input" id="searchInput" placeholder="Поиск по названию или описанию...">
+                            </div>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <select class="filter-select" id="statusFilter">
+                                <option value="">Все статусы</option>
+                                <option value="pending">В работе</option>
+                                <option value="completed">Завершено</option>
+                                <option value="cancelled">Отменено</option>
+                            </select>
+                            
+                            <select class="filter-select" id="regionFilter">
+                                <option value="">Все регионы</option>
+                                <option value="Астрахань">Астрахань</option>
+                                <option value="Бурятия">Бурятия</option>
+                                <option value="Курган">Курган</option>
+                                <option value="Калмыкия">Калмыкия</option>
+                                <option value="Мордовия">Мордовия</option>
+                                <option value="Удмуртия">Удмуртия</option>
+                            </select>
+                            
+                            <select class="filter-select" id="priorityFilter">
+                                <option value="">Все приоритеты</option>
+                                <option value="high">Высокий</option>
+                                <option value="medium">Средний</option>
+                                <option value="low">Низкий</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="tasks-grid" id="tasksGrid">
+                        <!-- Все задачи -->
+                    </div>
+
+                    <div class="empty-state" id="emptyState" style="display: none;">
+                        <div class="icon">📋</div>
+                        <h3>Задач не найдено</h3>
+                        <p>Попробуйте изменить параметры фильтрации</p>
+                    </div>
+
+                    <!-- Массовые действия -->
+                    <div class="bulk-actions" id="bulkActions">
+                        <span class="bulk-count" id="selectedCount">0 задач выбрано</span>
+                        <button class="btn btn-secondary" onclick="completeSelected()">
+                            <span class="nav-icon">✅</span>
+                            Завершить
+                        </button>
+                        <button class="btn btn-secondary" onclick="deleteSelected()">
+                            <span class="nav-icon">🗑️</span>
+                            Удалить
+                        </button>
+                        <button class="btn btn-secondary" onclick="clearSelection()">
+                            <span class="nav-icon">❌</span>
+                            Отменить выбор
+                        </button>
+                    </div>
                 </div>
             </div>
-            
-            <div class="filter-group">
-                <select class="filter-select" id="statusFilter">
-                    <option value="">Все статусы</option>
-                    <option value="pending">В работе</option>
-                    <option value="completed">Завершено</option>
-                    <option value="cancelled">Отменено</option>
-                </select>
+
+            <!-- ПРАВЫЙ САЙДБАР РЕГИОНОВ -->
+            <div class="region-sidebar" id="regionSidebar">
+                <div class="sidebar-header">
+                    <h4>📍 Регионы</h4>
+                    <div class="sidebar-subtitle">Выберите регион для просмотра</div>
+                </div>
                 
-                <select class="filter-select" id="regionFilter">
-                    <option value="">Все регионы</option>
-                    <option value="Астрахань">Астрахань</option>
-                    <option value="Бурятия">Бурятия</option>
-                    <option value="Курган">Курган</option>
-                    <option value="Калмыкия">Калмыкия</option>
-                    <option value="Мордовия">Мордовия</option>
-                    <option value="Удмуртия">Удмуртия</option>
-                </select>
-                
-                <select class="filter-select" id="priorityFilter">
-                    <option value="">Все приоритеты</option>
-                    <option value="high">Высокий</option>
-                    <option value="medium">Средний</option>
-                    <option value="low">Низкий</option>
-                </select>
+                <div class="region-list" id="regionList">
+                    <!-- Регионы будут добавляться через JS -->
+                </div>
+
+                <!-- Информационная панель региона -->
+                <div class="region-info-panel" id="regionInfoPanel" style="display: none;">
+                    <div class="info-header">
+                        <h5>📊 Информация о регионе</h5>
+                        <span class="current-region" id="currentRegionName"></span>
+                    </div>
+                    
+                    <div class="info-stats">
+                        <div class="stat">
+                            <span class="label">ИП в регионе:</span>
+                            <span class="value" id="ipCount">0</span>
+                        </div>
+                        <div class="stat">
+                            <span class="label">Активных карт:</span>
+                            <span class="value" id="activeCardsCount">0</span>
+                        </div>
+                        <div class="stat">
+                            <span class="label">Бюджет месяца:</span>
+                            <span class="value" id="regionBudget">0 ₽</span>
+                        </div>
+                    </div>
+                    
+                    <div class="ip-list-title">Индивидуальные предприниматели:</div>
+                    <div class="ip-list" id="regionIpList">
+                        <!-- Список ИП будет заполняться динамически -->
+                    </div>
+                </div>
             </div>
-        </div>
 
-        <!-- Сетка задач -->
-        <div class="tasks-grid" id="tasksGrid">
-            <!-- Задачи будут загружены через JavaScript -->
-        </div>
-
-        <!-- Состояние пустого списка -->
-        <div class="empty-state" id="emptyState" style="display: none;">
-            <div class="icon">📋</div>
-            <h3>Задач не найдено</h3>
-            <p>Попробуйте изменить параметры фильтрации или создайте новую задачу</p>
-            <a href="create-task.html" class="btn btn-primary">
-                <span class="nav-icon">➕</span>
-                Создать задачу
-            </a>
-        </div>
-
-        <!-- Массовые действия -->
-        <div class="bulk-actions" id="bulkActions">
-            <span class="bulk-count" id="selectedCount">0 задач выбрано</span>
-            <button class="btn btn-secondary" onclick="completeSelected()">
-                <span class="nav-icon">✅</span>
-                Завершить
-            </button>
-            <button class="btn btn-secondary" onclick="deleteSelected()">
-                <span class="nav-icon">🗑️</span>
-                Удалить
-            </button>
-            <button class="btn btn-secondary" onclick="clearSelection()">
-                <span class="nav-icon">❌</span>
-                Отменить выбор
-            </button>
         </div>
     </main>
 
-    <!-- Скрипты -->
+    <!-- Модальные окна -->
+    <div id="addTaskModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Добавить задачу в неделю <span id="modalWeekNumber">1</span></h3>
+                <button class="close-modal" onclick="closeAddTaskModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="budget-warning" id="budgetWarning" style="display: none;">
+                    <!-- Предупреждение о превышении бюджета -->
+                </div>
+                <form id="addTaskForm">
+                    <input type="hidden" id="modalWeek" value="1">
+                    
+                    <div class="form-group">
+                        <label class="form-label">Категория</label>
+                        <select class="form-select" id="taskCategory" required>
+                            <option value="">Выберите категорию</option>
+                            <option value="products">🛒 Продукты</option>
+                            <option value="household">🏠 Хоз. товары</option>
+                            <option value="medicaments">💊 Медикаменты</option>
+                            <option value="stationery">📎 Канцелярия</option>
+                            <option value="cafe">☕ Кафе</option>
+                            <option value="repairs">🔧 Ремонт</option>
+                            <option value="azs">⛽ АЗС</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Описание задачи</label>
+                        <textarea class="form-textarea" id="taskDescription" placeholder="Опишите задачу..." required></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">ИП</label>
+                            <select class="form-select" id="taskIP" required>
+                                <!-- Заполнится динамически по региону -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Плановая сумма</label>
+                            <input type="number" class="form-input" id="taskPlanAmount" placeholder="0" required>
+                        </div>
+                    </div>
+
+                    <div class="budget-info" id="budgetInfo">
+                        <!-- Информация о лимитах -->
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeAddTaskModal()">Отмена</button>
+                <button class="btn btn-primary" onclick="saveWeeklyTask()">Добавить задачу</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="completeTaskModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Завершить задачу</h3>
+                <button class="close-modal" onclick="closeCompleteTaskModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="completeTaskForm">
+                    <input type="hidden" id="completeTaskId">
+                    
+                    <div class="task-info" id="completeTaskInfo">
+                        <!-- Информация о задаче -->
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Фактическая сумма</label>
+                        <input type="number" class="form-input" id="factAmount" placeholder="Введите фактическую сумму" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Дата выполнения</label>
+                        <input type="date" class="form-input" id="completionDate" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Комментарий (опционально)</label>
+                        <textarea class="form-textarea" id="completionNotes" placeholder="Дополнительная информация..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeCompleteTaskModal()">Отмена</button>
+                <button class="btn btn-primary" onclick="saveTaskCompletion()">Сохранить</button>
+            </div>
+        </div>
+    </div>
+
     <script src="js/navbar.js"></script>
-    <script src="js/tasks.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="data/real-cards-data.js"></script>
+    <script src="js/tasks-enhanced.js"></script>
 </body>
 </html>

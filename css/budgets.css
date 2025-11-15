@@ -309,7 +309,7 @@
 .budget-edit-input {
     -moz-appearance: textfield !important;
     background: transparent !important;
-    color: #1e40af !important; /* Темно-синий текст */
+    color: white !important;
     border: 2px solid #3b82f6 !important;
     border-radius: 6px !important;
     font-weight: 700 !important;
