@@ -186,7 +186,7 @@ body {
   font-size: 0.9rem;
 }
 
-/* ===== БАЗОВЫЕ СТИЛИ ФОРМ (только самые основные) ===== */
+/* ===== ФОРМЫ ===== */
 .form-input {
   width: 100%;
   padding: 1rem;
@@ -211,8 +211,74 @@ body {
   color: var(--text-muted);
 }
 
-/* Специфические стили для селектов будут в отдельных файлах */
-/* УБРАЛ СТИЛИ ДЛЯ SELECT И ФИЛЬТРОВ - они будут в cards.css */
+.form-select, .filter-select {
+  width: 100%;
+  padding: 1rem;
+  background: var(--bg-glass);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text-primary);
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  font-family: inherit;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23cbd5e1'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1.5em;
+}
+
+.form-select:focus, .filter-select:focus {
+  outline: none;
+  border-color: var(--primary);
+  background-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.15);
+}
+
+.form-select:disabled, .filter-select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.form-textarea {
+  width: 100%;
+  padding: 1rem;
+  background: var(--bg-glass);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text-primary);
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 100px;
+}
+
+.form-textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.15);
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
 
 .input-group {
   position: relative;
@@ -253,6 +319,67 @@ body {
   animation: fadeInUp 0.8s ease-out;
 }
 
+@keyframes float {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  25% { transform: translate(10px, -10px) rotate(2deg); }
+  50% { transform: translate(-5px, 5px) rotate(-1deg); }
+  75% { transform: translate(-10px, -5px) rotate(1deg); }
+}
+
+@keyframes parallax {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(-10px, -10px); }
+}
+
+/* ===== УВЕДОМЛЕНИЯ ===== */
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+  padding: 1rem 1.5rem;
+  box-shadow: var(--shadow);
+  z-index: 10000;
+  animation: slideInRight 0.3s ease;
+  backdrop-filter: blur(20px);
+}
+
+.notification-success {
+  border-left: 4px solid #10b981;
+}
+
+.notification-error {
+  border-left: 4px solid #ef4444;
+}
+
+.notification-content {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.notification-icon {
+  font-size: 1.2rem;
+}
+
+.notification-text {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
 /* ===== АДАПТИВНОСТЬ ===== */
 @media (max-width: 768px) {
   .main-container {
@@ -266,7 +393,242 @@ body {
   .page-subtitle {
     font-size: 1.1rem;
   }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}
+/* ДОБАВИМ В КОНЕЦ global.css */
+
+/* ===== СТИЛИ ДЛЯ ТАБЛИЦ ===== */
+.table-container {
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-light);
+    overflow: hidden;
+    margin-bottom: 2rem;
 }
 
-/* УБРАЛ ВСЕ СТИЛИ ДЛЯ SELECT И ФИЛЬТРОВ ИЗ GLOBAL.CSS */
-/* Они теперь будут только в cards.css чтобы избежать конфликтов */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.data-table th {
+    background: rgba(255, 255, 255, 0.08);
+    font-weight: 600;
+    padding: 1rem 0.75rem;
+    text-align: left;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border);
+}
+
+.data-table td {
+    padding: 1rem 0.75rem;
+    vertical-align: top;
+    border-bottom: 1px solid var(--border);
+}
+
+.data-table tr:hover {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+/* ===== СТИЛИ ДЛЯ САЙДБАРА РЕГИОНОВ ===== */
+.region-sidebar {
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-light);
+    padding: 1.5rem;
+    position: sticky;
+    top: 2rem;
+}
+
+.sidebar-header {
+    margin-bottom: 1.5rem;
+}
+
+.sidebar-header h4 {
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+}
+
+.sidebar-subtitle {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.region-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+}
+
+.region-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+}
+
+.region-item:hover {
+    background: var(--bg-glass);
+    border-color: var(--border);
+}
+
+.region-item.active {
+    background: var(--gradient);
+    border-color: var(--primary);
+    color: white;
+}
+
+.region-item.active .region-name,
+.region-item.active .region-badge {
+    color: white;
+}
+
+.region-name {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.region-badge {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 0.25rem 0.5rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+/* ===== СТИЛИ ДЛЯ СТАТИСТИКИ ===== */
+.plan-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: var(--bg-glass);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    text-align: center;
+    border: 1px solid var(--border);
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    border-color: var(--primary-light);
+    transform: translateY(-2px);
+}
+
+.stat-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.stat-label {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+/* ===== СТИЛИ ДЛЯ ИТОГОВ МЕСЯЦА ===== */
+.month-summary {
+    margin-top: 2rem;
+}
+
+.summary-card {
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    border: 1px solid var(--border-light);
+}
+
+.summary-card h4 {
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+}
+
+.total-amount {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.weeks-breakdown {
+    display: grid;
+    gap: 0.75rem;
+}
+
+.week-breakdown {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.week-breakdown:last-child {
+    border-bottom: none;
+}
+
+/* ===== СТИЛИ ДЛЯ УПРАВЛЕНИЯ ПЛАНОМ ===== */
+.plan-controls {
+    background: var(--bg-glass);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    border: 1px solid var(--border-light);
+}
+
+.control-group {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.region-selector,
+.month-selector {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.control-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+}
+
+/* ===== АДАПТИВНОСТЬ ===== */
+@media (max-width: 768px) {
+    .plan-stats {
+        grid-template-columns: 1fr;
+    }
+    
+    .control-group {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .control-actions {
+        justify-content: stretch;
+    }
+    
+    .control-actions .btn {
+        flex: 1;
+        justify-content: center;
+    }
+}

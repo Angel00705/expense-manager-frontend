@@ -1,12 +1,26 @@
-/* css/pages/tasks/tasks-main.css */
+/* css/pages/tasks/tasks-main.css - ДОПОЛНЕННАЯ ВЕРСИЯ */
+
+/* Основной контейнер */
 .tasks-container {
     padding: 2rem;
     max-width: 1400px;
     margin: 0 auto;
 }
 
+.tasks-layout {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 2rem;
+    align-items: start;
+}
+
+/* Заголовок страницы */
 .tasks-header {
+    background: var(--bg-card);
+    border-radius: var(--radius-xl);
+    padding: 2rem;
     margin-bottom: 2rem;
+    border: 1px solid var(--border-light);
 }
 
 .header-main {
@@ -16,39 +30,389 @@
     margin-bottom: 1.5rem;
 }
 
-.page-title {
-    font-size: 2.5rem;
-    font-weight: 800;
+.header-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+/* Секции недель */
+.week-section {
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-light);
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+}
+
+.week-content {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+/* Статистика плана */
+.plan-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: var(--bg-glass);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    text-align: center;
+    border: 1px solid var(--border);
+}
+
+.stat-value {
+    font-size: 1.8rem;
+    font-weight: 700;
     margin-bottom: 0.5rem;
-    background: linear-gradient(135deg, var(--text-primary), var(--text-secondary));
+    background: var(--gradient);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
-.page-subtitle {
-    color: var(--text-secondary);
-    font-size: 1.2rem;
+.stat-label {
+    color: var(--text-muted);
+    font-size: 0.9rem;
 }
 
-.tasks-tabs {
+/* Управление планом */
+.plan-controls {
+    background: var(--bg-glass);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    border: 1px solid var(--border-light);
+}
+
+.control-group {
     display: flex;
-    gap: 0.5rem;
-    border-bottom: 1px solid var(--border);
-    padding-bottom: 0.5rem;
+    gap: 2rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
 }
 
-.tab-btn {
+.region-selector,
+.month-selector {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.control-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+}
+
+/* Сетка задач */
+.my-tasks-grid,
+.tasks-grid {
+    display: grid;
+    gap: 1rem;
+}
+
+.task-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.task-card:hover {
+    border-color: var(--primary-light);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-glow);
+}
+
+/* Пустые состояния */
+.empty-state {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: var(--text-muted);
+}
+
+.empty-state .icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.empty-state-small {
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    justify-content: center;
+    padding: 2rem;
+    color: var(--text-muted);
+}
+
+/* Бейджи категорий */
+.category-badge {
+    padding: 0.4rem 0.8rem;
+    border-radius: var(--radius);
+    font-size: 0.8rem;
+    font-weight: 500;
+    display: inline-block;
+    background: var(--bg-glass);
+    border: 1px solid var(--border);
+}
+
+/* Кнопки действий */
+.btn-icon {
+    background: none;
+    border: none;
+    padding: 0.5rem;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1.1rem;
+}
+
+.btn-icon:hover {
+    background: var(--bg-glass);
+    transform: scale(1.1);
+}
+
+.btn-complete {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    border: none;
+}
+
+.btn-complete:hover {
+    background: linear-gradient(135deg, #059669, #047857);
+}
+
+/* Информация о ИП */
+.ip-info-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.card-number {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-family: 'Courier New', monospace;
+}
+
+/* Адаптивность */
+@media (max-width: 1200px) {
+    .tasks-layout {
+        grid-template-columns: 1fr;
+    }
+    
+    .region-sidebar {
+        order: -1;
+    }
+}
+
+@media (max-width: 768px) {
+    .tasks-container {
+        padding: 1rem;
+    }
+    
+    .header-main {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .control-group {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .week-summary {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+}
+/* ===== СТИЛИ ДЛЯ ФОРМ ===== */
+.form-select {
+    width: 100%;
+    padding: 1rem;
+    background: var(--bg-glass);
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text-primary);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    font-family: inherit;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23cbd5e1'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1.5em;
+}
+
+.form-select:focus {
+    outline: none;
+    border-color: var(--primary);
+    background-color: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.15);
+}
+
+.form-select:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.form-textarea {
+    width: 100%;
+    padding: 1rem;
+    background: var(--bg-glass);
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text-primary);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 100px;
+}
+
+.form-textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    background: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.15);
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.filter-select {
+    padding: 0.75rem 1rem;
+    background: var(--bg-glass);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    cursor: pointer;
+    min-width: 150px;
+}
+
+.filter-select:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+/* ДОБАВЬТЕ ЭТО В КОНЕЦ css/pages/tasks/tasks-main.css */
+
+/* Стили для таблицы задач */
+.week-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.week-table th {
+    background: rgba(255, 255, 255, 0.08);
+    font-weight: 600;
+    padding: 1rem 0.75rem;
+    text-align: left;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border);
+}
+
+.week-table td {
+    padding: 1rem 0.75rem;
+    vertical-align: top;
+    border-bottom: 1px solid var(--border);
+}
+
+.task-row:hover {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+/* Стили для сайдбара регионов */
+.region-sidebar {
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-light);
+    padding: 1.5rem;
+    position: sticky;
+    top: 2rem;
+}
+
+.region-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+}
+
+.region-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+}
+
+.region-item:hover {
+    background: var(--bg-glass);
+    border-color: var(--border);
+}
+
+.region-item.active {
+    background: var(--gradient);
+    border-color: var(--primary);
+    color: white;
+}
+
+.region-item.active .region-name,
+.region-item.active .region-badge {
+    color: white;
+}
+
+/* Стили для вкладок */
+.tasks-tabs {
+    display: flex;
+    gap: 0.5rem;
+    background: var(--bg-glass);
+    border-radius: var(--radius-lg);
+    padding: 0.5rem;
+    border: 1px solid var(--border);
+}
+
+.tab-btn {
+    flex: 1;
     padding: 1rem 1.5rem;
     background: transparent;
     border: none;
+    border-radius: var(--radius);
     color: var(--text-secondary);
+    font-weight: 600;
     cursor: pointer;
-    border-radius: var(--radius) var(--radius) 0 0;
     transition: all 0.3s ease;
-    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: center;
 }
 
 .tab-btn:hover {
@@ -57,9 +421,9 @@
 }
 
 .tab-btn.active {
-    background: var(--bg-glass);
-    color: var(--text-primary);
-    border-bottom: 2px solid var(--primary);
+    background: var(--gradient);
+    color: white;
+    box-shadow: var(--shadow-glow);
 }
 
 .tab-content {
@@ -71,16 +435,59 @@
     animation: fadeInUp 0.5s ease;
 }
 
-/* ===== НОВАЯ СТРУКТУРА С САЙДБАРОМ ===== */
-.tasks-layout {
-    display: grid;
-    grid-template-columns: 1fr 320px;
-    gap: 2rem;
-    max-width: 1600px;
-    margin: 0 auto;
-    align-items: start;
+/* Стили для заголовков недель */
+.week-header {
+    padding: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--bg-glass);
+    transition: all 0.3s ease;
 }
 
-.tasks-main-content {
-    min-height: 80vh;
+.week-header:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.week-title {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex: 1;
+}
+
+.week-summary {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+/* Прогресс-бар */
+.progress-bar {
+    flex: 1;
+    height: 8px;
+    background: var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    min-width: 100px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--gradient);
+    border-radius: 10px;
+    transition: width 0.5s ease;
+}
+
+/* Адаптивность */
+@media (max-width: 1200px) {
+    .tasks-layout {
+        grid-template-columns: 1fr;
+    }
+    
+    .region-sidebar {
+        position: static;
+        order: -1;
+    }
 }

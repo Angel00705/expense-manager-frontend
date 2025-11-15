@@ -1,4 +1,4 @@
-// Модуль для интерфейса управляющего
+// js/modules/manager-tasks.js - ИСПРАВЛЕННАЯ ВЕРСИЯ
 const ManagerTasks = {
     currentUser: null,
     userRegion: null,
@@ -6,7 +6,12 @@ const ManagerTasks = {
     init() {
         console.log('👤 Инициализация модуля управляющего');
         this.currentUser = app.currentUser;
-        this.userRegion = this.currentUser.regions[0];
+        this.userRegion = this.currentUser.region || this.currentUser.regions?.[0];
+        
+        if (!this.userRegion) {
+            console.error('❌ Не удалось определить регион управляющего');
+            return;
+        }
         
         this.setupManagerUI();
         this.setupDataProtection();
@@ -26,7 +31,10 @@ const ManagerTasks = {
         }
 
         // Настраиваем заголовок
-        document.getElementById('pageSubtitle').textContent = `Задачи в регионе ${this.userRegion}`;
+        const subtitle = document.getElementById('pageSubtitle');
+        if (subtitle) {
+            subtitle.textContent = `Задачи в регионе ${this.userRegion}`;
+        }
 
         // Блокируем выбор региона в плане месяца
         const planRegionSelect = document.getElementById('planRegion');
@@ -48,7 +56,7 @@ const ManagerTasks = {
         });
     },
 
-    setupDataProtection() {
+     setupDataProtection() {
         console.log('🔒 Настройка защиты данных для управляющего');
         
         // Скрываем элементы редактирования

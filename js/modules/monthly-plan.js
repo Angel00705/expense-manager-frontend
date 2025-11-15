@@ -1,7 +1,7 @@
-// js/modules/monthly-plan.js
+// js/modules/monthly-plan.js - ИСПРАВЛЕННАЯ ВЕРСИЯ
 const MonthlyPlan = {
     currentRegion: 'Курган',
-    currentMonth: '2025-11', // Обновили на ноябрь 2025
+    currentMonth: '2025-11',
 
     init() {
         console.log('📅 Инициализация модуля плана месяца');
@@ -11,7 +11,6 @@ const MonthlyPlan = {
     },
 
     setupEventListeners() {
-        // Обработчики для выбора региона и месяца
         const planRegion = document.getElementById('planRegion');
         const planMonth = document.getElementById('planMonth');
         
@@ -24,14 +23,22 @@ const MonthlyPlan = {
             this.currentMonth = e.target.value;
             this.loadPlanData();
         });
+
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.week-header')) {
+                const weekSection = e.target.closest('.week-section');
+                if (weekSection) {
+                    const week = weekSection.dataset.week;
+                    this.toggleWeek(week);
+                }
+            }
+        });
     },
 
     setupRegionSidebar() {
-        // Инициализация сайдбара регионов только для админов
         if (app.currentUser.role === 'admin') {
             this.renderRegionList();
         } else {
-            // Скрываем сайдбар для управляющих
             const sidebar = document.getElementById('regionSidebar');
             if (sidebar) sidebar.style.display = 'none';
         }
@@ -59,7 +66,6 @@ const MonthlyPlan = {
             </div>
         `).join('');
 
-        // Обработчики клика по регионам
         regionList.addEventListener('click', (e) => {
             const regionItem = e.target.closest('.region-item');
             if (regionItem) {
@@ -72,7 +78,6 @@ const MonthlyPlan = {
         console.log(`🔄 Переключение на регион: ${regionName}`);
         this.currentRegion = regionName;
         
-        // Обновляем активный элемент
         document.querySelectorAll('.region-item').forEach(item => {
             item.classList.remove('active');
         });
@@ -80,38 +85,46 @@ const MonthlyPlan = {
         const activeItem = document.querySelector(`[data-region="${regionName}"]`);
         if (activeItem) activeItem.classList.add('active');
 
-        // Обновляем выпадающий список
         const planRegionSelect = document.getElementById('planRegion');
         if (planRegionSelect) planRegionSelect.value = regionName;
 
-        // Загружаем данные региона
         this.loadPlanData();
     },
 
     loadPlanData() {
         console.log(`📥 Загрузка плана для: ${this.currentRegion}, ${this.currentMonth}`);
         
-        // Получаем данные из monthly-plans-data.js
-        const planData = getMonthlyPlan(this.currentRegion);
-        
-        // Обновляем статистику
+        const planData = this.getMonthlyPlan(this.currentRegion);
         this.updatePlanStatistics(planData);
-        
-        // Рендерим недели
         this.renderWeeklyPlan(planData);
-        
-        // Обновляем информацию о регионе
         this.updateRegionInfo();
     },
 
-    updatePlanStatistics(planData) {
-        const totalPlan = Object.values(planData).reduce((sum, week) => {
-            return sum + (week.tasks ? week.tasks.reduce((weekSum, task) => weekSum + (task.plan || 0), 0) : 0);
-        }, 0);
-        
-        const weeksWithPlan = Object.values(planData).filter(week => week.tasks && week.tasks.length > 0).length;
+    // ДОБАВЛЕНА ФУНКЦИЯ ДЛЯ ПОЛУЧЕНИЯ ПЛАНА
+    getMonthlyPlan(region) {
+        return MonthlyPlansData[region] || { 
+            week1: { budget: 0, reserve: 0, total: 0, tasks: [] },
+            week2: { budget: 0, reserve: 0, total: 0, tasks: [] },
+            week3: { budget: 0, reserve: 0, total: 0, tasks: [] },
+            week4: { budget: 0, reserve: 0, total: 0, tasks: [] }
+        };
+    },
 
-        // Бюджет из CSV
+    updatePlanStatistics(planData) {
+        let totalPlan = 0;
+        let weeksWithPlan = 0;
+
+        for (let week = 1; week <= 4; week++) {
+            const weekData = planData[`week${week}`];
+            if (weekData && weekData.tasks && weekData.tasks.length > 0) {
+                const weekTotal = weekData.tasks.reduce((sum, task) => sum + (task.plan || 0), 0);
+                totalPlan += weekTotal;
+                weeksWithPlan++;
+                
+                this.updateWeekHeader(week, weekTotal);
+            }
+        }
+
         const totalBudget = 72050;
 
         document.getElementById('monthBudget').textContent = formatCurrency(totalBudget) + ' ₽';
@@ -120,22 +133,46 @@ const MonthlyPlan = {
         document.getElementById('weeksPlanned').textContent = `${weeksWithPlan}/4`;
     },
 
-    renderWeeklyPlan(planData) {
-        // Обновляем каждую неделю
-        [1, 2, 3, 4].forEach(week => {
-            const weekData = planData[`week${week}`] || { tasks: [] };
-            const weekTotal = weekData.tasks ? weekData.tasks.reduce((sum, task) => sum + (task.plan || 0), 0) : 0;
-            
-            this.updateWeekHeader(week, weekTotal);
-            this.renderWeekTasks(week, weekData.tasks || []);
-        });
-        
-        this.updateMonthSummary(planData);
-    },
-
     updateWeekHeader(week, total) {
         const totalElement = document.getElementById(`week${week}Total`);
-        if (totalElement) totalElement.textContent = formatCurrency(total) + ' ₽';
+        if (totalElement) {
+            totalElement.textContent = formatCurrency(total) + ' ₽';
+        }
+
+        const progressElement = document.querySelector(`[data-week="${week}"] .progress-fill`);
+        if (progressElement) {
+            const completedTasks = this.getCompletedTasksCount(this.currentRegion, week);
+            const totalTasks = this.getTotalTasksCount(this.currentRegion, week);
+            const progressPercent = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
+            
+            progressElement.style.width = `${progressPercent}%`;
+            
+            const progressText = document.querySelector(`[data-week="${week}"] .progress-text`);
+            if (progressText) {
+                progressText.textContent = `Выполнено: ${Math.round(progressPercent)}%`;
+            }
+        }
+    },
+
+    getCompletedTasksCount(region, week) {
+        const weekData = this.getMonthlyPlan(region)[`week${week}`];
+        if (!weekData || !weekData.tasks) return 0;
+        return weekData.tasks.filter(task => task.status === 'completed').length;
+    },
+
+    getTotalTasksCount(region, week) {
+        const weekData = this.getMonthlyPlan(region)[`week${week}`];
+        if (!weekData || !weekData.tasks) return 0;
+        return weekData.tasks.length;
+    },
+
+    renderWeeklyPlan(planData) {
+        for (let week = 1; week <= 4; week++) {
+            const weekData = planData[`week${week}`] || { tasks: [] };
+            this.renderWeekTasks(week, weekData.tasks || []);
+        }
+        
+        this.updateMonthSummary(planData);
     },
 
     renderWeekTasks(week, tasks) {
@@ -168,15 +205,14 @@ const MonthlyPlan = {
                         ${getCategoryEmoji(task.category)} ${getCategoryName(task.category)}
                     </div>
                 </td>
-                <td>
-                    <div class="task-description-cell">
-                        <div class="task-main-desc">${task.description}</div>
-                        ${task.explanation ? `<div class="task-explanation">${task.explanation}</div>` : ''}
-                    </div>
+                <td class="task-description-cell">
+                    <div class="task-main-desc">${task.description}</div>
+                    ${task.explanation ? `<div class="task-explanation">${task.explanation}</div>` : ''}
+                    ${task.responsible ? `<div class="task-responsible">👤 ${task.responsible}</div>` : ''}
                 </td>
                 <td>
                     <div class="ip-info-cell">
-                        <div class="ip-name">${task.ip}</div>
+                        <div class="ip-name">${task.ip || '-'}</div>
                         ${task.card ? `<div class="card-number">${task.card}</div>` : ''}
                     </div>
                 </td>
@@ -191,10 +227,10 @@ const MonthlyPlan = {
                 <td>
                     <div class="action-buttons">
                         ${app.currentUser.role === 'admin' ? `
-                            <button class="btn-icon edit" onclick="editWeeklyTask(${week}, '${task.id}')" title="Редактировать">
+                            <button class="btn-icon edit" onclick="MonthlyPlan.editTask(${week}, '${task.id}')" title="Редактировать">
                                 ✏️
                             </button>
-                            <button class="btn-icon delete" onclick="deleteWeeklyTask(${week}, '${task.id}')" title="Удалить">
+                            <button class="btn-icon delete" onclick="MonthlyPlan.deleteTask(${week}, '${task.id}')" title="Удалить">
                                 🗑️
                             </button>
                         ` : `
@@ -213,8 +249,8 @@ const MonthlyPlan = {
     },
 
     updateMonthSummary(planData) {
-        const total = Object.values(planData).reduce((sum, week) => {
-            return sum + (week.tasks ? week.tasks.reduce((weekSum, task) => weekSum + (task.plan || 0), 0) : 0);
+        const total = Object.values(planData).reduce((sum, weekData) => {
+            return sum + (weekData.tasks ? weekData.tasks.reduce((weekSum, task) => weekSum + (task.plan || 0), 0) : 0);
         }, 0);
         
         const totalElement = document.getElementById('monthTotal');
@@ -222,87 +258,123 @@ const MonthlyPlan = {
     },
 
     updateRegionInfo() {
-        // Обновляем информацию о регионе в сайдбаре
         const regionNameElement = document.getElementById('currentRegionName');
         if (regionNameElement) regionNameElement.textContent = this.currentRegion;
         
-        // Обновляем статистику региона
         const ips = appData.getIPsByRegion(this.currentRegion);
         const cards = appData.getCardsByRegion(this.currentRegion);
         
-        document.getElementById('ipCount').textContent = ips.length;
-        document.getElementById('activeCardsCount').textContent = cards.filter(card => card.status === 'в регионе').length;
-        document.getElementById('regionBudget').textContent = '72,050 ₽'; // Из CSV
+        const ipCountElement = document.getElementById('ipCount');
+        const cardsCountElement = document.getElementById('activeCardsCount');
+        const budgetElement = document.getElementById('regionBudget');
+        
+        if (ipCountElement) ipCountElement.textContent = ips.length;
+        if (cardsCountElement) cardsCountElement.textContent = cards.filter(card => card.status === 'в регионе').length;
+        if (budgetElement) budgetElement.textContent = '72,050 ₽';
+        
+        this.renderIpList(ips);
+    },
+
+    renderIpList(ips) {
+        const ipListElement = document.getElementById('regionIpList');
+        if (!ipListElement) return;
+
+        ipListElement.innerHTML = ips.map(ip => `
+            <div class="ip-info">
+                <span class="ip-name">${ip}</span>
+                <div class="ip-cards">
+                    ${this.getCardsForIp(ip).map(card => `
+                        <span class="card-badge">${card.number}</span>
+                    `).join('')}
+                </div>
+            </div>
+        `).join('');
+    },
+
+    getCardsForIp(ipName) {
+        const cards = appData.getCardsByRegion(this.currentRegion);
+        return cards.filter(card => card.ip === ipName);
+    },
+
+    toggleWeek(week) {
+        const content = document.querySelector(`.week-section[data-week="${week}"] .week-content`);
+        const icon = document.querySelector(`.week-section[data-week="${week}"] .expand-icon`);
+        
+        if (content.style.display === 'none') {
+            content.style.display = 'block';
+            icon.textContent = '🔽';
+        } else {
+            content.style.display = 'none';
+            icon.textContent = '▶️';
+        }
+    },
+
+    toggleAllWeeks() {
+        const allWeeks = [1, 2, 3, 4];
+        const allExpanded = allWeeks.every(week => {
+            const content = document.querySelector(`.week-section[data-week="${week}"] .week-content`);
+            return content && content.style.display !== 'none';
+        });
+        
+        allWeeks.forEach(week => {
+            const content = document.querySelector(`.week-section[data-week="${week}"] .week-content`);
+            const icon = document.querySelector(`.week-section[data-week="${week}"] .expand-icon`);
+            if (content && icon) {
+                if (allExpanded) {
+                    content.style.display = 'none';
+                    icon.textContent = '▶️';
+                } else {
+                    content.style.display = 'block';
+                    icon.textContent = '🔽';
+                }
+            }
+        });
+        
+        const toggleText = document.getElementById('toggleAllText');
+        if (toggleText) {
+            toggleText.textContent = allExpanded ? 'Развернуть все' : 'Свернуть все';
+        }
+    },
+
+    addTaskToWeek(week) {
+        if (app.currentUser.role === 'manager') {
+            Notification.error('❌ У вас нет прав для добавления задач в план');
+            return;
+        }
+        console.log('➕ Добавление задачи в неделю:', week);
+        Notification.info('Функция добавления задачи в разработке');
+    },
+
+    saveMonthlyPlan() {
+        console.log('💾 Сохранение плана месяца');
+        Notification.success('План месяца сохранен!');
+    },
+
+    editTask(week, taskId) {
+        console.log('✏️ Редактирование задачи:', taskId, 'в неделе:', week);
+        Notification.info('Функция редактирования в разработке');
+    },
+
+    deleteTask(week, taskId) {
+        if (confirm('Удалить эту задачу из плана?')) {
+            console.log('🗑️ Удаление задачи:', taskId, 'из недели:', week);
+            Notification.success('Задача удалена из плана');
+        }
     },
 
     getStatusText(status) {
         const statusMap = {
-            'planned': 'Запланировано',
-            'pending': 'В работе', 
-            'completed': 'Выполнено',
-            'cancelled': 'Отменено'
+            'planned': '📅 Запланировано',
+            'pending': '🔄 В работе', 
+            'completed': '✅ Выполнено',
+            'cancelled': '❌ Отменено',
+            'reserve': '🛡️ Резерв'
         };
         return statusMap[status] || status;
     }
 };
 
-// Глобальные функции
-function toggleWeek(week) {
-    const content = document.querySelector(`.week-section[data-week="${week}"] .week-content`);
-    const icon = document.querySelector(`.week-section[data-week="${week}"] .expand-icon`);
-    
-    if (content.style.display === 'none') {
-        content.style.display = 'block';
-        icon.textContent = '🔽';
-    } else {
-        content.style.display = 'none';
-        icon.textContent = '▶️';
-    }
-}
-
-function addTaskToWeek(week) {
-    if (app.currentUser.role === 'manager') {
-        Notification.error('❌ У вас нет прав для добавления задач в план');
-        return;
-    }
-    console.log('➕ Добавление задачи в неделю:', week);
-}
-
-function editWeeklyTask(week, taskId) {
-    console.log('✏️ Редактирование задачи:', taskId, 'в неделе:', week);
-}
-
-function deleteWeeklyTask(week, taskId) {
-    if (confirm('Удалить эту задачу из плана?')) {
-        console.log('🗑️ Удаление задачи:', taskId, 'из недели:', week);
-    }
-}
-
-function saveMonthlyPlan() {
-    console.log('💾 Сохранение плана месяца');
-    Notification.success('План месяца сохранен!');
-}
-
-function toggleAllWeeks() {
-    const allWeeks = [1, 2, 3, 4];
-    const allExpanded = allWeeks.every(week => {
-        const content = document.querySelector(`.week-section[data-week="${week}"] .week-content`);
-        return content && content.style.display !== 'none';
-    });
-    
-    allWeeks.forEach(week => {
-        const content = document.querySelector(`.week-section[data-week="${week}"] .week-content`);
-        const icon = document.querySelector(`.week-section[data-week="${week}"] .expand-icon`);
-        if (content && icon) {
-            if (allExpanded) {
-                content.style.display = 'none';
-                icon.textContent = '▶️';
-            } else {
-                content.style.display = 'block';
-                icon.textContent = '🔽';
-            }
-        }
-    });
-    
-    document.getElementById('toggleAllText').textContent = allExpanded ? 'Развернуть все' : 'Свернуть все';
-}
+// Глобальные функции для HTML onclick
+function toggleAllWeeks() { MonthlyPlan.toggleAllWeeks(); }
+function addTaskToWeek(week) { MonthlyPlan.addTaskToWeek(week); }
+function saveMonthlyPlan() { MonthlyPlan.saveMonthlyPlan(); }

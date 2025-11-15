@@ -1,4 +1,4 @@
-// js/utils.js - ДОБАВИТЬ В НАЧАЛО ФАЙЛА
+// js/utils.js - ИСПРАВЛЕННАЯ ВЕРСИЯ
 console.log('🔧 Загрузка utils.js...');
 
 // Инициализация при загрузке
@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('✅ Auth система готова');
     }
 });
+
 const Auth = {
   currentUser: null,
   initialized: false,
@@ -118,7 +119,7 @@ const Notification = {
     },
     
     error: function(message) {
-        this.show('❌ ' + message, 'error', false); // Ошибки не закрываются автоматически
+        this.show('❌ ' + message, 'error', false);
     },
     
     info: function(message) {
@@ -126,7 +127,6 @@ const Notification = {
     },
     
     createToast: function(message, type, autoClose) {
-        // Создаем контейнер для уведомлений если его нет
         let container = document.getElementById('notification-container');
         if (!container) {
             container = document.createElement('div');
@@ -143,7 +143,6 @@ const Notification = {
             document.body.appendChild(container);
         }
         
-        // Создаем уведомление
         const toast = document.createElement('div');
         toast.className = `notification-toast ${type}`;
         toast.style.cssText = `
@@ -170,12 +169,10 @@ const Notification = {
         
         container.appendChild(toast);
         
-        // Анимация появления
         setTimeout(() => {
             toast.style.transform = 'translateX(0)';
         }, 100);
         
-        // Авто-закрытие
         if (autoClose) {
             setTimeout(() => {
                 if (toast.parentElement) {
@@ -207,26 +204,7 @@ const Notification = {
     }
 };
 
-// Добавить в utils.js
-const NavigationHelper = {
-  // Добавить кнопку "Назад" в навигацию
-  addBackButton: function(targetPage = 'dashboard.html', text = '← Назад') {
-    const nav = document.querySelector('.navbar .container > div');
-    if (nav) {
-      const backBtn = document.createElement('a');
-      backBtn.href = targetPage;
-      backBtn.className = 'btn btn-outline';
-      backBtn.style.background = 'rgba(255,255,255,0.1)';
-      backBtn.style.color = 'white';
-      backBtn.style.border = '1px solid rgba(255,255,255,0.3)';
-      backBtn.style.marginRight = '12px';
-      backBtn.innerHTML = text;
-      nav.insertBefore(backBtn, nav.firstChild);
-    }
-  }
-};
-
-// ПОЛНЫЙ TaskManager с ВСЕМИ методами
+// TaskManager
 const TaskManager = {
   statuses: {
     'pending': '⏳ Ожидает выполнения',
@@ -235,7 +213,6 @@ const TaskManager = {
     'cancelled': '❌ Отменено'
   },
   
-  // Получить все задачи
   getAllTasks: function() {
     try {
       const tasks = localStorage.getItem('tasks');
@@ -246,7 +223,6 @@ const TaskManager = {
     }
   },
   
-  // Сохранить задачи
   saveTasks: function(tasks) {
     try {
       localStorage.setItem('tasks', JSON.stringify(tasks));
@@ -257,7 +233,6 @@ const TaskManager = {
     }
   },
   
-  // СОЗДАТЬ задачу
   createTask: function(taskData) {
     const tasks = this.getAllTasks();
     
@@ -280,7 +255,6 @@ const TaskManager = {
     }
   },
   
-  // ОБНОВИТЬ задачу
   updateTask: function(taskId, updates) {
     const tasks = this.getAllTasks();
     const taskIndex = tasks.findIndex(task => task.id === taskId);
@@ -303,7 +277,6 @@ const TaskManager = {
     return null;
   },
   
-  // УДАЛИТЬ задачу
   deleteTask: function(taskId) {
     const tasks = this.getAllTasks();
     const filteredTasks = tasks.filter(task => task.id !== taskId);
@@ -317,16 +290,14 @@ const TaskManager = {
     return false;
   },
   
-  // Получить задачи для текущего пользователя
   getUserTasks: function() {
     const tasks = this.getAllTasks();
     
     if (!Auth.currentUser) return [];
     
     if (Auth.isAdmin()) {
-      return tasks; // Админ видит все задачи
+      return tasks;
     } else if (Auth.isManager()) {
-      // Управляющий видит только свои задачи
       return tasks.filter(task => 
         task.responsibleManager === Auth.currentUser.name ||
         task.region === Auth.currentUser.region
@@ -337,7 +308,7 @@ const TaskManager = {
   }
 };
 
-// Утилиты форматирования
+// Форматирование
 const FormatHelper = {
   formatDate: function(dateString) {
     try {
@@ -360,174 +331,103 @@ const FormatHelper = {
   }
 };
 
-// Массовые операции
-const BulkOperations = {
-  createMultipleTasks: function(tasksData) {
-    const results = {
-      success: [],
-      errors: []
+// Глобальные функции для модальных окон
+function closeAddTaskModal() {
+    const modal = document.getElementById('addTaskModal');
+    if (modal) modal.style.display = 'none';
+}
+
+function closeCompleteTaskModal() {
+    const modal = document.getElementById('completeTaskModal');
+    if (modal) modal.style.display = 'none';
+}
+
+function saveWeeklyTask() {
+    Notification.info('Функция сохранения задачи в разработке');
+}
+
+function saveTaskCompletion() {
+    if (typeof ManagerTasks !== 'undefined') {
+        ManagerTasks.saveTaskCompletion();
+    } else {
+        Notification.info('Завершение задачи в разработке');
+    }
+}
+
+// Глобальные функции для кнопок
+function toggleWeek(week) {
+    if (typeof MonthlyPlan !== 'undefined') {
+        MonthlyPlan.toggleWeek(week);
+    }
+}
+
+function toggleAllWeeks() {
+    if (typeof MonthlyPlan !== 'undefined') {
+        MonthlyPlan.toggleAllWeeks();
+    }
+}
+
+function addTaskToWeek(week) {
+    if (typeof MonthlyPlan !== 'undefined') {
+        MonthlyPlan.addTaskToWeek(week);
+    }
+}
+
+function saveMonthlyPlan() {
+    if (typeof MonthlyPlan !== 'undefined') {
+        MonthlyPlan.saveMonthlyPlan();
+    }
+}
+
+// Вспомогательные функции для форматов
+function formatCurrency(amount) {
+    if (!amount || amount === 0) return '0';
+    return new Intl.NumberFormat('ru-RU').format(Math.round(amount));
+}
+
+function formatDate(dateString) {
+    if (!dateString) return 'Не указана';
+    try {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('ru-RU');
+    } catch {
+        return 'Неверная дата';
+    }
+}
+
+function getCategoryEmoji(category) {
+    const emojis = {
+        'products': '🛒', 'household': '🏠', 'medicaments': '💊',
+        'stationery': '📎', 'cafe': '☕', 'repairs': '🔧',
+        'azs': '⛽', 'salary': '💰', 'shipping': '📦',
+        'events': '🎉', 'polygraphy': '🖨️', 'insurance': '🛡️',
+        'charity': '❤️', 'equipment': '💻', 'cleaning': '🧹',
+        'checks': '🧾', 'carsharing': '🚗', 'rent': '🏢',
+        'comm': '💡', 'internet': '🌐', 'ipSalary': '💼'
     };
-    
-    tasksData.forEach((taskData, index) => {
-      try {
-        const task = TaskManager.createTask(taskData);
-        results.success.push(task);
-      } catch (error) {
-        results.errors.push({ index, error: error.message });
-      }
-    });
-    
-    return results;
-  },
-  
-  updateTasksStatus: function(taskIds, newStatus) {
-    const results = {
-      updated: [],
-      errors: []
+    return emojis[category] || '📋';
+}
+
+function getCategoryName(category) {
+    const names = {
+        'products': 'Продукты', 'household': 'Хоз. товары',
+        'medicaments': 'Медикаменты', 'stationery': 'Канцелярия',
+        'cafe': 'Кафе', 'repairs': 'Ремонт', 'azs': 'АЗС',
+        'salary': 'Зарплата', 'shipping': 'Отправка',
+        'events': 'Мероприятия', 'polygraphy': 'Полиграфия',
+        'insurance': 'Страхование', 'charity': 'Благотворительность',
+        'equipment': 'Техника', 'cleaning': 'Клининг',
+        'checks': 'Чеки', 'carsharing': 'Каршеринг',
+        'rent': 'Аренда', 'comm': 'Коммуналка',
+        'internet': 'Интернет', 'ipSalary': 'ЗП ИП'
     };
-    
-    taskIds.forEach(taskId => {
-      const updated = TaskManager.updateTask(taskId, { status: newStatus });
-      if (updated) {
-        results.updated.push(updated);
-      } else {
-        results.errors.push(taskId);
-      }
-    });
-    
-    return results;
-  },
-  
-  exportTasksToCSV: function(tasks) {
-    let csv = 'ID,Название,Регион,ИП,Статус,Сумма,Дата\n';
-    
-    tasks.forEach(task => {
-      csv += `"${task.id}","${task.title}","${task.region}","${task.ip}","${task.status}","${task.plannedAmount}","${task.plannedDate}"\n`;
-    });
-    
-    return csv;
-  }
-};
-// В utils.js добавляем после BulkOperations:
-
-// Система аудита для отслеживания изменений
-const AuditSystem = {
-    // Получить историю изменений
-    getHistory: function() {
-        try {
-            const history = localStorage.getItem('auditHistory');
-            return history ? JSON.parse(history) : [];
-        } catch (e) {
-            return [];
-        }
-    },
-
-    // Сохранить историю изменений
-    saveHistory: function(history) {
-        try {
-            localStorage.setItem('auditHistory', JSON.stringify(history));
-            return true;
-        } catch (e) {
-            console.error('Ошибка сохранения истории:', e);
-            return false;
-        }
-    },
-
-    // Добавить запись в историю
-    logAction: function(action, entity, entityId, details = {}) {
-        if (!Auth.currentUser || Auth.currentUser.role !== 'admin') return;
-
-        const history = this.getHistory();
-        
-        const record = {
-            id: 'audit_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
-            timestamp: new Date().toISOString(),
-            user: {
-                name: Auth.currentUser.name,
-                email: Auth.currentUser.email,
-                role: Auth.currentUser.role
-            },
-            action: action, // create, update, delete
-            entity: entity, // task, expense_item, card, etc.
-            entityId: entityId,
-            details: details
-        };
-
-        history.unshift(record); // Добавляем в начало
-        
-        // Ограничиваем историю последними 1000 записей
-        if (history.length > 1000) {
-            history.splice(1000);
-        }
-        
-        this.saveHistory(history);
-        return record;
-    }
-};
-
-// Обновляем TaskManager для логирования действий
-const originalCreateTask = TaskManager.createTask;
-TaskManager.createTask = function(taskData) {
-    const task = originalCreateTask.call(this, taskData);
-    if (task && Auth.isAdmin()) {
-        AuditSystem.logAction('create', 'task', task.id, {
-            title: task.title,
-            description: task.description,
-            region: task.region,
-            ip: task.ip,
-            amount: task.plannedAmount
-        });
-    }
-    return task;
-};
-
-const originalUpdateTask = TaskManager.updateTask;
-TaskManager.updateTask = function(taskId, updates) {
-    const oldTask = this.getAllTasks().find(t => t.id === taskId);
-    const task = originalUpdateTask.call(this, taskId, updates);
-    
-    if (task && Auth.isAdmin() && oldTask) {
-        const changes = {};
-        Object.keys(updates).forEach(key => {
-            if (oldTask[key] !== updates[key]) {
-                changes[key] = {
-                    old: oldTask[key],
-                    new: updates[key]
-                };
-            }
-        });
-        
-        if (Object.keys(changes).length > 0) {
-            AuditSystem.logAction('update', 'task', taskId, {
-                title: task.title,
-                changes: changes
-            });
-        }
-    }
-    return task;
-};
-
-const originalDeleteTask = TaskManager.deleteTask;
-TaskManager.deleteTask = function(taskId) {
-    const task = this.getAllTasks().find(t => t.id === taskId);
-    const success = originalDeleteTask.call(this, taskId);
-    
-    if (success && task && Auth.isAdmin()) {
-        AuditSystem.logAction('delete', 'task', taskId, {
-            title: task.title,
-            region: task.region
-        });
-    }
-    return success;
-};
+    return names[category] || category;
+}
 
 // Экспорт в глобальную область
 window.Auth = Auth;
 window.Notification = Notification;
 window.TaskManager = TaskManager;
 window.FormatHelper = FormatHelper;
-window.BulkOperations = BulkOperations;
-window.NavigationHelper = NavigationHelper;
-window.AuditSystem = AuditSystem;
 
 console.log('🔧 Utils.js загружен успешно');

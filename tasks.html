@@ -6,13 +6,14 @@
     <title>Задачи - IP Expense Manager</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><defs><linearGradient id='borderGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%238b5cf6'/><stop offset='50%' stop-color='%236d28d9'/><stop offset='100%' stop-color='%231e40af'/></linearGradient><linearGradient id='checkGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%23a78bfa'/><stop offset='100%' stop-color='%234f46e5'/></linearGradient><filter id='glow' x='-50%' y='-50%' width='200%' height='200%'><feGaussianBlur in='SourceGraphic' stdDeviation='1' result='blur'/><feMerge><feMergeNode in='blur'/><feMergeNode in='SourceGraphic'/></feMerge></filter></defs><circle cx='10' cy='10' r='9' fill='none' stroke='url(%23borderGrad)' stroke-width='1.5' opacity='0.9'/><path d='M6,10 L8.5,12.5 L14,7' stroke='url(%23checkGrad)' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round' filter='url(%23glow)'/></svg>">
     
+    <!-- ПРАВИЛЬНЫЕ ПУТИ БЕЗ ../ -->
     <link rel="stylesheet" href="css/global.css">
-<link rel="stylesheet" href="css/components/navbar.css">
-<link rel="stylesheet" href="css/components/modal.css">
-<link rel="stylesheet" href="css/pages/tasks/tasks-main.css">
-<link rel="stylesheet" href="css/pages/tasks/tasks-admin.css">
-<link rel="stylesheet" href="css/pages/tasks/tasks-manager.css">
-<link rel="stylesheet" href="css/modules/tasks-modules.css">
+    <link rel="stylesheet" href="css/components/navbar.css">
+    <link rel="stylesheet" href="css/components/modal.css">
+    <link rel="stylesheet" href="css/pages/tasks/tasks-main.css">
+    <link rel="stylesheet" href="css/pages/tasks/tasks-admin.css">
+    <link rel="stylesheet" href="css/pages/tasks/tasks-manager.css">
+    <link rel="stylesheet" href="css/modules/tasks-modules.css">
 </head>
 <body>
     <div class="background-animation">
@@ -46,7 +47,7 @@
                     <span class="user-name" id="userName">Пользователь</span>
                     <span class="user-role" id="userRole">Роль</span>
                 </div>
-                <button onclick="logout()" class="logout-btn">
+                <button onclick="Auth.logout()" class="logout-btn">
                     <span class="nav-icon">🚪</span>
                     Выйти
                 </button>
@@ -112,9 +113,9 @@
                             <div class="month-selector">
                                 <label>Месяц:</label>
                                 <select id="planMonth" class="form-select">
-                                    <option value="2024-11">Ноябрь 2024</option>
-                                    <option value="2024-12">Декабрь 2024</option>
-                                    <option value="2025-01">Январь 2025</option>
+                                    <option value="2025-11">Ноябрь 2025</option>
+                                    <option value="2025-12">Декабрь 2025</option>
+                                    <option value="2026-01">Январь 2026</option>
                                 </select>
                             </div>
                         </div>
@@ -157,7 +158,7 @@
                             <div class="week-header" onclick="toggleWeek(1)">
                                 <div class="week-title">
                                     <span class="expand-icon">▶️</span>
-                                    <h3>📌 НЕДЕЛЯ 1 (1-7 ноября)</h3>
+                                    <h3>📌 НЕДЕЛЯ 1 (1-7 ноября 2025)</h3>
                                 </div>
                                 <div class="week-summary">
                                     <span class="week-total">План: <strong id="week1Total">0 ₽</strong></span>
@@ -176,19 +177,19 @@
                             <div class="week-content" style="display: none;">
                                 <div class="week-tasks">
                                     <table class="week-table">
-                                     <thead>
-    <tr>
-        <th width="30"></th>
-        <th width="120">Категория</th>
-        <th>Описание задачи</th>
-        <th width="120">ИП</th>
-        <th width="100">План</th>
-        <th width="100">Факт</th>
-        <th width="100">Дата выполнения</th>
-        <th width="80">Статус</th>
-        <th width="100">Действия</th>
-    </tr>
-</thead>
+                                        <thead>
+                                            <tr>
+                                                <th width="30"></th>
+                                                <th width="120">Категория</th>
+                                                <th>Описание задачи</th>
+                                                <th width="120">ИП</th>
+                                                <th width="100">План</th>
+                                                <th width="100">Факт</th>
+                                                <th width="100">Дата выполнения</th>
+                                                <th width="80">Статус</th>
+                                                <th width="100">Действия</th>
+                                            </tr>
+                                        </thead>
                                         <tbody id="week1Tasks">
                                             <!-- Задачи будут через JS -->
                                         </tbody>
@@ -202,7 +203,7 @@
                             <div class="week-header" onclick="toggleWeek(2)">
                                 <div class="week-title">
                                     <span class="expand-icon">▶️</span>
-                                    <h3>📌 НЕДЕЛЯ 2 (8-14 ноября)</h3>
+                                    <h3>📌 НЕДЕЛЯ 2 (8-14 ноября 2025)</h3>
                                 </div>
                                 <div class="week-summary">
                                     <span class="week-total">План: <strong id="week2Total">0 ₽</strong></span>
@@ -229,6 +230,7 @@
                                                 <th width="120">ИП</th>
                                                 <th width="100">План</th>
                                                 <th width="100">Факт</th>
+                                                <th width="100">Дата выполнения</th>
                                                 <th width="80">Статус</th>
                                                 <th width="100">Действия</th>
                                             </tr>
@@ -246,7 +248,7 @@
                             <div class="week-header" onclick="toggleWeek(3)">
                                 <div class="week-title">
                                     <span class="expand-icon">▶️</span>
-                                    <h3>📌 НЕДЕЛЯ 3 (15-21 ноября)</h3>
+                                    <h3>📌 НЕДЕЛЯ 3 (15-21 ноября 2025)</h3>
                                 </div>
                                 <div class="week-summary">
                                     <span class="week-total">План: <strong id="week3Total">0 ₽</strong></span>
@@ -273,6 +275,7 @@
                                                 <th width="120">ИП</th>
                                                 <th width="100">План</th>
                                                 <th width="100">Факт</th>
+                                                <th width="100">Дата выполнения</th>
                                                 <th width="80">Статус</th>
                                                 <th width="100">Действия</th>
                                             </tr>
@@ -290,7 +293,7 @@
                             <div class="week-header" onclick="toggleWeek(4)">
                                 <div class="week-title">
                                     <span class="expand-icon">▶️</span>
-                                    <h3>📌 НЕДЕЛЯ 4 (22-30 ноября)</h3>
+                                    <h3>📌 НЕДЕЛЯ 4 (22-30 ноября 2025)</h3>
                                 </div>
                                 <div class="week-summary">
                                     <span class="week-total">План: <strong id="week4Total">0 ₽</strong></span>
@@ -317,6 +320,7 @@
                                                 <th width="120">ИП</th>
                                                 <th width="100">План</th>
                                                 <th width="100">Факт</th>
+                                                <th width="100">Дата выполнения</th>
                                                 <th width="80">Статус</th>
                                                 <th width="100">Действия</th>
                                             </tr>
@@ -442,20 +446,20 @@
 
                     <!-- Массовые действия -->
                     <div class="bulk-actions" id="bulkActions">
-    <span class="bulk-count" id="selectedCount">0 задач выбрано</span>
-    <button class="btn btn-secondary" onclick="AllTasks.completeSelected()">
-        <span class="nav-icon">✅</span>
-        Завершить
-    </button>
-    <button class="btn btn-secondary" onclick="AllTasks.deleteSelected()">
-        <span class="nav-icon">🗑️</span>
-        Удалить
-    </button>
-    <button class="btn btn-secondary" onclick="AllTasks.clearSelection()">
-        <span class="nav-icon">❌</span>
-        Отменить выбор
-    </button>
-</div>
+                        <span class="bulk-count" id="selectedCount">0 задач выбрано</span>
+                        <button class="btn btn-secondary" onclick="AllTasks.completeSelected()">
+                            <span class="nav-icon">✅</span>
+                            Завершить
+                        </button>
+                        <button class="btn btn-secondary" onclick="AllTasks.deleteSelected()">
+                            <span class="nav-icon">🗑️</span>
+                            Удалить
+                        </button>
+                        <button class="btn btn-secondary" onclick="AllTasks.clearSelection()">
+                            <span class="nav-icon">❌</span>
+                            Отменить выбор
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -596,46 +600,18 @@
             </div>
         </div>
     </div>
-<!-- В неделях ОБНОВИ кнопки: -->
-<button class="btn btn-sm" onclick="event.stopPropagation(); addTaskToWeek(1)">
-    <span class="nav-icon">➕</span>
-    Добавить
-</button>
 
-<!-- В строках задач ОБНОВИ кнопки: -->
-<div class="action-buttons">
-    ${app.currentUser.role === 'admin' ? `
-        <button class="btn-icon edit" onclick="editWeeklyTask(${week}, '${task.id}')" title="Редактировать">✏️</button>
-        <button class="btn-icon delete" onclick="deleteWeeklyTask(${week}, '${task.id}')" title="Удалить">🗑️</button>
-    ` : `
-        ${task.status !== 'completed' ? `
-            <button class="btn btn-sm btn-complete" onclick="ManagerTasks.startTaskCompletion('${task.id}')" title="Выполнить">
-                ✅ Выполнить
-            </button>
-        ` : `
-            <span class="completed-badge">✅ Готово</span>
-        `}
-    `}
-</div>
-
-<!-- В контролах плана ОБНОВИ кнопки: -->
-<button class="btn btn-secondary" onclick="toggleAllWeeks()">
-    <span class="nav-icon">📂</span>
-    <span id="toggleAllText">Развернуть все</span>
-</button>
-<button class="btn btn-primary" onclick="saveMonthlyPlan()">
-    <span class="nav-icon">💾</span>
-    Сохранить план
-</button>
-    <script src="js/data/monthly-plans-data.js"></script>
-    <script src="js/navbar.js"></script>
-    <script src="js/data.js"></script>
-    <script src="js/utils.js"></script>
-    <script src="data/real-cards-data.js"></script>
-    <script src="js/app.js"></script>
-    <script src="js/modules/admin-tasks.js"></script>
-    <script src="js/modules/manager-tasks.js"></script>
-    <script src="js/modules/all-tasks.js"></script>
-    <script src="js/modules/monthly-plan.js"></script>
+<!-- ПРАВИЛЬНЫЕ ПУТИ К СКРИПТАМ -->
+<script src="js/data/init-data.js"></script>
+<script src="js/data/monthly-plans-data.js"></script>
+<script src="js/navbar.js"></script>
+<script src="js/data.js"></script>
+<script src="js/utils.js"></script>
+<script src="data/real-cards-data.js"></script>
+<script src="js/app.js"></script>
+<script src="js/modules/admin-tasks.js"></script>
+<script src="js/modules/manager-tasks.js"></script>
+<script src="js/modules/all-tasks.js"></script>
+<script src="js/modules/monthly-plan.js"></script>
 </body>
 </html>
