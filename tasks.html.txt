@@ -437,20 +437,20 @@
 
                     <!-- Массовые действия -->
                     <div class="bulk-actions" id="bulkActions">
-                        <span class="bulk-count" id="selectedCount">0 задач выбрано</span>
-                        <button class="btn btn-secondary" onclick="completeSelected()">
-                            <span class="nav-icon">✅</span>
-                            Завершить
-                        </button>
-                        <button class="btn btn-secondary" onclick="deleteSelected()">
-                            <span class="nav-icon">🗑️</span>
-                            Удалить
-                        </button>
-                        <button class="btn btn-secondary" onclick="clearSelection()">
-                            <span class="nav-icon">❌</span>
-                            Отменить выбор
-                        </button>
-                    </div>
+    <span class="bulk-count" id="selectedCount">0 задач выбрано</span>
+    <button class="btn btn-secondary" onclick="AllTasks.completeSelected()">
+        <span class="nav-icon">✅</span>
+        Завершить
+    </button>
+    <button class="btn btn-secondary" onclick="AllTasks.deleteSelected()">
+        <span class="nav-icon">🗑️</span>
+        Удалить
+    </button>
+    <button class="btn btn-secondary" onclick="AllTasks.clearSelection()">
+        <span class="nav-icon">❌</span>
+        Отменить выбор
+    </button>
+</div>
                 </div>
             </div>
 
@@ -596,6 +596,10 @@
     <script src="js/data.js"></script>
     <script src="js/utils.js"></script>
     <script src="data/real-cards-data.js"></script>
-    <script src="js/tasks-enhanced.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/modules/admin-tasks.js"></script>
+    <script src="js/modules/manager-tasks.js"></script>
+    <script src="js/modules/all-tasks.js"></script>
+    <script src="js/modules/monthly-plan.js"></script>
 </body>
 </html>
