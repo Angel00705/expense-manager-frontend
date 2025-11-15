@@ -246,3 +246,138 @@ const MonthlyPlan = {
         return statusMap[status] || status;
     }
 };
+// ДОБАВЬ В КОНЕЦ monthly-plan.js
+
+// Функции для кнопок "Добавить"
+function addTaskToWeek(week) {
+    if (app.currentUser.role === 'manager') {
+        Notification.error('❌ У вас нет прав для добавления задач в план');
+        return;
+    }
+    
+    console.log('➕ Добавление задачи в неделю:', week);
+    // Здесь будет логика открытия модального окна
+    Notification.info('Функция добавления задачи будет реализована в следующем обновлении');
+}
+
+// Функции для кнопок редактирования/удаления
+function editWeeklyTask(week, taskId) {
+    console.log('✏️ Редактирование задачи:', taskId, 'в неделе:', week);
+    Notification.info('Функция редактирования задачи будет реализована в следующем обновлении');
+}
+
+function deleteWeeklyTask(week, taskId) {
+    if (confirm('Удалить эту задачу из плана?')) {
+        console.log('🗑️ Удаление задачи:', taskId, 'из недели:', week);
+        Notification.info('Функция удаления задачи будет реализована в следующем обновлении');
+    }
+}
+
+// Функция для кнопки "Сохранить план"
+function saveMonthlyPlan() {
+    console.log('💾 Сохранение плана месяца');
+    MonthlyPlan.savePlansToStorage();
+    Notification.success('План месяца сохранен!');
+}
+
+// Функция для кнопки "Развернуть/Свернуть все"
+function toggleAllWeeks() {
+    const allWeeks = [1, 2, 3, 4];
+    const allExpanded = allWeeks.every(week => {
+        const content = document.querySelector(`.week-section[data-week="${week}"] .week-content`);
+        return content && content.style.display !== 'none';
+    });
+    
+    if (allExpanded) {
+        // Сворачиваем все
+        allWeeks.forEach(week => {
+            const content = document.querySelector(`.week-section[data-week="${week}"] .week-content`);
+            const icon = document.querySelector(`.week-section[data-week="${week}"] .expand-icon`);
+            if (content) content.style.display = 'none';
+            if (icon) icon.textContent = '▶️';
+        });
+        document.getElementById('toggleAllText').textContent = 'Развернуть все';
+    } else {
+        // Разворачиваем все
+        allWeeks.forEach(week => {
+            const content = document.querySelector(`.week-section[data-week="${week}"] .week-content`);
+            const icon = document.querySelector(`.week-section[data-week="${week}"] .expand-icon`);
+            if (content) content.style.display = 'block';
+            if (icon) icon.textContent = '🔽';
+        });
+        document.getElementById('toggleAllText').textContent = 'Свернуть все';
+    }
+}
+// ДОБАВЬ В КОНЕЦ monthly-plan.js
+
+// Функции для кнопок "Добавить"
+function addTaskToWeek(week) {
+    if (app.currentUser.role === 'manager') {
+        Notification.error('❌ У вас нет прав для добавления задач в план');
+        return;
+    }
+    
+    console.log('➕ Добавление задачи в неделю:', week);
+    // Здесь будет логика открытия модального окна
+    Notification.info('Функция добавления задачи будет реализована в следующем обновлении');
+}
+
+// Функции для кнопок редактирования/удаления
+function editWeeklyTask(week, taskId) {
+    console.log('✏️ Редактирование задачи:', taskId, 'в неделе:', week);
+    Notification.info('Функция редактирования задачи будет реализована в следующем обновлении');
+}
+
+function deleteWeeklyTask(week, taskId) {
+    if (confirm('Удалить эту задачу из плана?')) {
+        console.log('🗑️ Удаление задачи:', taskId, 'из недели:', week);
+        Notification.info('Функция удаления задачи будет реализована в следующем обновлении');
+    }
+}
+
+// Функция для кнопки "Сохранить план"
+function saveMonthlyPlan() {
+    console.log('💾 Сохранение плана месяца');
+    MonthlyPlan.savePlansToStorage();
+    Notification.success('План месяца сохранен!');
+}
+
+// Функция для кнопки "Развернуть/Свернуть все"
+function toggleAllWeeks() {
+    const allWeeks = [1, 2, 3, 4];
+    const allExpanded = allWeeks.every(week => {
+        const content = document.querySelector(`.week-section[data-week="${week}"] .week-content`);
+        return content && content.style.display !== 'none';
+    });
+    
+    if (allExpanded) {
+        // Сворачиваем все
+        allWeeks.forEach(week => {
+            const content = document.querySelector(`.week-section[data-week="${week}"] .week-content`);
+            const icon = document.querySelector(`.week-section[data-week="${week}"] .expand-icon`);
+            if (content) content.style.display = 'none';
+            if (icon) icon.textContent = '▶️';
+        });
+        document.getElementById('toggleAllText').textContent = 'Развернуть все';
+    } else {
+        // Разворачиваем все
+        allWeeks.forEach(week => {
+            const content = document.querySelector(`.week-section[data-week="${week}"] .week-content`);
+            const icon = document.querySelector(`.week-section[data-week="${week}"] .expand-icon`);
+            if (content) content.style.display = 'block';
+            if (icon) icon.textContent = '🔽';
+        });
+        document.getElementById('toggleAllText').textContent = 'Свернуть все';
+    }
+}
+// ДОБАВЬ В КЛАСС MonthlyPlan
+savePlansToStorage() {
+    try {
+        localStorage.setItem('weeklyPlans', JSON.stringify(appData.weeklyPlans));
+        console.log('💾 Планы сохранены в localStorage');
+        return true;
+    } catch (e) {
+        console.error('❌ Ошибка сохранения планов:', e);
+        return false;
+    }
+}
