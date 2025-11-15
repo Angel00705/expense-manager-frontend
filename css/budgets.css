@@ -1,4 +1,4 @@
-/* budgets.css - ПОЛНОСТЬЮ ИСПРАВЛЕННАЯ ВЕРСИЯ */
+/* budgets.css - КОРРЕКТНАЯ ВЕРСИЯ */
 
 .budgets-container {
     max-width: 100%;
@@ -7,7 +7,7 @@
     min-height: 100vh;
 }
 
-/* ОСНОВНОЙ КОНТЕЙНЕР ТАБЛИЦЫ - БЕЗ СКРОЛЛА */
+/* ОСНОВНОЙ КОНТЕЙНЕР ТАБЛИЦЫ */
 .budgets-master-container {
     background: var(--bg-card);
     border: 1px solid var(--border);
@@ -26,7 +26,7 @@
     border-bottom: 1px solid var(--border);
     background: var(--bg-card);
     position: sticky;
-    top: 80px; /* Фиксируем под навбаром */
+    top: 80px;
     z-index: 100;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
@@ -48,7 +48,7 @@
     gap: 0.5rem;
 }
 
-/* КОНТЕЙНЕР ТАБЛИЦЫ БЕЗ СКРОЛЛА */
+/* КОНТЕЙНЕР ТАБЛИЦЫ */
 .table-container {
     position: relative;
     overflow: visible;
@@ -66,7 +66,7 @@
 
 .compact-table thead {
     position: sticky;
-    top: 150px; /* Учитываем навбар + master-table-header */
+    top: 150px;
     z-index: 90;
 }
 
@@ -148,7 +148,7 @@
     vertical-align: middle;
 }
 
-/* СТРОКИ ТАБЛИЦЫ - БЕЗ СКРОЛЛА */
+/* СТРОКИ ТАБЛИЦЫ */
 .compact-table td {
     padding: 0.3rem 0.2rem;
     border: 1px solid var(--border-light);
@@ -193,7 +193,7 @@
     flex-shrink: 0;
 }
 
-/* ЯЧЕЙКИ ИП - МЕНЕЕ ВЫДЕЛЕННЫЕ */
+/* ЯЧЕЙКИ ИП */
 .compact-table .ip-cell {
     width: 180px;
     background: var(--bg-card);
@@ -242,7 +242,7 @@
     transition: all 0.2s ease;
 }
 
-/* ИП - МЕНЕЕ ВЫРАЗИТЕЛЬНЫЕ */
+/* ИП */
 .ip-row {
     background: var(--bg-card);
 }
@@ -263,7 +263,7 @@
     font-weight: 800;
 }
 
-/* ДИЗАЙН ЯЧЕЕК С БЮДЖЕТАМИ - БЕЗ СКРОЛЛА */
+/* ДИЗАЙН ЯЧЕЕК С БЮДЖЕТАМИ */
 .budget-cell-content {
     display: flex;
     flex-direction: column;
@@ -303,6 +303,21 @@
 .budget-amount.editing {
     background: rgba(59, 130, 246, 0.2);
     border: 1px solid rgba(59, 130, 246, 0.7);
+}
+
+/* СТИЛИ ДЛЯ ПОЛЯ ВВОДА БЕЗ СТРЕЛОК */
+.budget-edit-input {
+    -moz-appearance: textfield !important;
+}
+
+.budget-edit-input::-webkit-outer-spin-button,
+.budget-edit-input::-webkit-inner-spin-button {
+    -webkit-appearance: none !important;
+    margin: 0 !important;
+}
+
+.budget-edit-input {
+    appearance: textfield !important;
 }
 
 .budget-actual {
