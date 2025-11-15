@@ -308,6 +308,15 @@
 /* СТИЛИ ДЛЯ ПОЛЯ ВВОДА БЕЗ СТРЕЛОК */
 .budget-edit-input {
     -moz-appearance: textfield !important;
+    background: transparent !important;
+    color: #1e40af !important; /* Темно-синий текст */
+    border: 2px solid #3b82f6 !important;
+    border-radius: 6px !important;
+    font-weight: 700 !important;
+    text-align: center !important;
+    font-size: 0.75rem !important;
+    padding: 0.3rem 0.2rem !important;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2) !important;
 }
 
 .budget-edit-input::-webkit-outer-spin-button,

@@ -1,4 +1,4 @@
-// budgets.js - ПОЛНОСТЬЮ ИСПРАВЛЕННАЯ ВЕРСИЯ
+// budgets.js - ИСПРАВЛЕННЫЕ РАСЧЕТЫ
 
 let currentMonth = '2025-11';
 let expandedRegions = new Set();
@@ -485,7 +485,7 @@ function renderTotalRow() {
     let grandTotal = 0;
     let grandActual = 0;
     
-    // ПРАВИЛЬНЫЙ РАСЧЁТ ИТОГОВ
+    // ПРАВИЛЬНЫЙ РАСЧЁТ ИТОГОВ - ВСЕГДА ВСЕ РЕГИОНЫ И ВСЕ ИП
     allCategories.forEach(category => {
         let categoryTotal = 0;
         let categoryActual = 0;
@@ -496,8 +496,8 @@ function renderTotalRow() {
             categoryTotal += getPlannedBudget(region, null, category.id);
             categoryActual += getActualSpending(region, null, category.id);
             
-            // Бюджет ИП региона (учитываем только если регион развернут)
-            if (expandedRegions.has(region) && MASTER_IP_BUDGETS[region]) {
+            // Бюджет ИП региона (ВСЕГДА учитываем ВСЕ ИП, независимо от expandedRegions)
+            if (MASTER_IP_BUDGETS[region]) {
                 Object.keys(MASTER_IP_BUDGETS[region]).forEach(ipName => {
                     categoryTotal += getPlannedBudget(region, ipName, category.id);
                     categoryActual += getActualSpending(region, ipName, category.id);
