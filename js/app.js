@@ -1,73 +1,83 @@
-// Главный файл инициализации
+// js/app.js
 class IPExpenseManager {
     constructor() {
         this.currentUser = null;
-        this.currentRegion = 'Курган'; // По умолчанию
+        this.currentRegion = 'Курган';
     }
 
     init() {
         console.log('🎯 Инициализация IP Expense Manager...');
         
-        // Загружаем пользователя
         this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
         if (!this.currentUser) {
             window.location.href = 'index.html';
             return;
         }
 
-        // Инициализируем модули по роли
+        // Обновляем даты на ноябрь 2025
+        this.updateDatesToNovember2025();
+
         if (this.currentUser.role === 'admin') {
             this.initAdminInterface();
         } else {
             this.initManagerInterface();
         }
 
-        // Загружаем начальные данные
         this.loadInitialData();
     }
 
+    updateDatesToNovember2025() {
+        // Обновляем выпадающие списки месяцев
+        const monthSelects = document.querySelectorAll('select[id*="Month"], select[id*="month"]');
+        monthSelects.forEach(select => {
+            if (select.innerHTML.includes('2024-11')) {
+                select.innerHTML = select.innerHTML.replace('2024-11', '2025-11')
+                                                  .replace('2024-12', '2025-12')
+                                                  .replace('2025-01', '2026-01');
+                select.value = '2025-11';
+            }
+        });
+    }
+
     initAdminInterface() {
-    console.log('👔 Инициализация интерфейса администратора');
-    
-    // Инициализируем модули для админа
-    if (typeof AdminTasks !== 'undefined') {
-        AdminTasks.init();
+        console.log('👔 Инициализация интерфейса администратора');
+        
+        // Скрываем "Мои задачи" для админов
+        const myTasksTab = document.getElementById('tabMyTasks');
+        if (myTasksTab) myTasksTab.style.display = 'none';
+        
+        // Показываем сайдбар регионов
+        const sidebar = document.getElementById('regionSidebar');
+        if (sidebar) sidebar.style.display = 'block';
+
+        // Инициализируем модули для админа
+        if (typeof AdminTasks !== 'undefined') AdminTasks.init();
+        if (typeof MonthlyPlan !== 'undefined') MonthlyPlan.init();
+        if (typeof AllTasks !== 'undefined') AllTasks.init();
     }
-    if (typeof MonthlyPlan !== 'undefined') {
-        MonthlyPlan.init();
-    }
-    if (typeof AllTasks !== 'undefined') {
-        AllTasks.init();
-    }
-    
-    // Скрываем "Мои задачи" для админов
-    document.getElementById('tabMyTasks').style.display = 'none';
-    
-    // Показываем сайдбар регионов
-    const sidebar = document.getElementById('regionSidebar');
-    if (sidebar) sidebar.style.display = 'block';
-}
 
     initManagerInterface() {
-    console.log('👤 Инициализация интерфейса управляющего');
-    
-    // Инициализируем модули для управляющего
-    if (typeof ManagerTasks !== 'undefined') {
-        ManagerTasks.init();
+        console.log('👤 Инициализация интерфейса управляющего');
+        
+        // Скрываем "Все задачи" для управляющих
+        const allTasksTab = document.getElementById('tabAllTasks');
+        if (allTasksTab) allTasksTab.style.display = 'none';
+        
+        // Скрываем сайдбар регионов
+        const sidebar = document.getElementById('regionSidebar');
+        if (sidebar) sidebar.style.display = 'none';
+
+        // Инициализируем модули для управляющего
+        if (typeof ManagerTasks !== 'undefined') ManagerTasks.init();
+        if (typeof MonthlyPlan !== 'undefined') MonthlyPlan.init();
     }
-    if (typeof MonthlyPlan !== 'undefined') {
-        MonthlyPlan.init();
+
+    loadInitialData() {
+        console.log('📊 Загрузка начальных данных...');
     }
-    
-    // Скрываем "Все задачи" для управляющих
-    document.getElementById('tabAllTasks').style.display = 'none';
-    
-    // Скрываем сайдбар регионов
-    const sidebar = document.getElementById('regionSidebar');
-    if (sidebar) sidebar.style.display = 'none';
 }
 
-// ===== ОБЩИЕ ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ =====
+// Вспомогательные функции
 function formatCurrency(amount) {
     if (!amount || amount === 0) return '0';
     return new Intl.NumberFormat('ru-RU').format(Math.round(amount));
@@ -111,6 +121,7 @@ function getCategoryName(category) {
     };
     return names[category] || category;
 }
+
 // Запуск приложения
 document.addEventListener('DOMContentLoaded', function() {
     window.app = new IPExpenseManager();

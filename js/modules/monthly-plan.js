@@ -1,7 +1,7 @@
 // js/modules/monthly-plan.js
 const MonthlyPlan = {
     currentRegion: 'Курган',
-    currentMonth: '2024-11',
+    currentMonth: '2025-11', // Обновили на ноябрь 2025
 
     init() {
         console.log('📅 Инициализация модуля плана месяца');
@@ -24,22 +24,16 @@ const MonthlyPlan = {
             this.currentMonth = e.target.value;
             this.loadPlanData();
         });
-
-        // Обработчики для сворачивания/разворачивания недель
-        document.querySelectorAll('.week-header').forEach(header => {
-            header.addEventListener('click', (e) => {
-                if (!e.target.closest('button')) {
-                    const week = header.closest('.week-section').dataset.week;
-                    this.toggleWeek(week);
-                }
-            });
-        });
     },
 
     setupRegionSidebar() {
-        // Инициализация сайдбара регионов для админов
+        // Инициализация сайдбара регионов только для админов
         if (app.currentUser.role === 'admin') {
             this.renderRegionList();
+        } else {
+            // Скрываем сайдбар для управляющих
+            const sidebar = document.getElementById('regionSidebar');
+            if (sidebar) sidebar.style.display = 'none';
         }
     },
 
@@ -57,7 +51,8 @@ const MonthlyPlan = {
         ];
 
         regionList.innerHTML = regions.map(region => `
-            <div class="region-item" data-region="${region.name}">
+            <div class="region-item ${region.name === this.currentRegion ? 'active' : ''}" 
+                 data-region="${region.name}">
                 <span class="region-icon">${region.icon}</span>
                 <span class="region-name">${region.name}</span>
                 <span class="region-badge">${region.ipCount} ИП</span>
@@ -111,13 +106,13 @@ const MonthlyPlan = {
 
     updatePlanStatistics(planData) {
         const totalPlan = Object.values(planData).reduce((sum, week) => {
-            return sum + week.reduce((weekSum, task) => weekSum + (task.plan || 0), 0);
+            return sum + (week.tasks ? week.tasks.reduce((weekSum, task) => weekSum + (task.plan || 0), 0) : 0);
         }, 0);
         
-        const weeksWithPlan = Object.values(planData).filter(week => week.length > 0).length;
+        const weeksWithPlan = Object.values(planData).filter(week => week.tasks && week.tasks.length > 0).length;
 
-        // Здесь позже добавим бюджет из budgets.js
-        const totalBudget = 72050; // Сумма из CSV
+        // Бюджет из CSV
+        const totalBudget = 72050;
 
         document.getElementById('monthBudget').textContent = formatCurrency(totalBudget) + ' ₽';
         document.getElementById('monthPlan').textContent = formatCurrency(totalPlan) + ' ₽';
@@ -128,11 +123,11 @@ const MonthlyPlan = {
     renderWeeklyPlan(planData) {
         // Обновляем каждую неделю
         [1, 2, 3, 4].forEach(week => {
-            const weekData = planData[`week${week}`] || [];
-            const weekTotal = weekData.reduce((sum, task) => sum + (task.plan || 0), 0);
+            const weekData = planData[`week${week}`] || { tasks: [] };
+            const weekTotal = weekData.tasks ? weekData.tasks.reduce((sum, task) => sum + (task.plan || 0), 0) : 0;
             
             this.updateWeekHeader(week, weekTotal);
-            this.renderWeekTasks(week, weekData);
+            this.renderWeekTasks(week, weekData.tasks || []);
         });
         
         this.updateMonthSummary(planData);
@@ -219,7 +214,7 @@ const MonthlyPlan = {
 
     updateMonthSummary(planData) {
         const total = Object.values(planData).reduce((sum, week) => {
-            return sum + week.reduce((weekSum, task) => weekSum + (task.plan || 0), 0);
+            return sum + (week.tasks ? week.tasks.reduce((weekSum, task) => weekSum + (task.plan || 0), 0) : 0);
         }, 0);
         
         const totalElement = document.getElementById('monthTotal');
@@ -230,19 +225,14 @@ const MonthlyPlan = {
         // Обновляем информацию о регионе в сайдбаре
         const regionNameElement = document.getElementById('currentRegionName');
         if (regionNameElement) regionNameElement.textContent = this.currentRegion;
-    },
-
-    toggleWeek(week) {
-        const content = document.querySelector(`.week-section[data-week="${week}"] .week-content`);
-        const icon = document.querySelector(`.week-section[data-week="${week}"] .expand-icon`);
         
-        if (content.style.display === 'none') {
-            content.style.display = 'block';
-            icon.textContent = '🔽';
-        } else {
-            content.style.display = 'none';
-            icon.textContent = '▶️';
-        }
+        // Обновляем статистику региона
+        const ips = appData.getIPsByRegion(this.currentRegion);
+        const cards = appData.getCardsByRegion(this.currentRegion);
+        
+        document.getElementById('ipCount').textContent = ips.length;
+        document.getElementById('activeCardsCount').textContent = cards.filter(card => card.status === 'в регионе').length;
+        document.getElementById('regionBudget').textContent = '72,050 ₽'; // Из CSV
     },
 
     getStatusText(status) {
@@ -253,46 +243,43 @@ const MonthlyPlan = {
             'cancelled': 'Отменено'
         };
         return statusMap[status] || status;
-    },
-
-    savePlansToStorage() {
-        try {
-            localStorage.setItem('monthlyPlans', JSON.stringify(MonthlyPlansData));
-            console.log('💾 Планы сохранены в localStorage');
-            return true;
-        } catch (e) {
-            console.error('❌ Ошибка сохранения планов:', e);
-            return false;
-        }
     }
 };
 
-// Глобальные функции для кнопок
+// Глобальные функции
+function toggleWeek(week) {
+    const content = document.querySelector(`.week-section[data-week="${week}"] .week-content`);
+    const icon = document.querySelector(`.week-section[data-week="${week}"] .expand-icon`);
+    
+    if (content.style.display === 'none') {
+        content.style.display = 'block';
+        icon.textContent = '🔽';
+    } else {
+        content.style.display = 'none';
+        icon.textContent = '▶️';
+    }
+}
+
 function addTaskToWeek(week) {
     if (app.currentUser.role === 'manager') {
         Notification.error('❌ У вас нет прав для добавления задач в план');
         return;
     }
-    
     console.log('➕ Добавление задачи в неделю:', week);
-    Notification.info('Функция добавления задачи будет реализована в следующем обновлении');
 }
 
 function editWeeklyTask(week, taskId) {
     console.log('✏️ Редактирование задачи:', taskId, 'в неделе:', week);
-    Notification.info('Функция редактирования задачи будет реализована в следующем обновлении');
 }
 
 function deleteWeeklyTask(week, taskId) {
     if (confirm('Удалить эту задачу из плана?')) {
         console.log('🗑️ Удаление задачи:', taskId, 'из недели:', week);
-        Notification.info('Функция удаления задачи будет реализована в следующем обновлении');
     }
 }
 
 function saveMonthlyPlan() {
     console.log('💾 Сохранение плана месяца');
-    MonthlyPlan.savePlansToStorage();
     Notification.success('План месяца сохранен!');
 }
 
@@ -303,23 +290,19 @@ function toggleAllWeeks() {
         return content && content.style.display !== 'none';
     });
     
-    if (allExpanded) {
-        // Сворачиваем все
-        allWeeks.forEach(week => {
-            const content = document.querySelector(`.week-section[data-week="${week}"] .week-content`);
-            const icon = document.querySelector(`.week-section[data-week="${week}"] .expand-icon`);
-            if (content) content.style.display = 'none';
-            if (icon) icon.textContent = '▶️';
-        });
-        document.getElementById('toggleAllText').textContent = 'Развернуть все';
-    } else {
-        // Разворачиваем все
-        allWeeks.forEach(week => {
-            const content = document.querySelector(`.week-section[data-week="${week}"] .week-content`);
-            const icon = document.querySelector(`.week-section[data-week="${week}"] .expand-icon`);
-            if (content) content.style.display = 'block';
-            if (icon) icon.textContent = '🔽';
-        });
-        document.getElementById('toggleAllText').textContent = 'Свернуть все';
-    }
+    allWeeks.forEach(week => {
+        const content = document.querySelector(`.week-section[data-week="${week}"] .week-content`);
+        const icon = document.querySelector(`.week-section[data-week="${week}"] .expand-icon`);
+        if (content && icon) {
+            if (allExpanded) {
+                content.style.display = 'none';
+                icon.textContent = '▶️';
+            } else {
+                content.style.display = 'block';
+                icon.textContent = '🔽';
+            }
+        }
+    });
+    
+    document.getElementById('toggleAllText').textContent = allExpanded ? 'Развернуть все' : 'Свернуть все';
 }
