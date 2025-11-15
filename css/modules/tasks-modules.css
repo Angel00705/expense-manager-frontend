@@ -1,0 +1,76 @@
+/* css/modules/tasks-modules.css */
+/* Только утилитарные стили для задач */
+
+/* Стили для пояснения по задаче */
+.task-explanation {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-top: 0.25rem;
+    line-height: 1.3;
+    font-style: italic;
+}
+
+/* Улучшенные стили для таблицы */
+.week-table {
+    font-size: 0.9rem;
+}
+
+.week-table th {
+    background: rgba(255, 255, 255, 0.08);
+    font-weight: 600;
+    padding: 1rem 0.75rem;
+}
+
+.week-table td {
+    padding: 1rem 0.75rem;
+    vertical-align: top;
+    border-bottom: 1px solid var(--border);
+}
+
+/* Стили для даты выполнения */
+.completion-date {
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+/* Адаптивность для таблицы */
+@media (max-width: 1200px) {
+    .week-table {
+        font-size: 0.85rem;
+    }
+    
+    .week-table th,
+    .week-table td {
+        padding: 0.75rem 0.5rem;
+    }
+}
+
+/* Улучшенные бейджи статусов */
+.status-badge {
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-align: center;
+    display: inline-block;
+    min-width: 100px;
+}
+
+.status-planned {
+    background: rgba(59, 130, 246, 0.15);
+    color: #3b82f6;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.status-completed {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.status-pending {
+    background: rgba(245, 158, 11, 0.15);
+    color: #f59e0b;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}

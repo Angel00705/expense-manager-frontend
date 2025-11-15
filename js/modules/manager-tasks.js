@@ -418,3 +418,71 @@ const ManagerTasks = {
         document.getElementById('completeTaskModal').style.display = 'none';
     }
 };
+// В ManagerTasks добавляем методы:
+startTaskCompletion(taskId) {
+    const task = this.findTaskInPlans(taskId);
+    if (!task) {
+        Notification.error('Задача не найдена');
+        return;
+    }
+
+    // Заполняем модальное окно
+    document.getElementById('completeTaskId').value = taskId;
+    document.getElementById('factAmount').value = task.plan || '';
+    document.getElementById('completionDate').value = new Date().toISOString().split('T')[0];
+    
+    // Показываем информацию о задаче
+    const taskInfo = document.getElementById('completeTaskInfo');
+    taskInfo.innerHTML = `
+        <div class="task-preview">
+            <h4>${task.description}</h4>
+            ${task.explanation ? `<p class="task-explanation">${task.explanation}</p>` : ''}
+            <div class="task-details-preview">
+                <div class="detail-row">
+                    <span class="detail-label">Категория:</span>
+                    <span class="detail-value">${getCategoryName(task.category)}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">ИП:</span>
+                    <span class="detail-value">${task.ip}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Плановая сумма:</span>
+                    <span class="detail-value">${formatCurrency(task.plan)} ₽</span>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Показываем модальное окно
+    document.getElementById('completeTaskModal').style.display = 'flex';
+}
+
+saveTaskCompletion() {
+    const taskId = document.getElementById('completeTaskId').value;
+    const factAmount = parseFloat(document.getElementById('factAmount').value);
+    const completionDate = document.getElementById('completionDate').value;
+    
+    if (!factAmount || !completionDate) {
+        Notification.error('Заполните обязательные поля');
+        return;
+    }
+    
+    // Обновляем задачу
+    const success = this.updateTaskInPlans(taskId, {
+        fact: factAmount,
+        dateCompleted: completionDate,
+        status: 'completed',
+        updatedAt: new Date().toISOString()
+    });
+    
+    if (success) {
+        Notification.success('Задача выполнена!');
+        this.closeCompleteTaskModal();
+        this.loadManagerData();
+    }
+}
+
+closeCompleteTaskModal() {
+    document.getElementById('completeTaskModal').style.display = 'none';
+}

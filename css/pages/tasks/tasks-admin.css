@@ -1,0 +1,33 @@
+/* css/pages/tasks/tasks-admin.css */
+/* Стили специфичные для админов */
+.admin-controls {
+    background: var(--bg-glass);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    border: 1px solid var(--border-light);
+}
+
+.bulk-actions {
+    background: var(--bg-glass);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    border: 1px solid var(--border-light);
+    display: none;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.bulk-actions.show {
+    display: flex;
+    animation: fadeInUp 0.3s ease;
+}
+
+.export-btn {
+    background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.export-btn:hover {
+    background: linear-gradient(135deg, #059669, #047857);
+}

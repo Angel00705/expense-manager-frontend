@@ -383,3 +383,91 @@ savePlansToStorage() {
         return false;
     }
 }
+// js/data/monthly-plans.js
+const MonthlyPlansData = {
+    // Данные для Кургана (из CSV)
+    'Курган': {
+        week1: [
+            {
+                id: 'kurgan_week1_1',
+                category: 'salary',
+                description: 'Снятие наличных',
+                explanation: '',
+                ip: 'ИП Бондаренко *7254',
+                plan: 3000,
+                fact: 0,
+                status: 'planned',
+                dateCompleted: ''
+            },
+            {
+                id: 'kurgan_week1_2', 
+                category: 'products',
+                description: 'Кофе, чай, сахар, печенье',
+                explanation: '',
+                ip: 'ИП Бондаренко *7254',
+                plan: 1500,
+                fact: 0,
+                status: 'planned',
+                dateCompleted: ''
+            },
+            // ... остальные задачи недели 1 из CSV
+        ],
+        week2: [
+            // Задачи недели 2 из CSV
+        ],
+        week3: [
+            // Задачи недели 3 из CSV  
+        ],
+        week4: [
+            // Задачи недели 4 из CSV
+        ]
+    },
+    
+    // Данные для Астрахани (аналогично Кургану)
+    'Астрахань': {
+        week1: [
+            {
+                id: 'astrakhan_week1_1',
+                category: 'salary', 
+                description: 'Снятие наличных',
+                explanation: '',
+                ip: 'ИП Астрахань 1',
+                plan: 2500,
+                fact: 0,
+                status: 'planned',
+                dateCompleted: ''
+            },
+            // ... и так далее
+        ],
+        week2: [],
+        week3: [],
+        week4: []
+    },
+    
+    // Аналогично для остальных регионов
+    'Бурятия': { week1: [], week2: [], week3: [], week4: [] },
+    'Калмыкия': { week1: [], week2: [], week3: [], week4: [] },
+    'Мордовия': { week1: [], week2: [], week3: [], week4: [] },
+    'Удмуртия': { week1: [], week2: [], week3: [], week4: [] }
+};
+
+// Функция для получения плана региона
+function getMonthlyPlan(region) {
+    return MonthlyPlansData[region] || {};
+}
+
+// Функция для обновления задачи
+function updateTask(region, week, taskId, updates) {
+    const weekData = MonthlyPlansData[region]?.[week];
+    if (weekData) {
+        const taskIndex = weekData.findIndex(task => task.id === taskId);
+        if (taskIndex !== -1) {
+            MonthlyPlansData[region][week][taskIndex] = {
+                ...MonthlyPlansData[region][week][taskIndex],
+                ...updates
+            };
+            return true;
+        }
+    }
+    return false;
+}
