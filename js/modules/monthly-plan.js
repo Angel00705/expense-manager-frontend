@@ -138,77 +138,79 @@ const MonthlyPlan = {
         if (totalElement) totalElement.textContent = formatCurrency(total) + ' ₽';
     },
 
-    renderWeekTasks(week, tasks) {
-        const tbody = document.getElementById(`week${week}Tasks`);
-        if (!tbody) return;
+   renderWeekTasks(week, tasks, region) {
+    const tbody = document.getElementById(`week${week}Tasks`);
+    if (!tbody) return;
 
-        if (tasks.length === 0) {
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="10" class="empty-week">
-                        <div class="empty-state-small">
-                            <span class="icon">📋</span>
-                            <span>Нет запланированных задач</span>
-                        </div>
-                    </td>
-                </tr>
-            `;
-            return;
-        }
-
-        tbody.innerHTML = tasks.map(task => `
-            <tr class="task-row ${task.status}" data-task-id="${task.id}" data-region="${this.currentRegion}">
-                <td>
-                    ${app.currentUser.role === 'admin' ? `
-                        <input type="checkbox" class="task-checkbox">
-                    ` : ''}
-                </td>
-                <td>
-                    <div class="category-badge ${task.category}">
-                        ${getCategoryEmoji(task.category)} ${getCategoryName(task.category)}
-                    </div>
-                </td>
-                <td>
-                    <div class="task-description-cell">
-                        <div class="task-main-desc">${task.description}</div>
-                    </div>
-                </td>
-                <td>
-                    <div class="task-explanation">${task.explanation || '-'}</div>
-                </td>
-                <td>
-                    <div class="ip-info-cell">
-                        <div class="ip-name">${task.ip}</div>
-                        ${task.card ? `<div class="card-number">${task.card}</div>` : ''}
-                    </div>
-                </td>
-                <td class="amount-cell plan-amount">${formatCurrency(task.plan)} ₽</td>
-                <td class="amount-cell fact-amount">${task.fact > 0 ? formatCurrency(task.fact) + ' ₽' : '-'}</td>
-                <td class="completion-date">${task.dateCompleted ? formatDate(task.dateCompleted) : '-'}</td>
-                <td>
-                    <span class="status-badge status-${task.status}">
-                        ${this.getStatusText(task.status)}
-                    </span>
-                </td>
-                <td>
-                    <div class="action-buttons">
-                        ${app.currentUser.role === 'admin' ? `
-                            <button class="btn-icon edit" title="Редактировать">✏️</button>
-                            <button class="btn-icon delete" title="Удалить">🗑️</button>
-                        ` : `
-                            ${task.status !== 'completed' ? `
-                                <button class="btn btn-sm btn-complete" onclick="ManagerTasks.startTaskCompletion('${task.id}')" title="Выполнить">
-                                    ✅ Выполнить
-                                </button>
-                            ` : `
-                                <span class="completed-badge">✅ Готово</span>
-                            `}
-                        `}
+    if (tasks.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="9" class="empty-week">
+                    <div class="empty-state-small">
+                        <span class="icon">📋</span>
+                        <span>Нет запланированных задач</span>
                     </div>
                 </td>
             </tr>
-        `).join('');
-    },
+        `;
+        return;
+    }
+
+    tbody.innerHTML = tasks.map(task => `
+        <tr class="task-row ${task.status}" data-task-id="${task.id}" data-region="${region}">
+            <td>
+                ${app.currentUser.role === 'admin' ? `
+                    <input type="checkbox" class="task-checkbox">
+                ` : ''}
+            </td>
+            <td>
+                <div class="category-badge ${task.category}">
+                    ${getCategoryEmoji(task.category)} ${getCategoryName(task.category)}
+                </div>
+            </td>
+            <td>
+                <div class="task-description-cell">
+                    <div class="task-main-desc">${task.description}</div>
+                    ${task.explanation ? `<div class="task-explanation">${task.explanation}</div>` : ''}
+                </div>
+            </td>
+            <td>
+                <div class="ip-info-cell">
+                    <div class="ip-name">${task.ip}</div>
+                    ${task.card ? `<div class="card-number">${task.card}</div>` : ''}
+                </div>
+            </td>
+            <td class="amount-cell plan-amount">${formatCurrency(task.plan)} ₽</td>
+            <td class="amount-cell fact-amount">${task.fact > 0 ? formatCurrency(task.fact) + ' ₽' : '-'}</td>
+            <td class="completion-date">${task.dateCompleted ? formatDate(task.dateCompleted) : '-'}</td>
+            <td>
+                <span class="status-badge status-${task.status}">
+                    ${this.getStatusText(task.status)}
+                </span>
+            </td>
+            <td>
+                <div class="action-buttons">
+                    ${app.currentUser.role === 'admin' ? `
+                        <button class="btn-icon edit" onclick="editWeeklyTask(${week}, '${task.id}')" title="Редактировать">
+                            ✏️
+                        </button>
+                        <button class="btn-icon delete" onclick="deleteWeeklyTask(${week}, '${task.id}')" title="Удалить">
+                            🗑️
+                        </button>
+                    ` : `
+                        ${task.status !== 'completed' ? `
+                            <button class="btn btn-sm btn-complete" onclick="ManagerTasks.startTaskCompletion('${task.id}')" title="Выполнить">
+                                ✅ Выполнить
+                            </button>
+                        ` : `
+                            <span class="completed-badge">✅ Готово</span>
+                        `}
+                    `}
+                </div>
+            </td>
+        </tr>
+    `).join('');
+}
 
     updateMonthSummary(planData) {
         const total = Object.values(planData).reduce((sum, week) => sum + (week.total || 0), 0);
