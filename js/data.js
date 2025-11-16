@@ -1,9 +1,11 @@
-// js/data.js - ЦЕНТРАЛИЗОВАННЫЕ ДАННЫЕ ПРИЛОЖЕНИЯ
+// js/data.js - ЕДИНЫЙ ФАЙЛ ДАННЫХ
+console.log('📊 Загрузка единого файла данных...');
+
 const appData = {
   // 6 регионов
   regions: ['Астрахань', 'Бурятия', 'Курган', 'Калмыкия', 'Мордовия', 'Удмуртия'],
   
-  // 28 ИП по регионам (полные данные из CSV)
+  // 28 ИП по регионам
   individualEntrepreneurs: {
     'Астрахань': ['ИП Крутоусов', 'ИП Храмова', 'ИП Янгалышева', 'ИП Наливайко', 'ИП Каширин'],
     'Бурятия': ['ИП Астанови', 'ИП Пинегин', 'ИП Ровда', 'ИП Ильенко'],
@@ -12,559 +14,98 @@ const appData = {
     'Мордовия': ['ИП Иванов', 'ИП Коротких', 'ИП Яковлева'],
     'Удмуртия': ['ИП Бадалов', 'ИП Емельнов', 'ИП Леонгард', 'ИП Саинова', 'ИП Самсонов', 'ИП Шефер']
   },
-  
-  // Банковские карты (примерные данные - нужно дополнить из CSV)
-  bankCards: {
-    'ИП Крутоусов': { 
-      corpCard: '****1234', 
-      flCard: '****5678', 
-      status: 'в регионе' 
-    },
-    'ИП Храмова': { 
-      corpCard: '****5049', 
-      flCard: '****4455', 
-      status: 'В ПВЗ Наливайко' 
-    },
-    'ИП Янгалышева': { 
-      corpCard: '****2468', 
-      flCard: '****9647', 
-      status: 'в регионе' 
-    },
-    'ИП Наливайко': { 
-      corpCard: '****1357', 
-      flCard: '****8642', 
-      status: 'в регионе' 
-    },
-    'ИП Каширин': { 
-      corpCard: '****9753', 
-      flCard: '****3185', 
-      status: 'Перевыпустить' 
-    }
-    // ДОБАВЬ ОСТАЛЬНЫЕ КАРТЫ ПО АНАЛОГИИ
-  },
-  
-  // 23 статьи расходов (полный список из CSV)
+
+  // Данные карт из real-cards-data.js
+  bankCards: window.REAL_CARDS_DATA || [],
+
+  // Статьи расходов
   expenseItems: [
-    '📱 Техника',
-    '❤️ Благотворительность', 
-    '🧽 Клининг',
-    '🔧 Ремонт',
-    '🤝 Местные контр-ты',
-    '🔄 Обмен платежами',
-    '💰 Зарплата',
-    '🛒 Продукты',
-    '🧹 Хоз. товары',
-    '💊 Медикаменты',
-    '📎 Канцелярия',
-    '⛽ АЗС',
-    '☕ Кафе',
-    '🖨️ Полиграфия',
-    '🎉 Мероприятия',
-    '📦 Отправка товаров',
-    '🛡️ Страхование',
-    '🧾 Чеки ККТ',
-    '🏢 АРЕНДА ОФИСЫ',
-    '💡 КОММ, ОФИСЫ',
-    '🌐 ИНТЕРНЕТ ОФИСЫ',
-    '🚗 Каршеринг',
-    '📦 Упаковка'
+    '📱 Техника', '❤️ Благотворительность', '🧽 Клининг', '🔧 Ремонт', '🤝 Местные контр-ты',
+    '🔄 Обмен платежами', '💰 Зарплата', '🛒 Продукты', '🧹 Хоз. товары', '💊 Медикаменты',
+    '📎 Канцелярия', '⛽ АЗС', '☕ Кафе', '🖨️ Полиграфия', '🎉 Мероприятия', '📦 Отправка товаров',
+    '🛡️ Страхование', '🧾 Чеки ККТ', '🏢 АРЕНДА ОФИСЫ', '💡 КОММ, ОФИСЫ', '🌐 ИНТЕРНЕТ ОФИСЫ',
+    '🚗 Каршеринг', '📦 Упаковка'
   ],
-  
-  // Ответственные управляющие (полное соответствие CSV)
-  managers: {
-    '📱 Техника': 'Иван В.',
-    '❤️ Благотворительность': 'Иван В.',
-    '🧽 Клининг': 'Полина М.',
-    '🔧 Ремонт': 'Полина М.',
-    '🤝 Местные контр-ты': 'Инна Б.',
-    '🔄 Обмен платежами': 'Инна Б.',
-    '💰 Зарплата': 'Ксения Б.',
-    '🛒 Продукты': 'Ксения Б.',
-    '🧹 Хоз. товары': 'Ксения Б.',
-    '💊 Медикаменты': 'Ксения Б.',
-    '📎 Канцелярия': 'Ксения Б.',
-    '⛽ АЗС': 'Ксения Б.',
-    '☕ Кафе': 'Ксения Б.',
-    '🖨️ Полиграфия': 'Ксения Б.',
-    '🎉 Мероприятия': 'Полина М.',
-    '📦 Отправка товаров': 'Ксения Б.',
-    '🛡️ Страхование': 'Полина М.',
-    '🧾 Чеки ККТ': 'Алеся Б.',
-    '🏢 АРЕНДА ОФИСЫ': 'Евгения Г.',
-    '💡 КОММ, ОФИСЫ': 'Евгения Г.',
-    '🌐 ИНТЕРНЕТ ОФИСЫ': 'Евгения Г.',
-    '🚗 Каршеринг': 'Полина М.',
-    '📦 Упаковка': 'Иван В.'
+
+  // Планы месяцев (перенесено из monthly-plans-data.js)
+  monthlyPlans: {
+    'Курган': {
+      week1: {
+        budget: 26000, reserve: 1500, total: 26000,
+        tasks: [
+          {
+            id: 'kurgan_week1_1', category: 'salary', description: 'Снятие наличных',
+            ip: 'ИП Бондаренко', card: '*7254', plan: 3000, fact: 0, status: 'planned',
+            dateCompleted: '', responsible: 'Ксения Б.'
+          },
+          {
+            id: 'kurgan_week1_2', category: 'products', description: 'Кофе, чай, сахар, печенье',
+            ip: 'ИП Бондаренко', card: '*7254', plan: 1500, fact: 0, status: 'planned',
+            dateCompleted: '', responsible: 'Ксения Б.'
+          }
+          // ... остальные задачи (можно добавить позже)
+        ]
+      },
+      week2: { budget: 20300, reserve: 1500, total: 20300, tasks: [] },
+      week3: { budget: 12500, reserve: 1500, total: 12500, tasks: [] },
+      week4: { budget: 13250, reserve: 1500, total: 13250, tasks: [] }
+    },
+    'Астрахань': {
+      week1: { budget: 0, reserve: 0, total: 0, tasks: [] },
+      week2: { budget: 0, reserve: 0, total: 0, tasks: [] },
+      week3: { budget: 0, reserve: 0, total: 0, tasks: [] },
+      week4: { budget: 0, reserve: 0, total: 0, tasks: [] }
+    },
+    'Бурятия': {
+      week1: { budget: 0, reserve: 0, total: 0, tasks: [] },
+      week2: { budget: 0, reserve: 0, total: 0, tasks: [] },
+      week3: { budget: 0, reserve: 0, total: 0, tasks: [] },
+      week4: { budget: 0, reserve: 0, total: 0, tasks: [] }
+    },
+    'Калмыкия': {
+      week1: { budget: 0, reserve: 0, total: 0, tasks: [] },
+      week2: { budget: 0, reserve: 0, total: 0, tasks: [] },
+      week3: { budget: 0, reserve: 0, total: 0, tasks: [] },
+      week4: { budget: 0, reserve: 0, total: 0, tasks: [] }
+    },
+    'Мордовия': {
+      week1: { budget: 0, reserve: 0, total: 0, tasks: [] },
+      week2: { budget: 0, reserve: 0, total: 0, tasks: [] },
+      week3: { budget: 0, reserve: 0, total: 0, tasks: [] },
+      week4: { budget: 0, reserve: 0, total: 0, tasks: [] }
+    },
+    'Удмуртия': {
+      week1: { budget: 0, reserve: 0, total: 0, tasks: [] },
+      week2: { budget: 0, reserve: 0, total: 0, tasks: [] },
+      week3: { budget: 0, reserve: 0, total: 0, tasks: [] },
+      week4: { budget: 0, reserve: 0, total: 0, tasks: [] }
+    }
   },
-  
+
   // Методы для работы с данными
-  getIPsByRegion: function(region) {
+  getIPsByRegion(region) {
     return this.individualEntrepreneurs[region] || [];
   },
-  
-  getCardsByIP: function(ip) {
-    return this.bankCards[ip] || { corpCard: '', flCard: '', status: '' };
+
+  getCardsByRegion(region) {
+    return this.bankCards.filter(card => card.region === region || 
+      (card.region && card.region.includes(region)));
   },
-  
-  getManagerByExpense: function(expenseItem) {
-    return this.managers[expenseItem] || 'Не назначен';
+
+  getMonthlyPlan(region) {
+    return this.monthlyPlans[region] || this.getEmptyPlan();
   },
-  
-  // Получить все карты для региона
-  getCardsByRegion: function(region) {
-    const ips = this.getIPsByRegion(region);
-    const cards = [];
-    
-    ips.forEach(ip => {
-      const ipCards = this.getCardsByIP(ip);
-      if (ipCards.corpCard) {
-        cards.push({
-          ip: ip,
-          card: ipCards.corpCard,
-          type: 'Корп. карта',
-          status: ipCards.status
-        });
-      }
-      if (ipCards.flCard) {
-        cards.push({
-          ip: ip, 
-          card: ipCards.flCard,
-          type: 'Карта ФЛ',
-          status: ipCards.status
-        });
-      }
-    });
-    
-    return cards;
+
+  getEmptyPlan() {
+    return {
+      week1: { budget: 0, reserve: 0, total: 0, tasks: [] },
+      week2: { budget: 0, reserve: 0, total: 0, tasks: [] },
+      week3: { budget: 0, reserve: 0, total: 0, tasks: [] },
+      week4: { budget: 0, reserve: 0, total: 0, tasks: [] }
+    };
   }
-};
-
-// Добавить в data.js
-appData.taskTemplates = {
-  'monthly_rent': {
-    title: 'Оплата аренды офиса',
-    expenseItem: '🏢 АРЕНДА ОФИСЫ',
-    description: 'Ежемесячная аренда офиса',
-    plannedAmount: 15000,
-    priority: 'high'
-  },
-  'office_supplies': {
-    title: 'Закупка канцелярии',
-    expenseItem: '📎 Канцелярия', 
-    description: 'Бумага, ручки, расходные материалы',
-    plannedAmount: 5000,
-    priority: 'medium'
-  },
-  'cleaning': {
-    title: 'Уборка офиса',
-    expenseItem: '🧽 Клининг',
-    description: 'Еженедельная уборка помещения',
-    plannedAmount: 3000,
-    priority: 'medium'
-  }
-};
-
-// ===== ДАННЫЕ ПЛАНА КУРГАНА НА ОСНОВЕ CSV =====
-appData.weeklyPlans = {
-  'Курган': {
-    week1: {
-      budget: 26000,
-      reserve: 1500,
-      total: 26000,
-      tasks: [
-        {
-          id: 'task_kurgan_1_1',
-          date: '03-09.11',
-          category: 'salary',
-          description: 'Снятие наличных',
-          ip: 'ИП Бондаренко',
-          card: '*7254',
-          plan: 3000,
-          fact: 0,
-          status: 'planned',
-          responsible: 'Ксения Б.'
-        },
-        {
-          id: 'task_kurgan_1_2',
-          date: '03-09.11', 
-          category: 'products',
-          description: 'Кофе, чай, сахар, печенье',
-          ip: 'ИП Бондаренко',
-          card: '*7254',
-          plan: 1500,
-          fact: 0,
-          status: 'planned',
-          responsible: 'Ксения Б.'
-        },
-        {
-          id: 'task_kurgan_1_3',
-          date: '03-09.11',
-          category: 'household',
-          description: 'Моющие средства, губки',
-          ip: 'ИП Бобков',
-          card: '*2911',
-          plan: 2500,
-          fact: 0,
-          status: 'planned',
-          responsible: 'Ксения Б.'
-        },
-        {
-          id: 'task_kurgan_1_4',
-          date: '03-09.11',
-          category: 'medicaments',
-          description: 'Аптечка первой помощи',
-          ip: 'ИП Овсейко',
-          card: '*1946',
-          plan: 1000,
-          fact: 0,
-          status: 'planned',
-          responsible: 'Ксения Б.'
-        },
-        {
-          id: 'task_kurgan_1_5',
-          date: '03-09.11',
-          category: 'stationery',
-          description: 'Ручки, блокноты, бумага',
-          ip: 'ИП Федчук',
-          card: '*9967',
-          plan: 500,
-          fact: 0,
-          status: 'planned',
-          responsible: 'Ксения Б.'
-        },
-        {
-          id: 'task_kurgan_1_6',
-          date: '03-09.11',
-          category: 'azs',
-          description: 'Заправка автомобиля',
-          ip: 'ИП Овсейко',
-          card: '*1946',
-          plan: 1000,
-          fact: 0,
-          status: 'planned',
-          responsible: 'Ксения Б.'
-        },
-        {
-          id: 'task_kurgan_1_7',
-          date: '03-09.11',
-          category: 'cafe',
-          description: 'Купить кофе/обед',
-          ip: 'ИП Карбышев',
-          card: '*2937',
-          plan: 2000,
-          fact: 0,
-          status: 'planned',
-          responsible: 'Ксения Б.'
-        },
-        {
-          id: 'task_kurgan_1_8',
-          date: '03-09.11',
-          category: 'repairs',
-          description: 'Покупка штор (на 2 окна гардины и тюли в Кургане)',
-          ip: 'ИП Федчук',
-          card: '*9967',
-          plan: 5000,
-          fact: 0,
-          status: 'planned',
-          responsible: 'Полина М.'
-        },
-        {
-          id: 'task_kurgan_1_9',
-          date: '03-09.11',
-          category: 'salary',
-          description: 'За поездку и ремонт работы (поездка в Курганская область, проверка почты, повесить шторы)',
-          ip: 'ИП Федчук',
-          card: '*9967',
-          plan: 8000,
-          fact: 0,
-          status: 'planned',
-          responsible: 'Полина М.'
-        }
-      ]
-    },
-    week2: {
-      budget: 20300,
-      reserve: 1500,
-      total: 20300,
-      tasks: [
-        {
-          id: 'task_kurgan_2_1',
-          date: '10-16.11',
-          category: 'salary',
-          description: 'Снятие наличных',
-          ip: 'ИП Бобков',
-          card: '*2911',
-          plan: 5000,
-          fact: 0,
-          status: 'planned',
-          responsible: 'Ксения Б.'
-        },
-        {
-          id: 'task_kurgan_2_2',
-          date: '10-16.11',
-          category: 'products',
-          description: 'Кофе, чай, сахар, печенье',
-          ip: 'ИП Бондаренко',
-          card: '*7254',
-          plan: 1500,
-          fact: 0,
-          status: 'planned',
-          responsible: 'Ксения Б.'
-        },
-        {
-          id: 'task_kurgan_2_3',
-          date: '10-16.11',
-          category: 'household',
-          description: 'Бумажные полотенца, средства',
-          ip: 'ИП Бобков',
-          card: '*2911',
-          plan: 2500,
-          fact: 0,
-          status: 'planned',
-          responsible: 'Ксения Б.'
-        },
-        {
-          id: 'task_kurgan_2_4',
-          date: '10-16.11',
-          category: 'polygraphy',
-          description: 'Распечатать фото',
-          ip: 'ИП Бондаренко',
-          card: '*7254',
-          plan: 300,
-          fact: 0,
-          status: 'planned',
-          responsible: 'Ксения Б.'
-        },
-        {
-          id: 'task_kurgan_2_5',
-          date: '10-16.11',
-          category: 'events',
-          description: 'Купить билет в кино/театр',
-          ip: 'ИП Овсейко',
-          card: '*1946',
-          plan: 1250,
-          fact: 0,
-          status: 'planned',
-          responsible: 'Полина М.'
-        },
-        {
-          id: 'task_kurgan_2_6',
-          date: '10-16.11',
-          category: 'repairs',
-          description: 'Купить и повесить занавески',
-          ip: 'ИП Карбышев',
-          card: '*2937',
-          plan: 5000,
-          fact: 0,
-          status: 'planned',
-          responsible: 'Полина М.'
-        },
-        {
-          id: 'task_kurgan_2_7',
-          date: '10-16.11',
-          category: 'cleaning',
-          description: 'Мойка окон в офисе',
-          ip: 'ИП Овсейко',
-          card: '*1946',
-          plan: 2000,
-          fact: 0,
-          status: 'planned',
-          responsible: 'Полина М.'
-        },
-        {
-          id: 'task_kurgan_2_8',
-          date: '10-16.11',
-          category: 'shipping',
-          description: 'Упаковка посылок СДЭК',
-          ip: 'ИП Бондаренко',
-          card: '*7254',
-          plan: 1250,
-          fact: 0,
-          status: 'planned',
-          responsible: 'Ксения Б.'
-        }
-      ]
-    },
-    week3: {
-      budget: 12500,
-      reserve: 1500,
-      total: 12500,
-      tasks: [
-        {
-          id: 'task_kurgan_3_1',
-          date: '17-23.11',
-          category: 'salary',
-          description: 'Снятие наличных',
-          ip: 'ИП Дюльгер',
-          card: '*9895',
-          plan: 5000,
-          fact: 0,
-          status: 'planned',
-          responsible: 'Ксения Б.'
-        },
-        {
-          id: 'task_kurgan_3_2',
-          date: '17-23.11',
-          category: 'events',
-          description: 'Кино/выставки/музеи',
-          ip: 'ИП Овсейко',
-          card: '*1946',
-          plan: 1250,
-          fact: 0,
-          status: 'planned',
-          responsible: 'Полина М.'
-        },
-        {
-          id: 'task_kurgan_3_3',
-          date: '17-23.11',
-          category: 'repairs',
-          description: 'Ремонт дверного замка',
-          ip: 'ИП Карбышев',
-          card: '*2937',
-          plan: 3750,
-          fact: 0,
-          status: 'planned',
-          responsible: 'Полина М.'
-        },
-        {
-          id: 'task_kurgan_3_4',
-          date: '17-23.11',
-          category: 'azs',
-          description: 'Заправка автомобиля',
-          ip: 'ИП Овсейко',
-          card: '*1946',
-          plan: 1000,
-          fact: 0,
-          status: 'planned',
-          responsible: 'Ксения Б.'
-        },
-        {
-          id: 'task_kurgan_3_5',
-          date: '17-23.11',
-          category: 'checks',
-          description: 'Чеки ККТ - ул.Тобольная,54 (Бондаренко)',
-          ip: 'ИП Бондаренко',
-          card: '*7254',
-          plan: 0,
-          fact: 0,
-          status: 'planned',
-          responsible: 'Алеся Б.'
-        },
-        {
-          id: 'task_kurgan_3_6',
-          date: '17-23.11',
-          category: 'checks',
-          description: 'Чеки ККТ - г. Курган, ул.Чехова 9, пом 11 (Федчук)',
-          ip: 'ИП Федчук',
-          card: '*9967',
-          plan: 0,
-          fact: 0,
-          status: 'planned',
-          responsible: 'Алеся Б.'
-        },
-        {
-          id: 'task_kurgan_3_7',
-          date: '17-23.11',
-          category: 'checks',
-          description: 'Чеки ККТ - г. Курган, ул. Родионова 1А, 2 этаж, оф 23 (Карбышев)',
-          ip: 'ИП Карбышев',
-          card: '*2937',
-          plan: 0,
-          fact: 0,
-          status: 'planned',
-          responsible: 'Алеся Б.'
-        },
-        {
-          id: 'task_kurgan_3_8',
-          date: '17-23.11',
-          category: 'checks',
-          description: 'Чеки ККТ - г. Курган, ул. Карла Маркса, 106. оф.216 (Рябенко)',
-          ip: 'ИП Рябенко',
-          card: '*6532',
-          plan: 0,
-          fact: 0,
-          status: 'planned',
-          responsible: 'Алеся Б.'
-        }
-      ]
-    },
-    week4: {
-      budget: 13250,
-      reserve: 1500,
-      total: 13250,
-      tasks: [
-        {
-          id: 'task_kurgan_4_1',
-          date: '24-30.11',
-          category: 'salary',
-          description: 'Снятие наличных',
-          ip: 'ИП Федчук',
-          card: '*9967',
-          plan: 5000,
-          fact: 0,
-          status: 'planned',
-          responsible: 'Ксения Б.'
-        },
-        {
-          id: 'task_kurgan_4_2',
-          date: '24-30.11',
-          category: 'repairs',
-          description: 'Финальные ремонтные работы',
-          ip: 'ИП Бондаренко',
-          card: '*7254',
-          plan: 5000,
-          fact: 0,
-          status: 'planned',
-          responsible: 'Полина М.'
-        },
-        {
-          id: 'task_kurgan_4_3',
-          date: '24-30.11',
-          category: 'stationery',
-          description: 'Ручки, блокноты, бумага',
-          ip: 'ИП Федчук',
-          card: '*9967',
-          plan: 500,
-          fact: 0,
-          status: 'planned',
-          responsible: 'Ксения Б.'
-        },
-        {
-          id: 'task_kurgan_4_4',
-          date: '24-30.11',
-          category: 'shipping',
-          description: 'Финальные отправления',
-          ip: 'ИП Бондаренко',
-          card: '*7254',
-          plan: 1250,
-          fact: 0,
-          status: 'planned',
-          responsible: 'Ксения Б.'
-        }
-      ]
-    }
-  }
-};
-
-// Пустые планы для других регионов
-appData.getEmptyPlan = function() {
-  return {
-    week1: { budget: 0, reserve: 0, total: 0, tasks: [] },
-    week2: { budget: 0, reserve: 0, total: 0, tasks: [] },
-    week3: { budget: 0, reserve: 0, total: 0, tasks: [] },
-    week4: { budget: 0, reserve: 0, total: 0, tasks: [] }
-  };
-};
-
-// Функция для получения плана региона
-appData.getWeeklyPlan = function(region, week) {
-  return this.weeklyPlans[region]?.[`week${week}`] || { budget: 0, reserve: 0, total: 0, tasks: [] };
-};
-
-// Функция для получения всего плана месяца
-appData.getMonthlyPlan = function(region) {
-  return this.weeklyPlans[region] || this.getEmptyPlan();
 };
 
 // Делаем данные глобально доступными
 window.appData = appData;
+console.log('✅ Единый файл данных загружен');

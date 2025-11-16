@@ -491,3 +491,254 @@
         order: -1;
     }
 }
+/* Улучшенные стили для заголовков недель */
+.week-header {
+    padding: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--bg-glass);
+    transition: all 0.3s ease;
+    border-bottom: 1px solid transparent;
+}
+
+.week-header:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-bottom-color: var(--primary-light);
+}
+
+.week-title {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex: 1;
+}
+
+.week-title h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: var(--text-primary);
+}
+
+.expand-icon {
+    transition: transform 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.week-section.expanded .expand-icon {
+    transform: rotate(90deg);
+}
+
+.week-summary {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.week-total {
+    font-weight: 600;
+    color: var(--primary-light);
+}
+
+.week-progress {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-width: 200px;
+}
+
+.progress-text {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    min-width: 100px;
+}
+
+/* Анимация для раскрытия контента */
+.week-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease, opacity 0.3s ease;
+    opacity: 0;
+}
+
+.week-section.expanded .week-content {
+    max-height: 2000px;
+    opacity: 1;
+}
+/* Улучшенные стили для сайдбара регионов */
+.region-info {
+    flex: 1;
+}
+
+.region-stats {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.25rem;
+}
+
+.region-stat {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    background: rgba(255, 255, 255, 0.1);
+    padding: 0.2rem 0.5rem;
+    border-radius: 10px;
+}
+
+.region-budget {
+    font-weight: 600;
+    color: var(--primary-light);
+    font-size: 0.9rem;
+}
+
+.ip-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.ip-info:last-child {
+    border-bottom: none;
+}
+
+.ip-name {
+    font-weight: 500;
+}
+
+.ip-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    align-items: flex-end;
+}
+
+.card-badge {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 8px;
+    font-family: 'Courier New', monospace;
+}
+
+.card-badge.active {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.card-badge.inactive {
+    background: rgba(245, 158, 11, 0.15);
+    color: #f59e0b;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+/* ДОПОЛНИТЕЛЬНЫЕ СТИЛИ ДЛЯ САЙДБАРА РЕГИОНОВ */
+.region-info {
+    flex: 1;
+}
+
+.region-main {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.region-stats {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.25rem;
+}
+
+.region-stat {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    background: rgba(255, 255, 255, 0.1);
+    padding: 0.2rem 0.5rem;
+    border-radius: 10px;
+}
+
+.region-budget {
+    font-weight: 600;
+    color: var(--primary-light);
+    font-size: 0.9rem;
+}
+
+.ip-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.ip-info:last-child {
+    border-bottom: none;
+}
+
+.ip-name {
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.ip-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    align-items: flex-end;
+}
+
+.card-badge {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 8px;
+    font-family: 'Courier New', monospace;
+}
+
+.card-badge.active {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.card-badge.inactive {
+    background: rgba(245, 158, 11, 0.15);
+    color: #f59e0b;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+/* Стили для пустых состояний */
+.empty-week {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-muted);
+}
+
+.empty-state-small {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: center;
+    padding: 1rem;
+}
+
+/* Улучшенные стили для заголовков недель */
+.week-section.expanded .week-header {
+    background: rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid var(--primary-light);
+}
+
+.expand-icon {
+    transition: transform 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.week-section.expanded .expand-icon {
+    transform: rotate(90deg);
+}
+
+/* Стили для кнопок действий */
+.completed-badge {
+    color: #10b981;
+    font-weight: 600;
+    font-size: 0.9rem;
+}

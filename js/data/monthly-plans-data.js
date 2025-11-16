@@ -597,3 +597,10 @@ function updateMonthlyTask(region, week, taskId, updates) {
     }
     return false;
 }
+
+// СДЕЛАЕМ ДАННЫЕ ГЛОБАЛЬНО ДОСТУПНЫМИ
+window.MonthlyPlansData = MonthlyPlansData;
+window.getMonthlyPlan = getMonthlyPlan;
+window.updateMonthlyTask = updateMonthlyTask;
+
+console.log('✅ MonthlyPlansData загружен:', Object.keys(MonthlyPlansData));

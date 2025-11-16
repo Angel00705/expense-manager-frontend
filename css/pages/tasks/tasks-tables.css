@@ -1,0 +1,119 @@
+/* css/pages/tasks/tasks-tables.css */
+/* Стили для таблиц задач */
+
+.week-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    background: var(--bg-card);
+}
+
+.week-table th {
+    background: rgba(255, 255, 255, 0.08);
+    font-weight: 600;
+    padding: 1rem 0.75rem;
+    text-align: left;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+}
+
+.week-table td {
+    padding: 1rem 0.75rem;
+    vertical-align: top;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.3s ease;
+}
+
+.week-table tr:hover {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.week-table tr:last-child td {
+    border-bottom: none;
+}
+
+/* Стили для ячеек с суммами */
+.amount-cell {
+    text-align: right;
+    font-family: 'Courier New', monospace;
+    font-weight: 600;
+}
+
+.plan-amount {
+    color: var(--primary-light);
+}
+
+.fact-amount {
+    color: #10b981;
+}
+
+/* Стили для статусов */
+.status-badge {
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-align: center;
+    display: inline-block;
+    min-width: 120px;
+}
+
+.status-planned {
+    background: rgba(59, 130, 246, 0.15);
+    color: #3b82f6;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.status-completed {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.status-pending {
+    background: rgba(245, 158, 11, 0.15);
+    color: #f59e0b;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.status-reserve {
+    background: rgba(139, 92, 246, 0.15);
+    color: #8b5cf6;
+    border: 1px solid rgba(139, 92, 246, 0.3);
+}
+
+/* Стили для чекбоксов */
+.task-checkbox {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+/* Адаптивность таблицы */
+@media (max-width: 1200px) {
+    .week-table {
+        font-size: 0.85rem;
+    }
+    
+    .week-table th,
+    .week-table td {
+        padding: 0.75rem 0.5rem;
+    }
+    
+    .status-badge {
+        min-width: 100px;
+        font-size: 0.75rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .week-table-container {
+        overflow-x: auto;
+    }
+    
+    .week-table {
+        min-width: 800px;
+    }
+}
