@@ -44,20 +44,30 @@ class IPExpenseManager {
     }
 
     initializeModules() {
+        console.log('🔧 Инициализация модулей задач...');
+        
+        // Инициализируем модальные окна
+        if (typeof TaskModals !== 'undefined') {
+            TaskModals.init();
+        }
+        
         // Инициализируем MonthlyPlan
         if (typeof MonthlyPlan !== 'undefined') {
             MonthlyPlan.currentRegion = this.currentRegion;
             MonthlyPlan.currentMonth = '2025-11';
             MonthlyPlan.init();
         }
-
-        // Инициализируем ролевые модули
+        
+        // Ролевая инициализация
         if (this.currentUser.role === 'admin') {
             this.initAdminInterface();
+            if (typeof AdminTasks !== 'undefined') AdminTasks.init();
+            if (typeof AllTasks !== 'undefined') AllTasks.init();
         } else {
             this.initManagerInterface();
+            if (typeof ManagerTasks !== 'undefined') ManagerTasks.init();
         }
-
+        
         // Настраиваем вкладки
         this.setupTabSwitching();
     }
@@ -72,10 +82,6 @@ class IPExpenseManager {
         // Показываем сайдбар регионов
         const sidebar = document.getElementById('regionSidebar');
         if (sidebar) sidebar.style.display = 'block';
-
-        // Инициализируем модули для админа
-        if (typeof AdminTasks !== 'undefined') AdminTasks.init();
-        if (typeof AllTasks !== 'undefined') AllTasks.init();
     }
 
     initManagerInterface() {
@@ -95,9 +101,6 @@ class IPExpenseManager {
             const planRegionSelect = document.getElementById('planRegion');
             if (planRegionSelect) planRegionSelect.value = this.currentRegion;
         }
-
-        // Инициализируем модули для управляющего
-        if (typeof ManagerTasks !== 'undefined') ManagerTasks.init();
     }
 
     setupTabSwitching() {

@@ -178,55 +178,61 @@ const ManagerTasks = {
         `;
     },
 
-startTaskCompletion(taskId) {
-    console.log('✅ Начало выполнения задачи:', taskId);
-    
-    if (typeof TaskModals !== 'undefined') {
-        TaskModals.openCompleteTaskModal(taskId);
-    } else {
-        this.showNotification('Система модальных окон не загружена', 'error');
-    }
-}
+    startTaskCompletion(taskId) {
+        console.log('✅ Начало выполнения задачи:', taskId);
         
-        // Заполняем модальное окно
-        document.getElementById('completeTaskId').value = taskId;
-        document.getElementById('factAmount').value = '';
-        document.getElementById('completionDate').value = new Date().toISOString().split('T')[0];
-        document.getElementById('completionNotes').value = '';
-        
-        // Показываем информацию о задаче
-        const taskInfo = document.getElementById('completeTaskInfo');
-        taskInfo.innerHTML = `
-            <div class="task-preview">
-                <h4>Задача #${taskId}</h4>
-                <p>Заполните фактические данные выполнения</p>
-            </div>
-        `;
-        
-        // Показываем модальное окно
-        document.getElementById('completeTaskModal').style.display = 'flex';
+        if (typeof TaskModals !== 'undefined') {
+            TaskModals.openCompleteTaskModal(taskId);
+        } else {
+            // Резервный метод
+            this.openSimpleCompletionModal(taskId);
+        }
     },
 
-    saveTaskCompletion() {
-        const taskId = document.getElementById('completeTaskId').value;
-        const factAmount = parseFloat(document.getElementById('factAmount').value);
-        const completionDate = document.getElementById('completionDate').value;
-        
-        if (!factAmount || !completionDate) {
-            this.showNotification('Заполните обязательные поля', 'error');
+    findTaskById(taskId) {
+        const allTasks = JSON.parse(localStorage.getItem('tasks')) || [];
+        return allTasks.find(task => task.id === taskId);
+    },
+
+    openSimpleCompletionModal(taskId) {
+        const task = this.findTaskById(taskId);
+        if (!task) {
+            this.showNotification('Задача не найдена', 'error');
             return;
         }
         
-        this.showNotification('Задача выполнена!', 'success');
-        this.closeCompleteTaskModal();
+        const factAmount = prompt(`Введите фактическую сумму для задачи:\n"${task.description}"\n\nПлан: ${task.plannedAmount || task.amount} ₽`, task.plannedAmount || task.amount || '');
+        
+        if (factAmount !== null) {
+            const amount = parseFloat(factAmount);
+            if (!isNaN(amount)) {
+                this.completeTaskSimple(taskId, amount);
+            } else {
+                this.showNotification('Неверная сумма', 'error');
+            }
+        }
     },
 
-    closeCompleteTaskModal() {
-        document.getElementById('completeTaskModal').style.display = 'none';
+    completeTaskSimple(taskId, factAmount) {
+        const allTasks = JSON.parse(localStorage.getItem('tasks')) || [];
+        const updatedTasks = allTasks.map(task => {
+            if (task.id === taskId) {
+                return {
+                    ...task,
+                    factAmount: factAmount,
+                    status: 'completed',
+                    dateCompleted: new Date().toISOString()
+                };
+            }
+            return task;
+        });
+        
+        localStorage.setItem('tasks', JSON.stringify(updatedTasks));
+        this.showNotification('Задача выполнена!', 'success');
+        this.loadMyTasks();
     },
 
     setupEventListeners() {
-        // Обработчики для вкладки "Мои задачи"
         const myTasksSearch = document.getElementById('myTasksSearch');
         const myTasksStatus = document.getElementById('myTasksStatus');
         const myTasksWeek = document.getElementById('myTasksWeek');
@@ -237,7 +243,6 @@ startTaskCompletion(taskId) {
     },
 
     filterMyTasks() {
-        // Простая фильтрация - можно улучшить
         this.loadMyTasks();
     },
 
@@ -251,9 +256,11 @@ startTaskCompletion(taskId) {
     },
 
     showNotification(message, type = 'info') {
-        console.log(`🔔 ${type}: ${message}`);
-        // Временная реализация - можно интегрировать с Notification из utils.js
-        alert(`${type === 'error' ? '❌' : '✅'} ${message}`);
+        if (typeof Notification !== 'undefined') {
+            Notification[type === 'error' ? 'error' : 'success'](message);
+        } else {
+            alert(`${type === 'error' ? '❌' : '✅'} ${message}`);
+        }
     }
 };
 

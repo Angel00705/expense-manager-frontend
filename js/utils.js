@@ -423,7 +423,51 @@ function getCategoryName(category) {
     };
     return names[category] || category;
 }
+// ДОБАВЬ В КОНЕЦ utils.js
+function initializeDemoTasks() {
+    const existingTasks = JSON.parse(localStorage.getItem('tasks'));
+    if (!existingTasks || existingTasks.length === 0) {
+        console.log('🔄 Создание демо-задач для тестирования...');
+        
+        const demoTasks = [
+            {
+                id: 'demo_1',
+                title: 'Закупка канцелярии',
+                description: 'Ручки, бумага, блокноты для офиса',
+                region: 'Курган',
+                ip: 'ИП Бондаренко',
+                expenseItem: 'stationery',
+                plannedAmount: 5000,
+                status: 'pending',
+                responsibleManager: 'Ксения Б.',
+                createdAt: new Date().toISOString(),
+                dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+            },
+            {
+                id: 'demo_2', 
+                title: 'Заправка автомобиля',
+                description: 'Заправка на АЗС',
+                region: 'Курган',
+                ip: 'ИП Овсейко',
+                expenseItem: 'azs',
+                plannedAmount: 3000,
+                status: 'completed',
+                factAmount: 2850,
+                responsibleManager: 'Ксения Б.',
+                createdAt: new Date().toISOString(),
+                dateCompleted: new Date().toISOString()
+            }
+        ];
+        
+        localStorage.setItem('tasks', JSON.stringify(demoTasks));
+        console.log('✅ Создано демо-задач:', demoTasks.length);
+    }
+}
 
+// Автоматически создаем демо-задачи при загрузке
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(initializeDemoTasks, 1000);
+});
 // Экспорт в глобальную область
 window.Auth = Auth;
 window.Notification = Notification;

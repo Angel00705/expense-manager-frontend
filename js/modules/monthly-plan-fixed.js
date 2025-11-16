@@ -159,25 +159,52 @@ const MonthlyPlan = {
         };
         return budgets[region] || '0 ₽';
     },
+updateRegionCardsInfo() {
+    const regionIpList = document.getElementById('regionIpList');
+    if (!regionIpList) return;
 
+    const ips = appData.getIPsByRegion(this.currentRegion);
+    const cards = appData.getCardsByRegion(this.currentRegion);
+    
+    regionIpList.innerHTML = ips.map(ip => {
+        const ipCards = cards.filter(card => card.owner === ip);
+        const hasCards = ipCards.length > 0;
+        
+        return `
+            <div class="ip-info">
+                <div class="ip-name">${ip}</div>
+                <div class="ip-cards">
+                    ${hasCards ? ipCards.map(card => `
+                        <span class="card-badge ${card.status || 'active'}">
+                            ${card.cardNumber} - ${this.formatCurrency(card.balance || 0)} ₽
+                        </span>
+                    `).join('') : `
+                        <span class="card-badge inactive">Нет карт</span>
+                    `}
+                </div>
+            </div>
+        `;
+    }).join('');
+},
     switchRegion(regionName) {
-        console.log(`🔄 Переключение на регион: ${regionName}`);
-        this.currentRegion = regionName;
-        
-        // Обновляем активный элемент в списке
-        document.querySelectorAll('.region-item').forEach(item => {
-            item.classList.remove('active');
-        });
-        
-        const activeItem = document.querySelector(`[data-region="${regionName}"]`);
-        if (activeItem) activeItem.classList.add('active');
+    console.log(`🔄 Переключение на регион: ${regionName}`);
+    this.currentRegion = regionName;
+    
+    // Обновляем активный элемент в списке
+    document.querySelectorAll('.region-item').forEach(item => {
+        item.classList.remove('active');
+    });
+    
+    const activeItem = document.querySelector(`[data-region="${regionName}"]`);
+    if (activeItem) activeItem.classList.add('active');
 
-        // Обновляем информацию о регионе
-        this.updateRegionInfo();
-        
-        // Загружаем план для нового региона
-        this.loadPlanData();
-    },
+    // Обновляем информацию о регионе
+    this.updateRegionInfo();
+    this.updateRegionCardsInfo(); // ДОБАВЬ ЭТУ СТРОЧКУ
+    
+    // Загружаем план для нового региона
+    this.loadPlanData();
+},
 
     loadPlanData() {
         console.log(`📥 Загрузка плана для: ${this.currentRegion}`);

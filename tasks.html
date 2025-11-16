@@ -8,13 +8,9 @@
     
     <!-- ПРАВИЛЬНЫЕ ПУТИ БЕЗ ../ -->
     <link rel="stylesheet" href="css/global.css">
-    <link rel="stylesheet" href="css/pages/tasks/tasks-tables.css">
     <link rel="stylesheet" href="css/components/navbar.css">
     <link rel="stylesheet" href="css/components/modal.css">
     <link rel="stylesheet" href="css/pages/tasks/tasks-main.css">
-    <link rel="stylesheet" href="css/pages/tasks/tasks-admin.css">
-    <link rel="stylesheet" href="css/pages/tasks/tasks-manager.css">
-    <link rel="stylesheet" href="css/modules/tasks-modules.css">
 </head>
 <body>
     <div class="background-animation">
@@ -99,28 +95,27 @@
              <!-- Контент вкладки "План месяца" -->
 <div class="tab-content active" id="month-plan-content">
     <div class="plan-controls">
-        <div class="control-group">
-            <!-- УБИРАЕМ ДУБЛИРУЮЩИЙСЯ SELECT РЕГИОНОВ -->
-            <div class="month-selector">
-                <label>Месяц:</label>
-                <select id="planMonth" class="form-select">
-                    <option value="2025-11">Ноябрь 2025</option>
-                    <option value="2025-12">Декабрь 2025</option>
-                    <option value="2026-01">Январь 2026</option>
-                </select>
-            </div>
-        </div>
-        <div class="control-actions">
-            <button class="btn btn-secondary" onclick="toggleAllWeeks()">
-                <span class="nav-icon">📂</span>
-                <span id="toggleAllText">Развернуть все</span>
-            </button>
-            <button class="btn btn-primary" onclick="saveMonthlyPlan()">
-                <span class="nav-icon">💾</span>
-                Сохранить план
-            </button>
+    <div class="control-group">
+        <div class="month-selector">
+            <label>Месяц:</label>
+            <select id="planMonth" class="form-select">
+                <option value="2025-11">Ноябрь 2025</option>
+                <option value="2025-12">Декабрь 2025</option>
+                <option value="2026-01">Январь 2026</option>
+            </select>
         </div>
     </div>
+    <div class="control-actions">
+        <button class="btn btn-secondary" onclick="toggleAllWeeks()">
+            <span class="nav-icon">📂</span>
+            <span id="toggleAllText">Развернуть все</span>
+        </button>
+        <button class="btn btn-primary" onclick="saveMonthlyPlan()">
+            <span class="nav-icon">💾</span>
+            Сохранить план
+        </button>
+    </div>
+</div>
 
                     <!-- Статистика плана -->
                     <div class="plan-stats">
@@ -596,12 +591,18 @@
 <script src="js/utils.js"></script>
 <script src="data/real-cards-data.js"></script>
 <script src="js/data.js"></script>
+<script src="js/data/demo-tasks-data.js"></script>
 <script src="js/navbar.js"></script>
 <script src="js/app.js"></script>
-<script src="js/modules/monthly-plan-fixed.js"></script> <!-- ЗАМЕНИЛ НА ИСПРАВЛЕННЫЙ -->
+
+<!-- МОДУЛИ ЗАДАЧ В ПРАВИЛЬНОМ ПОРЯДКЕ -->
 <script src="js/modules/task-modals.js"></script>
-<script src="js/modules/admin-tasks.js"></script>
+<script src="js/modules/monthly-plan-fixed.js"></script>
 <script src="js/modules/manager-tasks-fixed.js"></script>
+<script src="js/modules/admin-tasks.js"></script>
 <script src="js/modules/all-tasks.js"></script>
+
+<!-- ЕДИНЫЙ ИНИЦИАЛИЗАТОР -->
+<script src="js/modules/tasks-init.js"></script>
 </body>
 </html>
