@@ -463,7 +463,134 @@ function initializeDemoTasks() {
         console.log('✅ Создано демо-задач:', demoTasks.length);
     }
 }
+// ДОБАВИТЬ В utils.js
+const NotificationSystem = {
+    init() {
+        console.log('🔔 Инициализация системы уведомлений');
+        this.setupDeadlineChecker();
+    },
+    
+    setupDeadlineChecker() {
+        // Проверяем дедлайны каждые 30 минут
+        setInterval(() => this.checkDeadlines(), 30 * 60 * 1000);
+        // Первая проверка через 5 секунд после загрузки
+        setTimeout(() => this.checkDeadlines(), 5000);
+    },
+    
+    checkDeadlines() {
+        const plans = JSON.parse(localStorage.getItem('monthlyPlans')) || MonthlyPlansData;
+        const today = new Date();
+        
+        Object.keys(plans).forEach(region => {
+            for (let week = 1; week <= 4; week++) {
+                const weekData = plans[region][`week${week}`];
+                if (weekData && weekData.tasks) {
+                    weekData.tasks.forEach(task => {
+                        if (task.status !== 'completed' && !task.notificationSent) {
+                            const deadline = this.getTaskDeadline(week);
+                            if (deadline && this.isDeadlineClose(deadline, today)) {
+                                this.sendDeadlineNotification(task, region, deadline);
+                                task.notificationSent = true;
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    },
+// ДОБАВИТЬ В utils.js в NotificationSystem
+setupDeadlineNotifications() {
+    // Ежедневная проверка в 9:00
+    this.scheduleDailyCheck();
+    
+    // Первая проверка при загрузке
+    this.checkAllDeadlines();
+},
 
+scheduleDailyCheck() {
+    const now = new Date();
+    const nextCheck = new Date();
+    nextCheck.setHours(9, 0, 0, 0);
+    
+    if (now > nextCheck) {
+        nextCheck.setDate(nextCheck.getDate() + 1);
+    }
+    
+    const timeUntilCheck = nextCheck.getTime() - now.getTime();
+    
+    setTimeout(() => {
+        this.checkAllDeadlines();
+        // Повторяем каждые 24 часа
+        setInterval(() => this.checkAllDeadlines(), 24 * 60 * 60 * 1000);
+    }, timeUntilCheck);
+},
+
+checkAllDeadlines() {
+    console.log('🔔 Проверка сроков задач...');
+    const plans = StorageManager.load('monthlyPlans') || MonthlyPlansData;
+    const today = new Date();
+    
+    Object.keys(plans).forEach(region => {
+        for (let week = 1; week <= 4; week++) {
+            const weekData = plans[region][`week${week}`];
+            if (weekData && weekData.tasks) {
+                weekData.tasks.forEach(task => {
+                    if (task.status !== 'completed' && !task.notificationSent) {
+                        this.checkTaskDeadline(task, region, week);
+                    }
+                });
+            }
+        }
+    });
+},    
+    getTaskDeadline(week) {
+        const deadlines = {
+            1: '2025-11-07',
+            2: '2025-11-14', 
+            3: '2025-11-21',
+            4: '2025-11-30'
+        };
+        return deadlines[week];
+    },
+    
+    isDeadlineClose(deadline, today) {
+        const deadlineDate = new Date(deadline);
+        const timeDiff = deadlineDate.getTime() - today.getTime();
+        const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+        
+        return daysDiff <= 3 && daysDiff >= 0;
+    },
+    
+    sendDeadlineNotification(task, region, deadline) {
+        const deadlineDate = new Date(deadline);
+        const daysLeft = Math.ceil((deadlineDate.getTime() - new Date().getTime()) / (1000 * 3600 * 24));
+        
+        let message = `⏰ Задача "${task.description}" в регионе ${region} `;
+        if (daysLeft === 0) {
+            message += 'должна быть выполнена сегодня!';
+        } else {
+            message += `должна быть выполнена через ${daysLeft} дней`;
+        }
+        
+        Notification.warning(message);
+    },
+    
+    // Уведомление для админов о завершении задач
+    sendCompletionNotification(task, region, manager) {
+        if (Auth.isAdmin()) {
+            Notification.info(`✅ Задача "${task.description}" в регионе ${region} выполнена управляющим ${manager}`);
+        }
+    }
+};
+
+// Инициализация
+document.addEventListener('DOMContentLoaded', function() {
+    if (window.NotificationSystem) {
+        NotificationSystem.init();
+    }
+});
+
+window.NotificationSystem = NotificationSystem;
 // Автоматически создаем демо-задачи при загрузке
 document.addEventListener('DOMContentLoaded', function() {
     setTimeout(initializeDemoTasks, 1000);

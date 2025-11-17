@@ -75,21 +75,26 @@ const REAL_CARDS_DATA = [
     personalStatus: "Перевыпустить"
   },
   {
+// Обновляем данные карт с балансами
+{
     ipName: "ИП Бондаренко Л.И.",
     region: "Курган", 
     corpCard: "*7254",
     personalCard: "*5664",
     corpStatus: "в регионе",
-    personalStatus: "в регионе"
-  },
-  {
+    personalStatus: "в регионе",
+    balance: 15000
+},
+{
     ipName: "ИП Бобков",
     region: "",
-    corpCard: "*1381",
+    corpCard: "*1381", 
     personalCard: "*2911",
     corpStatus: "В ПВЗ Овсейко",
-    personalStatus: "в регионе"
-  },
+    personalStatus: "в регионе",
+    balance: 12000
+},
+  // ... добавить балансы для всех карт
   {
     ipName: "ИП Дюльгер",
     region: "",

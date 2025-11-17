@@ -14,16 +14,28 @@ const TasksInitializer = {
         console.log('✅ Все модули задач инициализированы');
     },
     
-    initMonthlyPlan() {
+// ЗАМЕНИТЕ текущий initMonthlyPlan на:
+initMonthlyPlan() {
+    return new Promise((resolve) => {
         if (typeof MonthlyPlan !== 'undefined') {
-            MonthlyPlan.currentRegion = window.app?.currentRegion || 'Курган';
-            MonthlyPlan.currentMonth = '2025-11';
-            MonthlyPlan.init();
-            console.log('✅ MonthlyPlan инициализирован');
+            // Ждем полной загрузки данных
+            const checkData = () => {
+                if (window.appData && window.MonthlyPlansData) {
+                    MonthlyPlan.currentRegion = window.app?.currentRegion || 'Курган';
+                    MonthlyPlan.currentMonth = '2025-11';
+                    MonthlyPlan.init();
+                    console.log('✅ MonthlyPlan инициализирован');
+                    resolve();
+                } else {
+                    setTimeout(checkData, 100);
+                }
+            };
+            checkData();
         } else {
-            console.error('❌ MonthlyPlan не найден');
+            resolve();
         }
-    },
+    });
+}
     
     initRoleModules() {
         const userRole = window.app?.currentUser?.role;

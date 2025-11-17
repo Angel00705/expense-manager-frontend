@@ -212,7 +212,36 @@ const ManagerTasks = {
             }
         }
     },
-
+// В manager-tasks-fixed.js ОБНОВИТЕ метод completeTask:
+completeTask(taskId) {
+    console.log('✅ Выполнение задачи:', taskId);
+    
+    if (typeof MonthlyPlan !== 'undefined') {
+        // Используем методы из MonthlyPlan для обновления
+        const task = MonthlyPlan.findTaskById(taskId);
+        if (task) {
+            // Открываем модальное окно или сразу обновляем
+            const factAmount = prompt(`Введите фактическую сумму для задачи:\n"${task.description}"\n\nПлан: ${task.plan} ₽`, task.plan || '');
+            
+            if (factAmount !== null) {
+                const amount = parseFloat(factAmount);
+                if (!isNaN(amount)) {
+                    MonthlyPlan.updateTaskFact(taskId, amount);
+                    
+                    // Автоматически устанавливаем сегодняшнюю дату
+                    const today = new Date().toISOString().split('T')[0];
+                    MonthlyPlan.updateTaskDate(taskId, today);
+                    
+                    Notification.success('Задача отмечена как выполненная!');
+                } else {
+                    Notification.error('Неверная сумма');
+                }
+            }
+        }
+    } else {
+        Notification.error('Модуль плана не доступен');
+    }
+}
     completeTaskSimple(taskId, factAmount) {
         const allTasks = JSON.parse(localStorage.getItem('tasks')) || [];
         const updatedTasks = allTasks.map(task => {

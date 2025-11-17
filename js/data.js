@@ -93,8 +93,12 @@ const appData = {
   },
 
   getMonthlyPlan(region) {
+    // Если данных нет, инициализируем из MonthlyPlansData
+    if (!this.monthlyPlans[region] || this.monthlyPlans[region].week1.tasks.length === 0) {
+        this.initializePlanData();
+    }
     return this.monthlyPlans[region] || this.getEmptyPlan();
-  },
+}
 
   getEmptyPlan() {
     return {
@@ -105,7 +109,12 @@ const appData = {
     };
   }
 };
-
+initializePlanData() {
+    if (window.MonthlyPlansData) {
+        this.monthlyPlans = { ...window.MonthlyPlansData };
+        console.log('✅ Данные планов инициализированы из MonthlyPlansData');
+    }
+}
 // Делаем данные глобально доступными
 window.appData = appData;
 console.log('✅ Единый файл данных загружен');

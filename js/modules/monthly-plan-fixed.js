@@ -1,3 +1,4 @@
+// js/modules/monthly-plan-fixed.js - ПОЛНОСТЬЮ ИСПРАВЛЕННАЯ ВЕРСИЯ
 const MonthlyPlan = {
     currentRegion: 'Курган',
     currentMonth: '2025-11',
@@ -10,10 +11,10 @@ const MonthlyPlan = {
         this.loadPlanData();
         this.setupRegionSidebar();
         this.initializeWeekSections();
+        this.updateCardsPanel(this.currentRegion);
     },
 
     initializeWeekSections() {
-        // Инициализируем все недели как свернутые
         for (let week = 1; week <= 4; week++) {
             const content = document.querySelector(`.week-section[data-week="${week}"] .week-content`);
             const icon = document.querySelector(`.week-section[data-week="${week}"] .expand-icon`);
@@ -34,7 +35,6 @@ const MonthlyPlan = {
             });
         }
 
-        // Обработчики для заголовков недель
         document.querySelectorAll('.week-header').forEach(header => {
             header.addEventListener('click', (e) => {
                 const weekSection = e.currentTarget.closest('.week-section');
@@ -49,12 +49,10 @@ const MonthlyPlan = {
     setupRegionSidebar() {
         if (window.app?.currentUser?.role === 'admin') {
             this.renderRegionList();
-            this.setupRegionInfo();
         } else {
             const sidebar = document.getElementById('regionSidebar');
             if (sidebar) sidebar.style.display = 'none';
             
-            // Для управляющих автоматически устанавливаем их регион
             if (window.app?.currentUser?.region) {
                 this.currentRegion = window.app.currentUser.region;
             }
@@ -98,113 +96,66 @@ const MonthlyPlan = {
         });
     },
 
-    setupRegionInfo() {
-        const regionInfoPanel = document.getElementById('regionInfoPanel');
-        if (regionInfoPanel) {
-            regionInfoPanel.style.display = 'block';
-            this.updateRegionInfo();
-        }
-    },
-
-    updateRegionInfo() {
-        const currentRegionName = document.getElementById('currentRegionName');
-        const ipCount = document.getElementById('ipCount');
-        const activeCardsCount = document.getElementById('activeCardsCount');
-        const regionBudget = document.getElementById('regionBudget');
-        const regionIpList = document.getElementById('regionIpList');
-
-        if (currentRegionName) currentRegionName.textContent = this.currentRegion;
-        
-        // Получаем реальные данные из appData
-        const ips = appData.getIPsByRegion(this.currentRegion);
-        const cards = appData.getCardsByRegion(this.currentRegion);
-        const activeCards = cards.filter(card => card.status === 'active');
-
-        if (ipCount) ipCount.textContent = ips.length;
-        if (activeCardsCount) activeCardsCount.textContent = activeCards.length;
-        if (regionBudget) regionBudget.textContent = this.getRegionBudget(this.currentRegion);
-
-        // Обновляем список ИП с реальными картами
-        if (regionIpList) {
-            regionIpList.innerHTML = ips.map(ip => {
-                const ipCards = cards.filter(card => card.owner === ip);
-                const hasCards = ipCards.length > 0;
-                
-                return `
-                    <div class="ip-info">
-                        <div class="ip-name">${ip}</div>
-                        <div class="ip-cards">
-                            ${hasCards ? ipCards.map(card => `
-                                <span class="card-badge ${card.status || 'active'}">
-                                    ${card.cardNumber} - ${this.formatCurrency(card.balance || 0)} ₽
-                                </span>
-                            `).join('') : `
-                                <span class="card-badge inactive">Нет карт</span>
-                            `}
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-    },
-
-    getRegionBudget(region) {
-        const budgets = {
-            'Курган': '72,050 ₽',
-            'Астрахань': '45,000 ₽', 
-            'Бурятия': '38,000 ₽',
-            'Калмыкия': '32,000 ₽',
-            'Мордовия': '35,000 ₽',
-            'Удмуртия': '65,000 ₽'
-        };
-        return budgets[region] || '0 ₽';
-    },
-updateRegionCardsInfo() {
-    const regionIpList = document.getElementById('regionIpList');
-    if (!regionIpList) return;
-
-    const ips = appData.getIPsByRegion(this.currentRegion);
-    const cards = appData.getCardsByRegion(this.currentRegion);
-    
-    regionIpList.innerHTML = ips.map(ip => {
-        const ipCards = cards.filter(card => card.owner === ip);
-        const hasCards = ipCards.length > 0;
-        
-        return `
-            <div class="ip-info">
-                <div class="ip-name">${ip}</div>
-                <div class="ip-cards">
-                    ${hasCards ? ipCards.map(card => `
-                        <span class="card-badge ${card.status || 'active'}">
-                            ${card.cardNumber} - ${this.formatCurrency(card.balance || 0)} ₽
-                        </span>
-                    `).join('') : `
-                        <span class="card-badge inactive">Нет карт</span>
-                    `}
-                </div>
-            </div>
-        `;
-    }).join('');
-},
     switchRegion(regionName) {
-    console.log(`🔄 Переключение на регион: ${regionName}`);
-    this.currentRegion = regionName;
-    
-    // Обновляем активный элемент в списке
-    document.querySelectorAll('.region-item').forEach(item => {
-        item.classList.remove('active');
-    });
-    
-    const activeItem = document.querySelector(`[data-region="${regionName}"]`);
-    if (activeItem) activeItem.classList.add('active');
+        console.log(`🔄 Переключение на регион: ${regionName}`);
+        this.currentRegion = regionName;
+        
+        document.querySelectorAll('.region-item').forEach(item => {
+            item.classList.remove('active');
+        });
+        
+        const activeItem = document.querySelector(`[data-region="${regionName}"]`);
+        if (activeItem) activeItem.classList.add('active');
 
-    // Обновляем информацию о регионе
-    this.updateRegionInfo();
-    this.updateRegionCardsInfo(); // ДОБАВЬ ЭТУ СТРОЧКУ
-    
-    // Загружаем план для нового региона
-    this.loadPlanData();
-},
+        this.updateCardsPanel(regionName);
+        this.loadPlanData();
+    },
+
+    updateCardsPanel(region) {
+        const cards = appData.getCardsByRegion(region);
+        const activeCards = cards.filter(card => 
+            card.corpStatus === 'в регионе' || card.personalStatus === 'в регионе'
+        );
+        
+        const totalBalance = cards.reduce((sum, card) => sum + (card.balance || 0), 0);
+        
+        const totalCardsElem = document.getElementById('totalCards');
+        const activeCardsElem = document.getElementById('activeCards');
+        const totalBalanceElem = document.getElementById('totalBalance');
+        const currentRegionElem = document.getElementById('currentRegionCards');
+        
+        if (totalCardsElem) totalCardsElem.textContent = cards.length;
+        if (activeCardsElem) activeCardsElem.textContent = activeCards.length;
+        if (totalBalanceElem) totalBalanceElem.textContent = this.formatCurrency(totalBalance) + ' ₽';
+        if (currentRegionElem) currentRegionElem.textContent = region;
+        
+        this.renderCardsList(cards);
+    },
+
+    renderCardsList(cards) {
+        const cardsList = document.getElementById('regionCardsList');
+        if (!cardsList) return;
+        
+        cardsList.innerHTML = cards.map(card => `
+            <div class="card-item ${(card.corpStatus === 'в регионе' || card.personalStatus === 'в регионе') ? 'active' : 'inactive'}">
+                <div class="card-header">
+                    <span class="card-ip">${card.ipName}</span>
+                    <span class="card-type">${card.corpCard ? '💳 Корп.' : '👤 Перс.'}</span>
+                </div>
+                <div class="card-details">
+                    <span class="card-number">${card.corpCard || card.personalCard}</span>
+                    <span class="card-status ${(card.corpStatus === 'в регионе' || card.personalStatus === 'в регионе') ? 'online' : 'offline'}">
+                        ${card.corpStatus || card.personalStatus}
+                    </span>
+                </div>
+                ${card.balance ? `
+                    <div class="card-balance">
+                        Баланс: <strong>${this.formatCurrency(card.balance)} ₽</strong>
+                    </div>
+                ` : ''}
+            </div>
+        `).join('');
+    },
 
     loadPlanData() {
         console.log(`📥 Загрузка плана для: ${this.currentRegion}`);
@@ -274,27 +225,9 @@ updateRegionCardsInfo() {
         const tbody = document.getElementById(`week${week}Tasks`);
         if (!tbody) return;
 
-        if (tasks.length === 0) {
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="9" class="empty-week">
-                        <div class="empty-state-small">
-                            <span class="icon">📋</span>
-                            <span>Нет запланированных задач</span>
-                        </div>
-                    </td>
-                </tr>
-            `;
-            return;
-        }
-
         tbody.innerHTML = tasks.map(task => `
-            <tr class="task-row" data-task-id="${task.id}" data-region="${this.currentRegion}">
-                <td>
-                    ${window.app?.currentUser?.role === 'admin' ? `
-                        <input type="checkbox" class="task-checkbox" data-task-id="${task.id}">
-                    ` : ''}
-                </td>
+            <tr class="task-row" data-task-id="${task.id}">
+                <td class="task-deadline">${this.getWeekDeadline(week)}</td>
                 <td>
                     <div class="category-badge ${task.category}">
                         ${this.getCategoryEmoji(task.category)} ${this.getCategoryName(task.category)}
@@ -302,30 +235,53 @@ updateRegionCardsInfo() {
                 </td>
                 <td class="task-description-cell">
                     <div class="task-main-desc">${task.description}</div>
-                    ${task.explanation ? `<div class="task-explanation">${task.explanation}</div>` : ''}
+                </td>
+                <td class="task-explanation-cell">
+                    ${task.explanation ? `<div class="task-explanation">${task.explanation}</div>` : '-'}
                 </td>
                 <td>
                     <div class="ip-info-cell">
                         <div class="ip-name">${task.ip || '-'}</div>
-                        ${task.card ? `<div class="card-number">${task.card}</div>` : ''}
                     </div>
                 </td>
+                <td class="card-cell">
+                    ${task.card ? `<span class="card-badge">${task.card}</span>` : '-'}
+                </td>
                 <td class="amount-cell plan-amount">${this.formatCurrency(task.plan)} ₽</td>
-                <td class="amount-cell fact-amount">${task.fact > 0 ? this.formatCurrency(task.fact) + ' ₽' : '-'}</td>
-                <td class="completion-date">${task.dateCompleted ? this.formatDate(task.dateCompleted) : '-'}</td>
+                <td class="amount-cell fact-amount">
+                    ${window.app?.currentUser?.role === 'admin' ? 
+                        (task.fact > 0 ? this.formatCurrency(task.fact) + ' ₽' : '-') :
+                        `<input type="number" class="fact-input" value="${task.fact || ''}" 
+                         onchange="MonthlyPlan.updateTaskFact('${task.id}', this.value)" placeholder="0">`
+                    }
+                </td>
+                <td class="completion-date">
+                    ${window.app?.currentUser?.role === 'admin' ? 
+                        (task.dateCompleted ? this.formatDate(task.dateCompleted) : '-') :
+                        `<input type="date" class="date-input" value="${task.dateCompleted || ''}" 
+                         onchange="MonthlyPlan.updateTaskDate('${task.id}', this.value)">`
+                    }
+                </td>
                 <td>
                     <span class="status-badge status-${task.status}">
                         ${this.getStatusText(task.status)}
                     </span>
                 </td>
+                <td class="manager-comment">
+                    ${window.app?.currentUser?.role === 'admin' ? 
+                        (task.comment || '-') :
+                        `<textarea class="comment-input" placeholder="Комментарий..." 
+                         onchange="MonthlyPlan.updateTaskComment('${task.id}', this.value)">${task.comment || ''}</textarea>`
+                    }
+                </td>
                 <td>
                     <div class="action-buttons">
                         ${window.app?.currentUser?.role === 'admin' ? `
-                            <button class="btn-icon edit" onclick="MonthlyPlan.editTask('${task.id}')" title="Редактировать">✏️</button>
-                            <button class="btn-icon delete" onclick="MonthlyPlan.deleteTask('${task.id}')" title="Удалить">🗑️</button>
+                            <button class="btn-icon edit" onclick="MonthlyPlan.editTask('${task.id}')">✏️</button>
+                            <button class="btn-icon delete" onclick="MonthlyPlan.deleteTask('${task.id}')">🗑️</button>
                         ` : `
                             ${task.status !== 'completed' ? `
-                                <button class="btn btn-sm btn-complete" onclick="ManagerTasks.startTaskCompletion('${task.id}')" title="Выполнить">
+                                <button class="btn btn-sm btn-complete" onclick="ManagerTasks.completeTask('${task.id}')">
                                     ✅ Выполнить
                                 </button>
                             ` : `
@@ -336,6 +292,217 @@ updateRegionCardsInfo() {
                 </td>
             </tr>
         `).join('');
+    },
+
+    getWeekDeadline(week) {
+        const deadlines = {
+            1: '07.11.2025',
+            2: '14.11.2025', 
+            3: '21.11.2025',
+            4: '30.11.2025'
+        };
+        return deadlines[week] || 'Не указан';
+    },
+
+    // МЕТОДЫ ДЛЯ ОБНОВЛЕНИЯ ЗАДАЧ УПРАВЛЯЮЩИМИ
+    updateTaskFact(taskId, factAmount) {
+        const amount = parseFloat(factAmount);
+        if (!isNaN(amount) && amount >= 0) {
+            this.updateTaskField(taskId, 'fact', amount);
+            
+            const task = this.findTaskById(taskId);
+            if (task && task.dateCompleted && amount > 0) {
+                this.updateTaskField(taskId, 'status', 'completed');
+            }
+            
+            Notification.success('Фактическая сумма обновлена');
+            this.loadPlanData();
+        }
+    },
+
+    updateTaskDate(taskId, date) {
+        if (date) {
+            this.updateTaskField(taskId, 'dateCompleted', date);
+            
+            const task = this.findTaskById(taskId);
+            if (task && task.fact > 0 && date) {
+                this.updateTaskField(taskId, 'status', 'completed');
+            }
+            
+            Notification.success('Дата выполнения обновлена');
+            this.loadPlanData();
+        }
+    },
+
+    updateTaskComment(taskId, comment) {
+        this.updateTaskField(taskId, 'comment', comment);
+        Notification.success('Комментарий сохранен');
+    },
+
+// ДОБАВИТЬ В monthly-plan-fixed.js
+updateTaskField(taskId, field, value) {
+    console.log(`🔄 Обновление задачи ${taskId}: ${field} = ${value}`);
+    
+    const planData = appData.getMonthlyPlan(this.currentRegion);
+    let taskUpdated = false;
+    
+    // Ищем задачу во всех неделях
+    for (let week = 1; week <= 4; week++) {
+        const weekKey = `week${week}`;
+        const weekData = planData[weekKey];
+        if (weekData && weekData.tasks) {
+            const taskIndex = weekData.tasks.findIndex(t => t.id === taskId);
+            if (taskIndex !== -1) {
+                // Обновляем задачу
+                weekData.tasks[taskIndex][field] = value;
+                taskUpdated = true;
+                
+                // Автоматически обновляем статус если заполнены факт и дата
+                if (field === 'fact' && value > 0) {
+                    const task = weekData.tasks[taskIndex];
+                    if (task.dateCompleted) {
+                        weekData.tasks[taskIndex].status = 'completed';
+                    }
+                }
+                if (field === 'dateCompleted' && value) {
+                    const task = weekData.tasks[taskIndex];
+                    if (task.fact > 0) {
+                        weekData.tasks[taskIndex].status = 'completed';
+                    }
+                }
+                
+                break;
+            }
+        }
+    }
+    
+    if (taskUpdated) {
+        // СОХРАНЯЕМ В LOCALSTORAGE
+        this.saveToLocalStorage();
+        console.log('✅ Задача обновлена:', { taskId, field, value });
+        return true;
+    }
+    
+    console.error('❌ Задача не найдена:', taskId);
+    return false;
+},
+
+saveToLocalStorage() {
+    try {
+        // Сохраняем весь MonthlyPlansData
+        localStorage.setItem('monthlyPlans', JSON.stringify(MonthlyPlansData));
+        console.log('💾 Данные сохранены в localStorage');
+    } catch (error) {
+        console.error('❌ Ошибка сохранения:', error);
+        Notification.error('Ошибка сохранения данных');
+    }
+},
+
+loadFromLocalStorage() {
+    try {
+        const saved = localStorage.getItem('monthlyPlans');
+        if (saved) {
+            const parsed = JSON.parse(saved);
+            // Мерджим с существующими данными
+            Object.assign(MonthlyPlansData, parsed);
+            console.log('📥 Данные загружены из localStorage');
+            return true;
+        }
+    } catch (error) {
+        console.error('❌ Ошибка загрузки:', error);
+    }
+    return false;
+}
+
+// Обновите метод loadPlanData
+loadPlanData() {
+    console.log(`📥 Загрузка плана для: ${this.currentRegion}`);
+    
+    // Сначала пробуем загрузить из localStorage
+    const savedPlan = this.loadPlanFromStorage();
+    
+    // Если нет в localStorage, используем данные из appData
+    const planData = savedPlan || appData.getMonthlyPlan(this.currentRegion);
+    
+    this.updatePlanStatistics(planData);
+    this.renderWeeklyPlan(planData);
+}
+
+    findTaskById(taskId) {
+        const planData = appData.getMonthlyPlan(this.currentRegion);
+        for (let week = 1; week <= 4; week++) {
+            const weekData = planData[`week${week}`];
+            if (weekData && weekData.tasks) {
+                const task = weekData.tasks.find(t => t.id === taskId);
+                if (task) return task;
+            }
+        }
+        return null;
+    },
+
+    // ВАЛИДАЦИЯ БЮДЖЕТОВ
+    validateBudget(category, amount) {
+        const categoryBudgets = {
+            'products': 5000,
+            'household': 5000, 
+            'medicaments': 1000,
+            'stationery': 1000,
+            'cafe': 2000,
+            'repairs': 10000,
+            'azs': 1500,
+            'salary': 15000,
+            'shipping': 3000,
+            'events': 2500,
+            'polygraphy': 300,
+            'insurance': 5000,
+            'cleaning': 2000
+        };
+        
+        const categoryLimit = categoryBudgets[category] || 0;
+        return {
+            isValid: amount <= categoryLimit,
+            limit: categoryLimit,
+            remaining: categoryLimit - amount
+        };
+    },
+
+    showBudgetWarning(category, amount) {
+        const validation = this.validateBudget(category, amount);
+        if (!validation.isValid) {
+            Notification.warning(`Превышен лимит! Категория "${this.getCategoryName(category)}": ${this.formatCurrency(amount)} ₽ > ${this.formatCurrency(validation.limit)} ₽`);
+            return false;
+        }
+        return true;
+    },
+
+    editTask(taskId) {
+        const task = this.findTaskById(taskId);
+        if (!task) {
+            Notification.error('Задача не найдена');
+            return;
+        }
+        
+        const newAmount = prompt(`Редактировать сумму для задачи:\n"${task.description}"\n\nТекущая сумма: ${task.plan} ₽\nЛимит категории: ${this.validateBudget(task.category, task.plan).limit} ₽`, task.plan);
+        
+        if (newAmount !== null) {
+            const amount = parseFloat(newAmount);
+            if (!isNaN(amount)) {
+                if (this.showBudgetWarning(task.category, amount)) {
+                    this.updateTaskField(taskId, 'plan', amount);
+                    Notification.success('Задача обновлена');
+                    this.loadPlanData();
+                }
+            } else {
+                Notification.error('Неверная сумма');
+            }
+        }
+    },
+
+    deleteTask(taskId) {
+        if (confirm('Удалить эту задачу?')) {
+            console.log('🗑️ Удаление задачи:', taskId);
+            Notification.success('Задача удалена');
+        }
     },
 
     toggleWeek(week) {
@@ -385,21 +552,12 @@ updateRegionCardsInfo() {
         }
     },
 
-    // Методы для работы с задачами
-    editTask(taskId) {
-        console.log('✏️ Редактирование задачи:', taskId);
-        Notification.info('Редактирование задачи - функция в разработке');
+    savePlanData() {
+        console.log('💾 Сохранение данных плана');
+        this.loadPlanData();
     },
 
-    deleteTask(taskId) {
-        if (confirm('Удалить эту задачу?')) {
-            console.log('🗑️ Удаление задачи:', taskId);
-            Notification.success('Задача удалена');
-            // Здесь будет логика удаления из данных
-        }
-    },
-
-    // Вспомогательные функции
+    // ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
     formatCurrency(amount) {
         if (!amount && amount !== 0) return '0';
         return new Intl.NumberFormat('ru-RU').format(Math.round(amount));
@@ -420,7 +578,8 @@ updateRegionCardsInfo() {
             'products': '🛒', 'household': '🏠', 'medicaments': '💊',
             'stationery': '📎', 'cafe': '☕', 'repairs': '🔧',
             'azs': '⛽', 'salary': '💰', 'shipping': '📦',
-            'events': '🎉', 'polygraphy': '🖨️', 'insurance': '🛡️'
+            'events': '🎉', 'polygraphy': '🖨️', 'insurance': '🛡️',
+            'cleaning': '🧹', 'charity': '❤️', 'equipment': '💻'
         };
         return emojis[category] || '📋';
     },
@@ -432,7 +591,8 @@ updateRegionCardsInfo() {
             'cafe': 'Кафе', 'repairs': 'Ремонт', 'azs': 'АЗС',
             'salary': 'Зарплата', 'shipping': 'Отправка',
             'events': 'Мероприятия', 'polygraphy': 'Полиграфия',
-            'insurance': 'Страхование'
+            'insurance': 'Страхование', 'charity': 'Благотворительность',
+            'equipment': 'Техника', 'cleaning': 'Клининг'
         };
         return names[category] || category;
     },
@@ -446,6 +606,18 @@ updateRegionCardsInfo() {
             'reserve': '💰 Резерв'
         };
         return statusMap[status] || status;
+    },
+
+    getRegionBudget(region) {
+        const budgets = {
+            'Курган': '72,050 ₽',
+            'Астрахань': '45,000 ₽', 
+            'Бурятия': '38,000 ₽',
+            'Калмыкия': '32,000 ₽',
+            'Мордовия': '35,000 ₽',
+            'Удмуртия': '65,000 ₽'
+        };
+        return budgets[region] || '0 ₽';
     }
 };
 

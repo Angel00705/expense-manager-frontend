@@ -1,4 +1,4 @@
-// js/modules/task-modals.js - МОДАЛЬНЫЕ ОКНА ДЛЯ ЗАДАЧ
+// js/modules/task-modals.js - ИСПРАВЛЕННАЯ ВЕРСИЯ
 const TaskModals = {
     currentWeek: null,
     currentTask: null,
@@ -72,21 +72,24 @@ const TaskModals = {
 
     // Модальное окно выполнения задачи
     openCompleteTaskModal(taskId) {
-        this.currentTask = this.findTaskById(taskId);
-        if (!this.currentTask) {
+        const taskInfo = this.findTaskById(taskId);
+        if (!taskInfo) {
             Notification.error('Задача не найдена');
             return;
         }
 
+        this.currentTask = taskInfo.task;
+        this.currentWeek = taskInfo.week;
+
         const modal = document.getElementById('completeTaskModal');
         const taskIdInput = document.getElementById('completeTaskId');
-        const taskInfo = document.getElementById('completeTaskInfo');
+        const taskInfoElement = document.getElementById('completeTaskInfo');
         
         if (taskIdInput) taskIdInput.value = taskId;
         
         // Заполняем информацию о задаче
-        if (taskInfo) {
-            taskInfo.innerHTML = `
+        if (taskInfoElement) {
+            taskInfoElement.innerHTML = `
                 <div class="task-preview">
                     <h4>${this.currentTask.description}</h4>
                     <div class="task-details">
@@ -130,7 +133,7 @@ const TaskModals = {
             const weekData = planData[`week${week}`];
             if (weekData && weekData.tasks) {
                 const task = weekData.tasks.find(t => t.id === taskId);
-                if (task) return task;
+                if (task) return { task, week };
             }
         }
         return null;
@@ -181,14 +184,20 @@ const TaskModals = {
             responsible: window.app?.currentUser?.name || 'Система'
         };
 
-        // Здесь будет логика сохранения в данных
-        console.log('✅ Новая задача:', newTask);
-        Notification.success('Задача успешно добавлена!');
-        
-        this.closeAddTaskModal();
-        
-        // Обновляем отображение
-        MonthlyPlan.loadPlanData();
+        // Добавляем задачу в текущую неделю и регион
+        const week = this.currentWeek;
+        const region = MonthlyPlan.currentRegion;
+        if (MonthlyPlansData[region] && MonthlyPlansData[region][`week${week}`]) {
+            MonthlyPlansData[region][`week${week}`].tasks.push(newTask);
+            // Сохраняем в localStorage
+            localStorage.setItem('monthlyPlans', JSON.stringify(MonthlyPlansData));
+            Notification.success('Задача успешно добавлена!');
+            this.closeAddTaskModal();
+            // Обновляем отображение
+            MonthlyPlan.loadPlanData();
+        } else {
+            Notification.error('Ошибка при добавлении задачи');
+        }
     },
 
     // Сохранение выполнения задачи
@@ -205,23 +214,21 @@ const TaskModals = {
         }
 
         // Обновляем задачу
-        const updatedTask = {
-            ...this.currentTask,
+        const updated = updateMonthlyTask(MonthlyPlan.currentRegion, this.currentWeek, taskId, {
             fact: factAmount,
             dateCompleted: completionDate,
             status: 'completed',
-            completionNotes: notes,
-            completedBy: window.app?.currentUser?.name
-        };
+            explanation: notes // Используем поле explanation для комментария
+        });
 
-        // Здесь будет логика сохранения в данных
-        console.log('✅ Задача выполнена:', updatedTask);
-        Notification.success('Задача отмечена как выполненная!');
-        
-        this.closeCompleteTaskModal();
-        
-        // Обновляем отображение
-        MonthlyPlan.loadPlanData();
+        if (updated) {
+            Notification.success('Задача отмечена как выполненная!');
+            this.closeCompleteTaskModal();
+            // Обновляем отображение
+            MonthlyPlan.loadPlanData();
+        } else {
+            Notification.error('Ошибка при обновлении задачи');
+        }
     }
 };
 

@@ -592,11 +592,31 @@ function updateMonthlyTask(region, week, taskId, updates) {
                 ...MonthlyPlansData[region][weekKey].tasks[taskIndex],
                 ...updates
             };
+            // Сохраняем в localStorage
+            localStorage.setItem('monthlyPlans', JSON.stringify(MonthlyPlansData));
             return true;
         }
     }
     return false;
 }
+
+// Инициализация данных для всех регионов
+function initializeAllRegions() {
+    const regions = ['Астрахань', 'Бурятия', 'Калмыкия', 'Мордовия', 'Удмуртия'];
+    regions.forEach(region => {
+        if (!MonthlyPlansData[region]) {
+            MonthlyPlansData[region] = {
+                week1: { budget: 0, reserve: 0, total: 0, tasks: [] },
+                week2: { budget: 0, reserve: 0, total: 0, tasks: [] },
+                week3: { budget: 0, reserve: 0, total: 0, tasks: [] },
+                week4: { budget: 0, reserve: 0, total: 0, tasks: [] }
+            };
+        }
+    });
+}
+
+// Вызываем инициализацию
+initializeAllRegions();
 
 // СДЕЛАЕМ ДАННЫЕ ГЛОБАЛЬНО ДОСТУПНЫМИ
 window.MonthlyPlansData = MonthlyPlansData;

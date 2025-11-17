@@ -54,9 +54,33 @@
 
     <main class="tasks-container">
         <div class="tasks-layout">
-            
+<div class="cards-info-panel" id="cardsInfoPanel">
+    <div class="panel-header">
+        <h4>💳 Карты региона</h4>
+        <div class="panel-subtitle" id="currentRegionCards">Курган</div>
+    </div>
+    
+    <div class="cards-stats">
+        <div class="card-stat">
+            <span class="stat-value" id="totalCards">0</span>
+            <span class="stat-label">Всего карт</span>
+        </div>
+        <div class="card-stat">
+            <span class="stat-value" id="activeCards">0</span>
+            <span class="stat-label">Активных</span>
+        </div>
+        <div class="card-stat">
+            <span class="stat-value" id="totalBalance">0 ₽</span>
+            <span class="stat-label">Общий баланс</span>
+        </div>
+    </div>
+    
+    <div class="cards-list" id="regionCardsList">
+        <!-- Список карт будет заполняться динамически -->
+    </div>
+</div>            
             <!-- Основной контент -->
-            <div class="tasks-main-content">
+            <div class="tasks-main-content with-cards-panel">
                 <!-- Информационная панель для управляющих -->
                 <div class="manager-info-panel manager-only" id="managerInfoPanel" style="display: none;">
                     <h4>👋 Добро пожаловать, <span id="managerUserName"></span>!</h4>
@@ -163,19 +187,22 @@
                             <div class="week-content" style="display: none;">
                                 <div class="week-tasks">
                                     <table class="week-table">
-                                        <thead>
-                                            <tr>
-                                                <th width="30"></th>
-                                                <th width="120">Категория</th>
-                                                <th>Описание задачи</th>
-                                                <th width="120">ИП</th>
-                                                <th width="100">План</th>
-                                                <th width="100">Факт</th>
-                                                <th width="100">Дата выполнения</th>
-                                                <th width="80">Статус</th>
-                                                <th width="100">Действия</th>
-                                            </tr>
-                                        </thead>
+<thead>
+    <tr>
+        <th width="100">Крайний срок</th>
+        <th width="120">Категория</th>
+        <th width="200">Описание задачи</th>
+        <th width="150">Пояснение</th>
+        <th width="100">ИП</th>
+        <th width="80">Карта</th>
+        <th width="90">План</th>
+        <th width="90">Факт</th>
+        <th width="110">Дата выполнения</th>
+        <th width="100">Статус</th>
+        <th width="120">Комментарий</th>
+        <th width="80">Действия</th>
+    </tr>
+</thead>
                                         <tbody id="week1Tasks">
                                             <!-- Задачи будут через JS -->
                                         </tbody>
@@ -209,18 +236,21 @@
                                 <div class="week-tasks">
                                     <table class="week-table">
                                         <thead>
-                                            <tr>
-                                                <th width="30"></th>
-                                                <th width="120">Категория</th>
-                                                <th>Описание задачи</th>
-                                                <th width="120">ИП</th>
-                                                <th width="100">План</th>
-                                                <th width="100">Факт</th>
-                                                <th width="100">Дата выполнения</th>
-                                                <th width="80">Статус</th>
-                                                <th width="100">Действия</th>
-                                            </tr>
-                                        </thead>
+    <tr>
+        <th width="100">Крайний срок</th>
+        <th width="120">Категория</th>
+        <th width="200">Описание задачи</th>
+        <th width="150">Пояснение</th>
+        <th width="100">ИП</th>
+        <th width="80">Карта</th>
+        <th width="90">План</th>
+        <th width="90">Факт</th>
+        <th width="110">Дата выполнения</th>
+        <th width="100">Статус</th>
+        <th width="120">Комментарий</th>
+        <th width="80">Действия</th>
+    </tr>
+</thead>
                                         <tbody id="week2Tasks">
                                             <!-- Задачи будут через JS -->
                                         </tbody>
@@ -254,18 +284,21 @@
                                 <div class="week-tasks">
                                     <table class="week-table">
                                         <thead>
-                                            <tr>
-                                                <th width="30"></th>
-                                                <th width="120">Категория</th>
-                                                <th>Описание задачи</th>
-                                                <th width="120">ИП</th>
-                                                <th width="100">План</th>
-                                                <th width="100">Факт</th>
-                                                <th width="100">Дата выполнения</th>
-                                                <th width="80">Статус</th>
-                                                <th width="100">Действия</th>
-                                            </tr>
-                                        </thead>
+    <tr>
+        <th width="100">Крайний срок</th>
+        <th width="120">Категория</th>
+        <th width="200">Описание задачи</th>
+        <th width="150">Пояснение</th>
+        <th width="100">ИП</th>
+        <th width="80">Карта</th>
+        <th width="90">План</th>
+        <th width="90">Факт</th>
+        <th width="110">Дата выполнения</th>
+        <th width="100">Статус</th>
+        <th width="120">Комментарий</th>
+        <th width="80">Действия</th>
+    </tr>
+</thead>
                                         <tbody id="week3Tasks">
                                             <!-- Задачи будут через JS -->
                                         </tbody>
@@ -299,18 +332,21 @@
                                 <div class="week-tasks">
                                     <table class="week-table">
                                         <thead>
-                                            <tr>
-                                                <th width="30"></th>
-                                                <th width="120">Категория</th>
-                                                <th>Описание задачи</th>
-                                                <th width="120">ИП</th>
-                                                <th width="100">План</th>
-                                                <th width="100">Факт</th>
-                                                <th width="100">Дата выполнения</th>
-                                                <th width="80">Статус</th>
-                                                <th width="100">Действия</th>
-                                            </tr>
-                                        </thead>
+    <tr>
+        <th width="100">Крайний срок</th>
+        <th width="120">Категория</th>
+        <th width="200">Описание задачи</th>
+        <th width="150">Пояснение</th>
+        <th width="100">ИП</th>
+        <th width="80">Карта</th>
+        <th width="90">План</th>
+        <th width="90">Факт</th>
+        <th width="110">Дата выполнения</th>
+        <th width="100">Статус</th>
+        <th width="120">Комментарий</th>
+        <th width="80">Действия</th>
+    </tr>
+</thead>
                                         <tbody id="week4Tasks">
                                             <!-- Задачи будут через JS -->
                                         </tbody>
@@ -448,46 +484,17 @@
                     </div>
                 </div>
             </div>
-
-            <!-- ПРАВЫЙ САЙДБАР РЕГИОНОВ -->
-            <div class="region-sidebar" id="regionSidebar">
-                <div class="sidebar-header">
-                    <h4>📍 Регионы</h4>
-                    <div class="sidebar-subtitle">Выберите регион для просмотра</div>
-                </div>
-                
-                <div class="region-list" id="regionList">
-                    <!-- Регионы будут добавляться через JS -->
-                </div>
-
-                <!-- Информационная панель региона -->
-                <div class="region-info-panel" id="regionInfoPanel" style="display: none;">
-                    <div class="info-header">
-                        <h5>📊 Информация о регионе</h5>
-                        <span class="current-region" id="currentRegionName"></span>
-                    </div>
-                    
-                    <div class="info-stats">
-                        <div class="stat">
-                            <span class="label">ИП в регионе:</span>
-                            <span class="value" id="ipCount">0</span>
-                        </div>
-                        <div class="stat">
-                            <span class="label">Активных карт:</span>
-                            <span class="value" id="activeCardsCount">0</span>
-                        </div>
-                        <div class="stat">
-                            <span class="label">Бюджет месяца:</span>
-                            <span class="value" id="regionBudget">0 ₽</span>
-                        </div>
-                    </div>
-                    
-                    <div class="ip-list-title">Индивидуальные предприниматели:</div>
-                    <div class="ip-list" id="regionIpList">
-                        <!-- Список ИП будет заполняться динамически -->
-                    </div>
-                </div>
-            </div>
+<!-- ЗАМЕНИТЕ текущий region-sidebar на: -->
+<div class="region-sidebar" id="regionSidebar">
+    <div class="sidebar-header">
+        <h4>📍 Быстрый переход</h4>
+        <div class="sidebar-subtitle">Выберите регион</div>
+    </div>
+    
+    <div class="region-list-compact" id="regionList">
+        <!-- Регионы будут добавляться через JS -->
+    </div>
+</div>
 
         </div>
     </main>
@@ -587,22 +594,24 @@
         </div>
     </div>
 
-<!-- ПРАВИЛЬНЫЕ ПУТИ К СКРИПТАМ -->
+<!-- ПРАВИЛЬНЫЙ ПОРЯДОК СКРИПТОВ -->
 <script src="js/utils.js"></script>
 <script src="data/real-cards-data.js"></script>
 <script src="js/data.js"></script>
+<script src="js/data/storage-manager.js"></script>
+<script src="js/data/monthly-plans-data.js"></script>
 <script src="js/data/demo-tasks-data.js"></script>
+<script src="js/data/regions-initial-data.js"></script>
 <script src="js/navbar.js"></script>
 <script src="js/app.js"></script>
 
-<!-- МОДУЛИ ЗАДАЧ В ПРАВИЛЬНОМ ПОРЯДКЕ -->
+<!-- МОДУЛИ ЗАДАЧ -->
 <script src="js/modules/task-modals.js"></script>
+<script src="js/modules/enhanced-task-modals.js"></script>
 <script src="js/modules/monthly-plan-fixed.js"></script>
 <script src="js/modules/manager-tasks-fixed.js"></script>
 <script src="js/modules/admin-tasks.js"></script>
 <script src="js/modules/all-tasks.js"></script>
-
-<!-- ЕДИНЫЙ ИНИЦИАЛИЗАТОР -->
 <script src="js/modules/tasks-init.js"></script>
 </body>
 </html>

@@ -34,6 +34,113 @@
     display: flex;
     gap: 1rem;
 }
+/* ДОБАВИТЬ В КОНЕЦ tasks-main.css */
+
+/* АДАПТИВНОСТЬ ДЛЯ МОБИЛЬНЫХ УСТРОЙСТВ */
+@media (max-width: 1200px) {
+    .tasks-main-content.with-cards-panel {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .cards-info-panel {
+        order: 2;
+    }
+    
+    .region-sidebar {
+        order: 3;
+    }
+}
+
+@media (max-width: 768px) {
+    .tasks-container {
+        padding: 1rem;
+    }
+    
+    .week-table {
+        font-size: 0.75rem;
+    }
+    
+    .week-table th,
+    .week-table td {
+        padding: 0.5rem 0.25rem;
+    }
+    
+    /* Скрываем менее важные колонки на мобильных */
+    .week-table th:nth-child(4),  /* Пояснение */
+    .week-table td:nth-child(4),
+    .week-table th:nth-child(6),  /* Карта */
+    .week-table td:nth-child(6),
+    .week-table th:nth-child(10), /* Статус */
+    .week-table td:nth-child(10),
+    .week-table th:nth-child(11), /* Комментарий */
+    .week-table td:nth-child(11) {
+        display: none;
+    }
+    
+    .task-description-cell,
+    .task-explanation-cell {
+        max-width: 120px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    
+    .header-main {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .header-actions {
+        justify-content: flex-start;
+    }
+    
+    .plan-controls {
+        flex-direction: column;
+    }
+    
+    .control-group {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .week-summary {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+    
+    .week-progress {
+        min-width: unset;
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .tasks-tabs {
+        flex-direction: column;
+    }
+    
+    .tab-btn {
+        justify-content: flex-start;
+    }
+    
+    .week-header {
+        padding: 1rem;
+    }
+    
+    .week-title h3 {
+        font-size: 1rem;
+    }
+    
+    .stat-card {
+        padding: 1rem;
+    }
+    
+    .stat-value {
+        font-size: 1.4rem;
+    }
+}
 
 /* Секции недель */
 .week-section {
@@ -922,4 +1029,772 @@
     background: rgba(245, 158, 11, 0.15);
     color: #f59e0b;
     border: 1px solid rgba(245, 158, 11, 0.3);
+}
+/* Стили для новых элементов таблицы */
+.task-day {
+    font-size: 0.8rem;
+    color: #6b7280;
+    text-align: center;
+}
+
+.fact-input, .date-input, .comment-input {
+    width: 100%;
+    padding: 4px 8px;
+    border: 1px solid #e5e7eb;
+    border-radius: 4px;
+    font-size: 0.8rem;
+}
+
+.comment-input {
+    resize: vertical;
+    min-height: 40px;
+}
+
+/* Стили для сайдбара с картами */
+.ip-card-info {
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+}
+
+.ip-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.ip-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.cards-count {
+    font-size: 0.7rem;
+    color: #6b7280;
+    background: rgba(59, 130, 246, 0.1);
+    padding: 2px 6px;
+    border-radius: 10px;
+}
+
+.card-item {
+    padding: 0.5rem;
+    margin-bottom: 0.25rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 6px;
+    border-left: 3px solid #10b981;
+}
+
+.card-item.inactive {
+    border-left-color: #ef4444;
+    opacity: 0.7;
+}
+
+.card-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.25rem;
+}
+
+.card-status {
+    font-size: 0.7rem;
+    color: #6b7280;
+}
+
+.card-balance {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #10b981;
+}
+
+.no-cards {
+    font-size: 0.8rem;
+    color: #6b7280;
+    text-align: center;
+    padding: 0.5rem;
+}
+/* Стили для новых элементов таблицы */
+.task-day {
+    font-size: 0.8rem;
+    color: #6b7280;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.fact-input, .date-input {
+    width: 100%;
+    padding: 4px 8px;
+    border: 1px solid #e5e7eb;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.comment-input {
+    width: 100%;
+    padding: 4px 8px;
+    border: 1px solid #e5e7eb;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    resize: vertical;
+    min-height: 40px;
+    font-family: inherit;
+}
+
+/* Стили для сайдбара с картами */
+.ip-card-info {
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ip-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.ip-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.cards-count {
+    font-size: 0.7rem;
+    color: #6b7280;
+    background: rgba(59, 130, 246, 0.1);
+    padding: 2px 6px;
+    border-radius: 10px;
+}
+
+.cards-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.card-item {
+    padding: 0.5rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 6px;
+    border-left: 3px solid #10b981;
+}
+
+.card-item.inactive {
+    border-left-color: #ef4444;
+    opacity: 0.7;
+}
+
+.card-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.25rem;
+}
+
+.card-type {
+    font-size: 0.7rem;
+    opacity: 0.8;
+}
+
+.card-number {
+    font-size: 0.8rem;
+    font-weight: 600;
+    font-family: 'Courier New', monospace;
+}
+
+.card-status {
+    font-size: 0.7rem;
+    color: #6b7280;
+    margin-bottom: 0.25rem;
+}
+
+.card-balance {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #10b981;
+}
+
+.no-cards {
+    font-size: 0.8rem;
+    color: #6b7280;
+    text-align: center;
+    padding: 0.5rem;
+    font-style: italic;
+}
+
+/* Адаптивность для новых полей ввода */
+@media (max-width: 768px) {
+    .fact-input, .date-input, .comment-input {
+        font-size: 0.7rem;
+        padding: 2px 4px;
+    }
+    
+    .comment-input {
+        min-height: 30px;
+    }
+}
+/* Улучшенные стили для сайдбара с картами */
+.region-sidebar {
+    width: 350px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1.5rem;
+    overflow-y: auto;
+}
+
+.ip-card-info {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.ip-card-info:hover {
+    background: rgba(255, 255, 255, 0.12);
+    transform: translateY(-2px);
+}
+
+.ip-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ip-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #fff;
+}
+
+.cards-count {
+    font-size: 0.75rem;
+    color: #10b981;
+    background: rgba(16, 185, 129, 0.1);
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-weight: 500;
+}
+
+.cards-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.card-item {
+    padding: 0.75rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    border-left: 4px solid #10b981;
+    transition: all 0.2s ease;
+}
+
+.card-item.inactive {
+    border-left-color: #6b7280;
+    opacity: 0.6;
+}
+
+.card-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.card-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.card-type {
+    font-size: 0.75rem;
+    color: #9ca3af;
+    font-weight: 500;
+}
+
+.card-number {
+    font-size: 0.85rem;
+    font-weight: 600;
+    font-family: 'Courier New', monospace;
+    color: #fff;
+}
+
+.card-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.card-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    color: #9ca3af;
+}
+
+.status-indicator {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #10b981;
+}
+
+.status-indicator.offline {
+    background: #6b7280;
+}
+
+.card-balance {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.8rem;
+}
+
+.balance-label {
+    color: #9ca3af;
+}
+
+.balance-amount {
+    color: #10b981;
+    font-weight: 600;
+}
+
+.no-cards {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: #6b7280;
+    text-align: center;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 6px;
+    justify-content: center;
+}
+
+.warning-icon {
+    font-size: 1rem;
+}
+
+/* Информационная панель региона */
+.region-info-panel {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.info-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.info-header h5 {
+    margin: 0;
+    font-size: 1rem;
+    color: #fff;
+}
+
+.current-region {
+    font-size: 0.9rem;
+    color: #10b981;
+    font-weight: 600;
+}
+
+.info-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.stat .label {
+    font-size: 0.75rem;
+    color: #9ca3af;
+}
+
+.stat .value {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #fff;
+}
+
+.ip-list-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+/* Стили для новых элементов таблицы */
+.task-day {
+    font-size: 0.8rem;
+    color: #6b7280;
+    text-align: center;
+}
+
+.fact-input, .date-input, .comment-input {
+    width: 100%;
+    padding: 4px 8px;
+    border: 1px solid #e5e7eb;
+    border-radius: 4px;
+    font-size: 0.8rem;
+}
+
+.comment-input {
+    resize: vertical;
+    min-height: 40px;
+}
+
+/* Адаптивность для новых полей ввода */
+@media (max-width: 768px) {
+    .fact-input, .date-input, .comment-input {
+        font-size: 0.7rem;
+        padding: 2px 4px;
+    }
+    
+    .comment-input {
+        min-height: 30px;
+    }
+}
+/* ДОБАВЬТЕ В КОНЕЦ css/pages/tasks/tasks-main.css */
+
+/* ПАНЕЛЬ КАРТ СЛЕВА */
+.cards-info-panel {
+    background: var(--surface-secondary);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow-sm);
+}
+
+.panel-header {
+    margin-bottom: 20px;
+}
+
+.panel-header h4 {
+    margin: 0 0 5px 0;
+    color: var(--text-primary);
+}
+
+.panel-subtitle {
+    color: var(--text-secondary);
+    font-size: 0.9em;
+}
+
+.cards-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.card-stat {
+    background: var(--surface-primary);
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: var(--shadow-xs);
+}
+
+.stat-value {
+    display: block;
+    font-size: 1.4em;
+    font-weight: 700;
+    color: var(--accent-primary);
+    margin-bottom: 5px;
+}
+
+.stat-label {
+    font-size: 0.8em;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.cards-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.card-item {
+    background: var(--surface-primary);
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid var(--success-color);
+    box-shadow: var(--shadow-xs);
+}
+
+.card-item.inactive {
+    border-left-color: var(--warning-color);
+    opacity: 0.7;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.card-ip {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.card-type {
+    font-size: 0.8em;
+    background: var(--surface-secondary);
+    padding: 2px 8px;
+    border-radius: 12px;
+    color: var(--text-secondary);
+}
+
+.card-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.card-number {
+    font-family: 'Courier New', monospace;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.card-status {
+    font-size: 0.8em;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.card-status.online {
+    color: var(--success-color);
+}
+
+.card-status.offline {
+    color: var(--warning-color);
+}
+
+.card-balance {
+    font-size: 0.9em;
+    color: var(--text-secondary);
+    text-align: right;
+}
+
+/* ОСНОВНОЙ КОНТЕНТ С ПАНЕЛЬЮ КАРТ */
+.tasks-main-content.with-cards-panel {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 20px;
+    align-items: start;
+}
+
+/* УПРОЩЕННЫЙ САЙДБАР РЕГИОНОВ */
+.region-sidebar {
+    background: var(--surface-secondary);
+    border-radius: 12px;
+    padding: 20px;
+    height: fit-content;
+    position: sticky;
+    top: 20px;
+}
+
+.region-list-compact {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.region-item {
+    padding: 12px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: var(--surface-primary);
+}
+
+.region-item:hover {
+    background: var(--surface-hover);
+    transform: translateX(5px);
+}
+
+.region-item.active {
+    background: var(--gradient-primary);
+    color: white;
+    transform: translateX(5px);
+}
+
+.region-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.region-main {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.region-stats {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    font-size: 0.8em;
+}
+
+.region-stat {
+    color: inherit;
+    opacity: 0.8;
+}
+
+.region-budget {
+    font-weight: 600;
+}
+
+/* СТИЛИ ДЛЯ ОБНОВЛЕННОЙ ТАБЛИЦЫ */
+.task-deadline {
+    font-weight: 600;
+    color: var(--accent-primary);
+    font-size: 0.9em;
+}
+
+.task-description-cell {
+    max-width: 200px;
+}
+
+.task-main-desc {
+    font-weight: 500;
+    line-height: 1.4;
+    word-wrap: break-word;
+}
+
+.task-explanation-cell {
+    max-width: 150px;
+}
+
+.task-explanation {
+    font-size: 0.85em;
+    color: var(--text-secondary);
+    line-height: 1.3;
+    word-wrap: break-word;
+}
+
+.ip-info-cell {
+    display: flex;
+    flex-direction: column;
+}
+
+.ip-name {
+    font-weight: 500;
+    font-size: 0.9em;
+}
+
+.card-cell {
+    text-align: center;
+}
+
+.card-badge {
+    background: var(--gradient-primary);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8em;
+    font-weight: 600;
+    font-family: 'Courier New', monospace;
+}
+
+.amount-cell {
+    text-align: right;
+    font-weight: 600;
+}
+
+.plan-amount {
+    color: var(--accent-primary);
+}
+
+.fact-amount input {
+    width: 80px;
+    padding: 6px 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    text-align: right;
+    font-size: 0.9em;
+}
+
+.fact-amount input:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.1);
+}
+
+.completion-date input {
+    width: 120px;
+    padding: 6px 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 0.9em;
+}
+
+.manager-comment textarea {
+    width: 100%;
+    min-height: 60px;
+    padding: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    resize: vertical;
+    font-size: 0.9em;
+    font-family: inherit;
+}
+
+.manager-comment textarea:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.1);
+}
+
+/* АДАПТИВНОСТЬ */
+@media (max-width: 1200px) {
+    .tasks-main-content.with-cards-panel {
+        grid-template-columns: 1fr;
+    }
+    
+    .cards-info-panel {
+        order: 2;
+    }
+    
+    .region-sidebar {
+        order: 3;
+    }
 }
