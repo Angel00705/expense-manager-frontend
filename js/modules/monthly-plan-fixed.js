@@ -1,4 +1,4 @@
-// js/modules/monthly-plan-fixed.js - ПОЛНОСТЬЮ ИСПРАВЛЕННАЯ ВЕРСИЯ
+// js/modules/monthly-plan-fixed.js - ИСПРАВЛЕННАЯ ВЕРСИЯ
 const MonthlyPlan = {
     currentRegion: 'Курган',
     currentMonth: '2025-11',
@@ -228,26 +228,33 @@ const MonthlyPlan = {
         tbody.innerHTML = tasks.map(task => `
             <tr class="task-row" data-task-id="${task.id}">
                 <td class="task-deadline">${this.getWeekDeadline(week)}</td>
+                
                 <td>
                     <div class="category-badge ${task.category}">
                         ${this.getCategoryEmoji(task.category)} ${this.getCategoryName(task.category)}
                     </div>
                 </td>
+                
                 <td class="task-description-cell">
                     <div class="task-main-desc">${task.description}</div>
                 </td>
+                
                 <td class="task-explanation-cell">
                     ${task.explanation ? `<div class="task-explanation">${task.explanation}</div>` : '-'}
                 </td>
+                
                 <td>
                     <div class="ip-info-cell">
                         <div class="ip-name">${task.ip || '-'}</div>
                     </div>
                 </td>
+                
                 <td class="card-cell">
                     ${task.card ? `<span class="card-badge">${task.card}</span>` : '-'}
                 </td>
+                
                 <td class="amount-cell plan-amount">${this.formatCurrency(task.plan)} ₽</td>
+                
                 <td class="amount-cell fact-amount">
                     ${window.app?.currentUser?.role === 'admin' ? 
                         (task.fact > 0 ? this.formatCurrency(task.fact) + ' ₽' : '-') :
@@ -255,6 +262,7 @@ const MonthlyPlan = {
                          onchange="MonthlyPlan.updateTaskFact('${task.id}', this.value)" placeholder="0">`
                     }
                 </td>
+                
                 <td class="completion-date">
                     ${window.app?.currentUser?.role === 'admin' ? 
                         (task.dateCompleted ? this.formatDate(task.dateCompleted) : '-') :
@@ -262,18 +270,21 @@ const MonthlyPlan = {
                          onchange="MonthlyPlan.updateTaskDate('${task.id}', this.value)">`
                     }
                 </td>
+                
                 <td>
                     <span class="status-badge status-${task.status}">
                         ${this.getStatusText(task.status)}
                     </span>
                 </td>
+                
                 <td class="manager-comment">
                     ${window.app?.currentUser?.role === 'admin' ? 
-                        (task.comment || '-') :
-                        `<textarea class="comment-input" placeholder="Комментарий..." 
-                         onchange="MonthlyPlan.updateTaskComment('${task.id}', this.value)">${task.comment || ''}</textarea>`
+                        (task.managerComment || '-') :
+                        `<textarea class="comment-input" placeholder="Ваш комментарий..." 
+                         onchange="MonthlyPlan.updateTaskComment('${task.id}', this.value)">${task.managerComment || ''}</textarea>`
                     }
                 </td>
+                
                 <td>
                     <div class="action-buttons">
                         ${window.app?.currentUser?.role === 'admin' ? `
@@ -304,7 +315,6 @@ const MonthlyPlan = {
         return deadlines[week] || 'Не указан';
     },
 
-    // МЕТОДЫ ДЛЯ ОБНОВЛЕНИЯ ЗАДАЧ УПРАВЛЯЮЩИМИ
     updateTaskFact(taskId, factAmount) {
         const amount = parseFloat(factAmount);
         if (!isNaN(amount) && amount >= 0) {
@@ -335,98 +345,88 @@ const MonthlyPlan = {
     },
 
     updateTaskComment(taskId, comment) {
-        this.updateTaskField(taskId, 'comment', comment);
+        this.updateTaskField(taskId, 'managerComment', comment);
         Notification.success('Комментарий сохранен');
     },
 
-// ДОБАВИТЬ В monthly-plan-fixed.js
-updateTaskField(taskId, field, value) {
-    console.log(`🔄 Обновление задачи ${taskId}: ${field} = ${value}`);
-    
-    const planData = appData.getMonthlyPlan(this.currentRegion);
-    let taskUpdated = false;
-    
-    // Ищем задачу во всех неделях
-    for (let week = 1; week <= 4; week++) {
-        const weekKey = `week${week}`;
-        const weekData = planData[weekKey];
-        if (weekData && weekData.tasks) {
-            const taskIndex = weekData.tasks.findIndex(t => t.id === taskId);
-            if (taskIndex !== -1) {
-                // Обновляем задачу
-                weekData.tasks[taskIndex][field] = value;
-                taskUpdated = true;
-                
-                // Автоматически обновляем статус если заполнены факт и дата
-                if (field === 'fact' && value > 0) {
-                    const task = weekData.tasks[taskIndex];
-                    if (task.dateCompleted) {
-                        weekData.tasks[taskIndex].status = 'completed';
+    updateTaskField(taskId, field, value) {
+        console.log(`🔄 Обновление задачи ${taskId}: ${field} = ${value}`);
+        
+        try {
+            const planData = appData.getMonthlyPlan(this.currentRegion);
+            let taskUpdated = false;
+            
+            for (let week = 1; week <= 4; week++) {
+                const weekKey = `week${week}`;
+                const weekData = planData[weekKey];
+                if (weekData && weekData.tasks) {
+                    const taskIndex = weekData.tasks.findIndex(t => t.id === taskId);
+                    if (taskIndex !== -1) {
+                        weekData.tasks[taskIndex][field] = value;
+                        taskUpdated = true;
+                        
+                        if (field === 'fact' && value > 0) {
+                            const task = weekData.tasks[taskIndex];
+                            if (task.dateCompleted) {
+                                weekData.tasks[taskIndex].status = 'completed';
+                            }
+                        }
+                        if (field === 'dateCompleted' && value) {
+                            const task = weekData.tasks[taskIndex];
+                            if (task.fact > 0) {
+                                weekData.tasks[taskIndex].status = 'completed';
+                            }
+                        }
+                        
+                        break;
                     }
                 }
-                if (field === 'dateCompleted' && value) {
-                    const task = weekData.tasks[taskIndex];
-                    if (task.fact > 0) {
-                        weekData.tasks[taskIndex].status = 'completed';
-                    }
-                }
-                
-                break;
             }
+            
+            if (taskUpdated) {
+                this.saveToLocalStorage();
+                console.log('✅ Задача обновлена:', { taskId, field, value });
+                return true;
+            }
+            
+            console.error('❌ Задача не найдена:', taskId);
+            return false;
+            
+        } catch (error) {
+            console.error('💥 Ошибка при обновлении задачи:', error);
+            Notification.error('Ошибка при сохранении данных');
+            return false;
         }
-    }
-    
-    if (taskUpdated) {
-        // СОХРАНЯЕМ В LOCALSTORAGE
-        this.saveToLocalStorage();
-        console.log('✅ Задача обновлена:', { taskId, field, value });
-        return true;
-    }
-    
-    console.error('❌ Задача не найдена:', taskId);
-    return false;
-},
+    },
 
-saveToLocalStorage() {
-    try {
-        // Сохраняем весь MonthlyPlansData
-        localStorage.setItem('monthlyPlans', JSON.stringify(MonthlyPlansData));
-        console.log('💾 Данные сохранены в localStorage');
-    } catch (error) {
-        console.error('❌ Ошибка сохранения:', error);
-        Notification.error('Ошибка сохранения данных');
-    }
-},
-
-loadFromLocalStorage() {
-    try {
-        const saved = localStorage.getItem('monthlyPlans');
-        if (saved) {
-            const parsed = JSON.parse(saved);
-            // Мерджим с существующими данными
-            Object.assign(MonthlyPlansData, parsed);
-            console.log('📥 Данные загружены из localStorage');
+    saveToLocalStorage() {
+        try {
+            localStorage.setItem('monthlyPlans', JSON.stringify(MonthlyPlansData));
+            console.log('💾 Данные сохранены в localStorage');
             return true;
+        } catch (error) {
+            console.error('❌ Ошибка сохранения:', error);
+            if (typeof Notification !== 'undefined') {
+                Notification.error('Ошибка сохранения данных');
+            }
+            return false;
         }
-    } catch (error) {
-        console.error('❌ Ошибка загрузки:', error);
-    }
-    return false;
-}
+    },
 
-// Обновите метод loadPlanData
-loadPlanData() {
-    console.log(`📥 Загрузка плана для: ${this.currentRegion}`);
-    
-    // Сначала пробуем загрузить из localStorage
-    const savedPlan = this.loadPlanFromStorage();
-    
-    // Если нет в localStorage, используем данные из appData
-    const planData = savedPlan || appData.getMonthlyPlan(this.currentRegion);
-    
-    this.updatePlanStatistics(planData);
-    this.renderWeeklyPlan(planData);
-}
+    loadFromLocalStorage() {
+        try {
+            const saved = localStorage.getItem('monthlyPlans');
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                Object.assign(MonthlyPlansData, parsed);
+                console.log('📥 Данные загружены из localStorage');
+                return true;
+            }
+        } catch (error) {
+            console.error('❌ Ошибка загрузки:', error);
+        }
+        return false;
+    },
 
     findTaskById(taskId) {
         const planData = appData.getMonthlyPlan(this.currentRegion);
@@ -440,7 +440,6 @@ loadPlanData() {
         return null;
     },
 
-    // ВАЛИДАЦИЯ БЮДЖЕТОВ
     validateBudget(category, amount) {
         const categoryBudgets = {
             'products': 5000,
@@ -557,7 +556,6 @@ loadPlanData() {
         this.loadPlanData();
     },
 
-    // ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
     formatCurrency(amount) {
         if (!amount && amount !== 0) return '0';
         return new Intl.NumberFormat('ru-RU').format(Math.round(amount));
@@ -621,7 +619,6 @@ loadPlanData() {
     }
 };
 
-// Глобальные функции для HTML
 window.toggleWeek = function(week) { 
     MonthlyPlan.toggleWeek(week);
 };
@@ -631,7 +628,11 @@ window.toggleAllWeeks = function() {
 };
 
 window.addTaskToWeek = function(week) {
-    Notification.info(`Добавление задачи в неделю ${week} - функция в разработке`);
+    if (typeof TaskModals !== 'undefined') {
+        TaskModals.openAddTaskModal(week);
+    } else {
+        Notification.info(`Добавление задачи в неделю ${week} - функция в разработке`);
+    }
 };
 
 window.saveMonthlyPlan = function() {

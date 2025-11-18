@@ -28,7 +28,6 @@ const ManagerTasks = {
     setupManagerUI() {
         console.log('🎨 Настройка UI для управляющего');
         
-        // Показываем информационную панель
         const infoPanel = document.getElementById('managerInfoPanel');
         if (infoPanel) {
             infoPanel.style.display = 'block';
@@ -39,13 +38,11 @@ const ManagerTasks = {
             if (regionNameElement) regionNameElement.textContent = this.userRegion;
         }
 
-        // Настраиваем заголовок
         const subtitle = document.getElementById('pageSubtitle');
         if (subtitle) {
             subtitle.textContent = `Задачи в регионе ${this.userRegion}`;
         }
 
-        // Блокируем выбор региона в плане месяца
         const planRegionSelect = document.getElementById('planRegion');
         if (planRegionSelect) {
             planRegionSelect.value = this.userRegion;
@@ -53,11 +50,9 @@ const ManagerTasks = {
             planRegionSelect.classList.add('protected-field');
         }
 
-        // Скрываем кнопки редактирования в плане месяца
         const controlActions = document.querySelector('.plan-controls .control-actions');
         if (controlActions) controlActions.style.display = 'none';
 
-        // Скрываем кнопки "Добавить" в неделях
         document.querySelectorAll('.week-section .btn').forEach(btn => {
             if (btn.textContent.includes('Добавить')) {
                 btn.style.display = 'none';
@@ -68,31 +63,26 @@ const ManagerTasks = {
     setupDataProtection() {
         console.log('🔒 Настройка защиты данных для управляющего');
         
-        // Скрываем элементы редактирования
         document.querySelectorAll('.btn-edit, .btn-delete, .btn-add').forEach(btn => {
             if (btn.closest('.week-section')) {
                 btn.style.display = 'none';
             }
         });
 
-        // Блокируем редактирование плановых сумм
         document.querySelectorAll('.plan-amount').forEach(element => {
             element.style.pointerEvents = 'none';
             element.style.opacity = '0.8';
         });
 
-        // Скрываем кнопки массовых операций
         const bulkActions = document.getElementById('bulkActions');
         if (bulkActions) bulkActions.style.display = 'none';
 
-        // Показываем только задачи своего региона
         this.filterTasksByUserRegion();
     },
 
     filterTasksByUserRegion() {
         console.log(`👀 Фильтрация задач для управляющего: ${this.userRegion}`);
         
-        // Скрываем задачи других регионов
         document.querySelectorAll('.task-row').forEach(row => {
             const taskRegion = row.dataset.region;
             if (taskRegion && taskRegion !== this.userRegion) {
@@ -107,7 +97,6 @@ const ManagerTasks = {
     },
 
     loadMyTasks() {
-        // Загружаем задачи для текущего управляющего
         const allTasks = JSON.parse(localStorage.getItem('tasks')) || [];
         
         const myTasks = allTasks.filter(task => 
@@ -184,7 +173,6 @@ const ManagerTasks = {
         if (typeof TaskModals !== 'undefined') {
             TaskModals.openCompleteTaskModal(taskId);
         } else {
-            // Резервный метод
             this.openSimpleCompletionModal(taskId);
         }
     },
@@ -212,53 +200,59 @@ const ManagerTasks = {
             }
         }
     },
-// В manager-tasks-fixed.js ОБНОВИТЕ метод completeTask:
-completeTask(taskId) {
-    console.log('✅ Выполнение задачи:', taskId);
-    
-    if (typeof MonthlyPlan !== 'undefined') {
-        // Используем методы из MonthlyPlan для обновления
-        const task = MonthlyPlan.findTaskById(taskId);
-        if (task) {
-            // Открываем модальное окно или сразу обновляем
-            const factAmount = prompt(`Введите фактическую сумму для задачи:\n"${task.description}"\n\nПлан: ${task.plan} ₽`, task.plan || '');
-            
-            if (factAmount !== null) {
-                const amount = parseFloat(factAmount);
-                if (!isNaN(amount)) {
-                    MonthlyPlan.updateTaskFact(taskId, amount);
-                    
-                    // Автоматически устанавливаем сегодняшнюю дату
-                    const today = new Date().toISOString().split('T')[0];
-                    MonthlyPlan.updateTaskDate(taskId, today);
-                    
-                    Notification.success('Задача отмечена как выполненная!');
-                } else {
-                    Notification.error('Неверная сумма');
+
+    completeTask(taskId) {
+        console.log('✅ Выполнение задачи:', taskId);
+        
+        if (typeof MonthlyPlan !== 'undefined') {
+            const task = MonthlyPlan.findTaskById(taskId);
+            if (task) {
+                const factAmount = prompt(`Введите фактическую сумму для задачи:\n"${task.description}"\n\nПлан: ${task.plan} ₽`, task.plan || '');
+                
+                if (factAmount !== null) {
+                    const amount = parseFloat(factAmount);
+                    if (!isNaN(amount)) {
+                        MonthlyPlan.updateTaskFact(taskId, amount);
+                        
+                        const today = new Date().toISOString().split('T')[0];
+                        MonthlyPlan.updateTaskDate(taskId, today);
+                        
+                        Notification.success('Задача отмечена как выполненная!');
+                    } else {
+                        Notification.error('Неверная сумма');
+                    }
                 }
             }
+        } else {
+            Notification.error('Модуль плана не доступен');
         }
-    } else {
-        Notification.error('Модуль плана не доступен');
-    }
-}
+    },
+
     completeTaskSimple(taskId, factAmount) {
-        const allTasks = JSON.parse(localStorage.getItem('tasks')) || [];
-        const updatedTasks = allTasks.map(task => {
-            if (task.id === taskId) {
-                return {
-                    ...task,
+        try {
+            const allTasks = JSON.parse(localStorage.getItem('tasks')) || [];
+            const taskIndex = allTasks.findIndex(task => task.id === taskId);
+            
+            if (taskIndex !== -1) {
+                allTasks[taskIndex] = {
+                    ...allTasks[taskIndex],
                     factAmount: factAmount,
                     status: 'completed',
-                    dateCompleted: new Date().toISOString()
+                    dateCompleted: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
                 };
+                
+                localStorage.setItem('tasks', JSON.stringify(allTasks));
+                this.showNotification('Задача выполнена!', 'success');
+                this.loadMyTasks();
+                return true;
             }
-            return task;
-        });
-        
-        localStorage.setItem('tasks', JSON.stringify(updatedTasks));
-        this.showNotification('Задача выполнена!', 'success');
-        this.loadMyTasks();
+            return false;
+        } catch (error) {
+            console.error('❌ Ошибка выполнения задачи:', error);
+            this.showNotification('Ошибка при выполнении задачи', 'error');
+            return false;
+        }
     },
 
     setupEventListeners() {
@@ -293,7 +287,6 @@ completeTask(taskId) {
     }
 };
 
-// Глобальные функции для модальных окон
 window.saveTaskCompletion = function() {
     if (window.ManagerTasks) {
         ManagerTasks.saveTaskCompletion();

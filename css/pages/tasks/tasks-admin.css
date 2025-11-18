@@ -1,33 +1,73 @@
 /* css/pages/tasks/tasks-admin.css */
-/* Стили специфичные для админов */
-.admin-controls {
-    background: var(--bg-glass);
-    border-radius: var(--radius-lg);
-    padding: 1.5rem;
-    margin-bottom: 2rem;
-    border: 1px solid var(--border-light);
+/* Стили для интерфейса администратора */
+
+/* Кнопки экспорта */
+.export-buttons {
+    display: flex;
+    gap: 8px;
+    align-items: center;
 }
 
+/* Стили для массовых действий */
 .bulk-actions {
     background: var(--bg-glass);
     border-radius: var(--radius-lg);
     padding: 1.5rem;
     border: 1px solid var(--border-light);
     display: none;
+    justify-content: space-between;
     align-items: center;
-    gap: 1rem;
     flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1rem;
 }
 
 .bulk-actions.show {
     display: flex;
-    animation: fadeInUp 0.3s ease;
 }
 
-.export-btn {
-    background: linear-gradient(135deg, #10b981, #059669);
+.bulk-count {
+    color: var(--text-secondary);
+    font-weight: 500;
 }
 
-.export-btn:hover {
-    background: linear-gradient(135deg, #059669, #047857);
+/* Стили для чекбоксов в задачах */
+.task-checkbox {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+/* Стили для редактируемых полей */
+.plan-amount {
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0.5rem;
+    border-radius: var(--radius);
+}
+
+.plan-amount:hover {
+    background: rgba(124, 58, 237, 0.1);
+}
+
+/* Стили для кнопок редактирования */
+.btn-edit, .btn-delete, .btn-add {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+/* Стили для сайдбара регионов (только для админа) */
+.region-sidebar.admin-only {
+    display: block;
+}
+
+/* Стили для панели управления (только для админа) */
+.plan-controls.admin-only .control-actions {
+    display: flex;
+}
+
+/* Скрываем элементы для управляющих в режиме админа */
+.manager-only {
+    display: none;
 }

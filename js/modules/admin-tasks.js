@@ -43,20 +43,35 @@ const AdminTasks = {
         });
     },
 
-    setupAdminEventListeners() {
-        // Обработчики для админских функций
-        console.log('🔗 Настройка обработчиков для админа');
+setupAdminEventListeners() {
+    console.log('🔗 Настройка обработчиков для админа');
+    // код метода
+}, 
 
-        // Обработчик для кнопки экспорта
-        const exportBtn = document.createElement('button');
-        exportBtn.className = 'btn btn-secondary';
-        exportBtn.innerHTML = '<span class="nav-icon">📤</span>Экспорт в CSV';
-        exportBtn.onclick = () => AllTasks.exportToCSV();
-        
-        // Добавляем кнопку экспорта в заголовок
-        const headerActions = document.getElementById('headerActions');
-        if (headerActions) {
-            headerActions.appendChild(exportBtn);
-        }
+setupExportFunctionality() {
+    const headerActions = document.getElementById('headerActions');
+    if (!headerActions) return;
+    
+    // Добавляем кнопки экспорта только для админов
+    if (this.isAdmin()) {
+        const exportHTML = `
+            <div class="export-buttons" style="display: flex; gap: 8px; align-items: center;">
+                <button class="btn btn-secondary btn-sm" onclick="ExportManager.exportToCSV()" 
+                        title="Экспорт всех задач в CSV">
+                    <span class="nav-icon">📊</span> CSV
+                </button>
+                <button class="btn btn-secondary btn-sm" onclick="ExportManager.exportToExcel()" 
+                        title="Экспорт всех задач в Excel">
+                    <span class="nav-icon">📈</span> Excel
+                </button>
+            </div>
+        `;
+        headerActions.insertAdjacentHTML('beforeend', exportHTML);
     }
+},
+
+isAdmin() {
+    return window.app?.currentUser?.role === 'admin';
+}
 };
+window.AdminTasks = AdminTasks;

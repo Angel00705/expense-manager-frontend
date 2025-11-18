@@ -1,12 +1,14 @@
 // js/modules/enhanced-task-modals.js
 const EnhancedTaskModals = {
     init() {
+        console.log('🔄 Инициализация улучшенных модальных окон');
         this.setupEnhancedModals();
         this.setupBudgetValidation();
+        this.setupAutoFill();
     },
 
     setupEnhancedModals() {
-        // Динамическая валидация бюджета при вводе
+        // Валидация бюджета в реальном времени
         const planAmountInput = document.getElementById('taskPlanAmount');
         if (planAmountInput) {
             planAmountInput.addEventListener('input', (e) => {
@@ -21,6 +23,43 @@ const EnhancedTaskModals = {
                 this.autoFillFromCategory(e.target.value);
             });
         }
+
+        // Автозаполнение карт при выборе ИП
+        const ipSelect = document.getElementById('taskIP');
+        if (ipSelect) {
+            ipSelect.addEventListener('change', (e) => {
+                this.autoFillCardsForIP(e.target.value);
+            });
+        }
+    },
+
+    setupAutoFill() {
+        // Автозаполнение даты выполнения текущей датой
+        const completionDate = document.getElementById('completionDate');
+        if (completionDate && !completionDate.value) {
+            completionDate.value = new Date().toISOString().split('T')[0];
+        }
+    },
+
+    autoFillCardsForIP(ipName) {
+        const cardSelect = document.getElementById('taskCard');
+        if (!cardSelect) return;
+
+        const currentRegion = MonthlyPlan.currentRegion;
+        const cards = appData.getCardsByRegion(currentRegion);
+        
+        // Фильтруем карты по выбранному ИП
+        const ipCards = cards.filter(card => 
+            card.ipName === ipName && 
+            (card.corpStatus === 'в регионе' || card.personalStatus === 'в регионе')
+        );
+        
+        cardSelect.innerHTML = '<option value="">Выберите карту</option>' +
+            ipCards.map(card => {
+                const cardNumber = card.corpCard || card.personalCard;
+                const cardType = card.corpCard ? '💳 Корп.' : '👤 Перс.';
+                return `<option value="${cardNumber}">${cardType} ${cardNumber}</option>`;
+            }).join('');
     },
 
     validateBudgetInRealTime() {
@@ -35,27 +74,45 @@ const EnhancedTaskModals = {
         if (!warningElement) return;
         
         if (!validation.isValid) {
-            warningElement.innerHTML = `
-                <div class="warning-message">
-                    ⚠️ <strong>Превышен лимит!</strong><br>
-                    Категория: ${MonthlyPlan.getCategoryName(category)}<br>
-                    Введено: ${MonthlyPlan.formatCurrency(amount)} ₽<br>
-                    Лимит: ${MonthlyPlan.formatCurrency(validation.limit)} ₽<br>
-                    <em>Превышение: ${MonthlyPlan.formatCurrency(amount - validation.limit)} ₽</em>
-                </div>
-            `;
+            warningElement.innerHTML = this.getWarningHTML(category, amount, validation);
             warningElement.style.display = 'block';
+            warningElement.className = 'budget-warning error';
         } else if (amount > 0) {
-            warningElement.innerHTML = `
-                <div class="info-message">
-                    ℹ️ <strong>В рамках бюджета</strong><br>
-                    Остаток: ${MonthlyPlan.formatCurrency(validation.remaining)} ₽
-                </div>
-            `;
+            warningElement.innerHTML = this.getInfoHTML(validation);
             warningElement.style.display = 'block';
+            warningElement.className = 'budget-warning info';
         } else {
             warningElement.style.display = 'none';
         }
+    },
+
+    getWarningHTML(category, amount, validation) {
+        return `
+            <div class="warning-content">
+                <span class="warning-icon">⚠️</span>
+                <div class="warning-details">
+                    <strong>Превышен лимит категории!</strong>
+                    <div>Категория: ${MonthlyPlan.getCategoryName(category)}</div>
+                    <div>Введено: ${MonthlyPlan.formatCurrency(amount)} ₽</div>
+                    <div>Лимит: ${MonthlyPlan.formatCurrency(validation.limit)} ₽</div>
+                    <div class="exceeded-amount">
+                        Превышение: ${MonthlyPlan.formatCurrency(amount - validation.limit)} ₽
+                    </div>
+                </div>
+            </div>
+        `;
+    },
+
+    getInfoHTML(validation) {
+        return `
+            <div class="info-content">
+                <span class="info-icon">ℹ️</span>
+                <div class="info-details">
+                    <strong>В рамках бюджета</strong>
+                    <div>Остаток: ${MonthlyPlan.formatCurrency(validation.remaining)} ₽</div>
+                </div>
+            </div>
+        `;
     },
 
     autoFillFromCategory(category) {
@@ -68,12 +125,26 @@ const EnhancedTaskModals = {
             'medicaments': 'Аптечка первой помощи, лекарства',
             'stationery': 'Ручки, блокноты, бумага, канцелярские товары',
             'azs': 'Заправка автомобиля на АЗС',
-            'salary': 'Снятие наличных для выплаты зарплаты'
+            'salary': 'Снятие наличных для выплаты зарплаты',
+            'repairs': 'Ремонтные работы в офисе',
+            'shipping': 'Отправка товаров и документов'
         };
         
         const descriptionField = document.getElementById('taskDescription');
         if (descriptionField && !descriptionField.value) {
             descriptionField.value = descriptionMap[category] || '';
+        }
+        
+        // Автозаполнение пояснения
+        const explanationMap = {
+            'products': 'Еженедельная закупка продуктов для офиса',
+            'azs': 'Заправка служебного автомобиля',
+            'salary': 'Выдача заработной платы сотрудникам'
+        };
+        
+        const explanationField = document.getElementById('taskExplanation');
+        if (explanationField && !explanationField.value) {
+            explanationField.value = explanationMap[category] || '';
         }
         
         // Автовыбор ИП на основе региона

@@ -14,39 +14,40 @@ const TasksInitializer = {
         console.log('✅ Все модули задач инициализированы');
     },
     
-// ЗАМЕНИТЕ текущий initMonthlyPlan на:
 initMonthlyPlan() {
     return new Promise((resolve) => {
         if (typeof MonthlyPlan !== 'undefined') {
-            // Ждем полной загрузки данных
-            const checkData = () => {
-                if (window.appData && window.MonthlyPlansData) {
-                    MonthlyPlan.currentRegion = window.app?.currentRegion || 'Курган';
-                    MonthlyPlan.currentMonth = '2025-11';
+            // Простая инициализация без сложных проверок
+            MonthlyPlan.currentRegion = window.app?.currentUser?.region || 'Курган';
+            MonthlyPlan.currentMonth = '2025-11';
+            
+            // Даем время на загрузку DOM
+            setTimeout(() => {
+                try {
                     MonthlyPlan.init();
                     console.log('✅ MonthlyPlan инициализирован');
                     resolve();
-                } else {
-                    setTimeout(checkData, 100);
+                } catch (error) {
+                    console.error('❌ Ошибка инициализации MonthlyPlan:', error);
+                    resolve(); // Все равно разрешаем, чтобы не блокировать
                 }
-            };
-            checkData();
+            }, 200);
         } else {
             resolve();
         }
     });
 }
+
+initRoleModules() {
+    const userRole = window.app?.currentUser?.role;
+    console.log('👤 Роль пользователя:', userRole);
     
-    initRoleModules() {
-        const userRole = window.app?.currentUser?.role;
-        console.log('👤 Роль пользователя:', userRole);
-        
-        if (userRole === 'admin') {
-            this.initAdminModules();
-        } else if (userRole === 'manager') {
-            this.initManagerModules();
-        }
-    },
+    if (userRole === 'admin') {
+        this.initAdminModules();
+    } else if (userRole === 'manager') {
+        this.initManagerModules();
+    }
+}
     
     initAdminModules() {
         console.log('👔 Инициализация модулей админа');

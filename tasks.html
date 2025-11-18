@@ -499,63 +499,90 @@
         </div>
     </main>
 
-    <!-- Модальные окна -->
-    <div id="addTaskModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Добавить задачу в неделю <span id="modalWeekNumber">1</span></h3>
-                <button class="close-modal" onclick="closeAddTaskModal()">×</button>
-            </div>
-            <div class="modal-body">
-                <div class="budget-warning" id="budgetWarning" style="display: none;">
-                    <!-- Предупреждение о превышении бюджета -->
+   <!-- Модальные окна -->
+<div id="addTaskModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Добавить задачу в неделю <span id="modalWeekNumber">1</span></h3>
+            <button class="close-modal" onclick="closeAddTaskModal()">×</button>
+        </div>
+        <div class="modal-body">
+            <div class="budget-warning" id="budgetWarning" style="display: none;"></div>
+            
+            <form id="addTaskForm">
+                <input type="hidden" id="modalWeek" value="1">
+                
+                <!-- КАТЕГОРИЯ -->
+                <div class="form-group">
+                    <label class="form-label">Категория *</label>
+                    <select class="form-select" id="taskCategory" required>
+                        <option value="">Выберите категорию</option>
+                        <option value="products">🛒 Продукты</option>
+                        <option value="household">🏠 Хоз. товары</option>
+                        <option value="medicaments">💊 Медикаменты</option>
+                        <option value="stationery">📎 Канцелярия</option>
+                        <option value="cafe">☕ Кафе</option>
+                        <option value="repairs">🔧 Ремонт</option>
+                        <option value="azs">⛽ АЗС</option>
+                        <option value="salary">💰 Зарплата</option>
+                        <option value="shipping">📦 Отправка</option>
+                        <option value="events">🎉 Мероприятия</option>
+                        <option value="polygraphy">🖨️ Полиграфия</option>
+                        <option value="insurance">🛡️ Страхование</option>
+                        <option value="cleaning">🧹 Клининг</option>
+                    </select>
                 </div>
-                <form id="addTaskForm">
-                    <input type="hidden" id="modalWeek" value="1">
-                    
+
+                <!-- ОПИСАНИЕ ЗАДАЧИ -->
+                <div class="form-group">
+                    <label class="form-label">Описание задачи *</label>
+                    <textarea class="form-textarea" id="taskDescription" 
+                              placeholder="Подробное описание задачи..." required></textarea>
+                </div>
+
+                <!-- ПОЯСНЕНИЕ ПО ЗАДАЧЕ/ТОВАРУ -->
+                <div class="form-group">
+                    <label class="form-label">Пояснение по задаче/товару</label>
+                    <textarea class="form-textarea" id="taskExplanation" 
+                              placeholder="Дополнительные пояснения, конкретные товары..."></textarea>
+                </div>
+
+                <div class="form-row">
+                    <!-- ИП -->
                     <div class="form-group">
-                        <label class="form-label">Категория</label>
-                        <select class="form-select" id="taskCategory" required>
-                            <option value="">Выберите категорию</option>
-                            <option value="products">🛒 Продукты</option>
-                            <option value="household">🏠 Хоз. товары</option>
-                            <option value="medicaments">💊 Медикаменты</option>
-                            <option value="stationery">📎 Канцелярия</option>
-                            <option value="cafe">☕ Кафе</option>
-                            <option value="repairs">🔧 Ремонт</option>
-                            <option value="azs">⛽ АЗС</option>
+                        <label class="form-label">ИП *</label>
+                        <select class="form-select" id="taskIP" required>
+                            <!-- Заполнится динамически -->
                         </select>
                     </div>
-
+                    
+                    <!-- КАРТА -->
                     <div class="form-group">
-                        <label class="form-label">Описание задачи</label>
-                        <textarea class="form-textarea" id="taskDescription" placeholder="Опишите задачу..." required></textarea>
+                        <label class="form-label">Карта</label>
+                        <select class="form-select" id="taskCard">
+                            <!-- Заполнится динамически -->
+                        </select>
                     </div>
+                </div>
 
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label">ИП</label>
-                            <select class="form-select" id="taskIP" required>
-                                <!-- Заполнится динамически по региону -->
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Плановая сумма</label>
-                            <input type="number" class="form-input" id="taskPlanAmount" placeholder="0" required>
-                        </div>
-                    </div>
+                <!-- ПЛАНОВАЯ СУММА -->
+                <div class="form-group">
+                    <label class="form-label">Плановая сумма *</label>
+                    <input type="number" class="form-input" id="taskPlanAmount" 
+                           placeholder="0" min="0" step="100" required>
+                </div>
 
-                    <div class="budget-info" id="budgetInfo">
-                        <!-- Информация о лимитах -->
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeAddTaskModal()">Отмена</button>
-                <button class="btn btn-primary" onclick="saveWeeklyTask()">Добавить задачу</button>
-            </div>
+                <div class="form-hint">
+                    * - обязательные для заполнения поля
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeAddTaskModal()">Отмена</button>
+            <button class="btn btn-primary" onclick="saveWeeklyTask()">Добавить задачу</button>
         </div>
     </div>
+</div>
 
     <div id="completeTaskModal" class="modal">
         <div class="modal-content">
@@ -594,20 +621,16 @@
         </div>
     </div>
 
-<!-- ПРАВИЛЬНЫЙ ПОРЯДОК СКРИПТОВ -->
-<script src="js/utils.js"></script>
-<script src="data/real-cards-data.js"></script>
-<script src="js/data.js"></script>
-<script src="js/data/storage-manager.js"></script>
-<script src="js/data/monthly-plans-data.js"></script>
-<script src="js/data/demo-tasks-data.js"></script>
-<script src="js/data/regions-initial-data.js"></script>
+<script src="js/utils.js"></script>                    
+<script src="data/real-cards-data.js"></script>        
+<script src="js/data.js"></script>                    
+
+<!-- Основные модули БЕЗ ДУБЛЕЙ -->
 <script src="js/navbar.js"></script>
 <script src="js/app.js"></script>
 
-<!-- МОДУЛИ ЗАДАЧ -->
+<!-- Модули задач по порядку зависимостей -->
 <script src="js/modules/task-modals.js"></script>
-<script src="js/modules/enhanced-task-modals.js"></script>
 <script src="js/modules/monthly-plan-fixed.js"></script>
 <script src="js/modules/manager-tasks-fixed.js"></script>
 <script src="js/modules/admin-tasks.js"></script>

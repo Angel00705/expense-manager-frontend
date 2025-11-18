@@ -98,7 +98,102 @@ const StorageManager = {
             console.error('❌ Ошибка загрузки:', error);
             return defaultValue;
         }
+    },
+
+    setupAutoSave() {
+        let saveTimeout;
+        const debouncedSave = () => {
+            clearTimeout(saveTimeout);
+            saveTimeout = setTimeout(() => {
+                this.saveAllData();
+            }, 2000);
+        };
+
+        document.addEventListener('change', (e) => {
+            if (e.target.classList.contains('fact-input') || 
+                e.target.classList.contains('date-input') ||
+                e.target.classList.contains('comment-input')) {
+                debouncedSave();
+            }
+        });
+    },
+
+    saveAllData() {
+        try {
+            localStorage.setItem('monthlyPlans', JSON.stringify(MonthlyPlansData));
+            console.log('💾 Все данные автосохранены');
+        } catch (error) {
+            console.error('❌ Ошибка автосохранения:', error);
+        }
     }
 };
 
+const DataManager = {
+    // Единый источник данных
+    getAllTasks() {
+        const plans = this.load('monthlyPlans') || MonthlyPlansData;
+        const allTasks = [];
+        
+        Object.keys(plans).forEach(region => {
+            for (let week = 1; week <= 4; week++) {
+                const weekData = plans[region]?.[`week${week}`];
+                if (weekData?.tasks) {
+                    weekData.tasks.forEach(task => {
+                        allTasks.push({
+                            ...task,
+                            region: region,
+                            week: week
+                        });
+                    });
+                }
+            }
+        });
+        
+        return allTasks;
+    },
+    
+    // Получение задач по региону
+    getTasksByRegion(region) {
+        return this.getAllTasks().filter(task => task.region === region);
+    },
+    
+    // Получение задач управляющего
+    getManagerTasks(region, managerName) {
+        return this.getTasksByRegion(region).filter(task => 
+            task.responsible === managerName || !task.responsible
+        );
+    },
+    
+    // Обновление задачи
+    updateTask(taskId, updates) {
+        const plans = this.load('monthlyPlans') || MonthlyPlansData;
+        let taskUpdated = false;
+        
+        Object.keys(plans).forEach(region => {
+            for (let week = 1; week <= 4; week++) {
+                const weekKey = `week${week}`;
+                const weekData = plans[region]?.[weekKey];
+                if (weekData?.tasks) {
+                    const taskIndex = weekData.tasks.findIndex(t => t.id === taskId);
+                    if (taskIndex !== -1) {
+                        plans[region][weekKey].tasks[taskIndex] = {
+                            ...plans[region][weekKey].tasks[taskIndex],
+                            ...updates,
+                            updatedAt: new Date().toISOString()
+                        };
+                        taskUpdated = true;
+                    }
+                }
+            }
+        });
+        
+        if (taskUpdated) {
+            this.save('monthlyPlans', plans);
+            return true;
+        }
+        return false;
+    }
+};
+
+window.DataManager = DataManager;
 window.StorageManager = StorageManager;

@@ -1,4 +1,6 @@
 /* css/components/modal.css */
+/* Стили для модальных окон */
+
 .modal {
     display: none;
     position: fixed;
@@ -7,8 +9,8 @@
     width: 100%;
     height: 100%;
     background: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(10px);
-    z-index: 1000;
+    backdrop-filter: blur(5px);
+    z-index: 10000;
     align-items: center;
     justify-content: center;
     padding: 1rem;
@@ -18,31 +20,31 @@
     background: var(--bg-card);
     border-radius: var(--radius-xl);
     border: 1px solid var(--border-light);
-    box-shadow: var(--shadow);
-    max-width: 600px;
     width: 100%;
+    max-width: 600px;
     max-height: 90vh;
     overflow-y: auto;
-    animation: modalSlideIn 0.3s ease;
+    box-shadow: var(--shadow);
+    animation: modalFadeIn 0.3s ease;
 }
 
-@keyframes modalSlideIn {
+@keyframes modalFadeIn {
     from {
         opacity: 0;
-        transform: translateY(-30px) scale(0.9);
+        transform: scale(0.9) translateY(-20px);
     }
     to {
         opacity: 1;
-        transform: translateY(0) scale(1);
+        transform: scale(1) translateY(0);
     }
 }
 
 .modal-header {
-    padding: 1.5rem;
-    border-bottom: 1px solid var(--border);
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border);
 }
 
 .modal-header h3 {
@@ -53,17 +55,21 @@
 .close-modal {
     background: none;
     border: none;
-    color: var(--text-muted);
     font-size: 1.5rem;
     cursor: pointer;
-    padding: 0.5rem;
-    border-radius: var(--radius);
-    transition: all 0.3s ease;
+    color: var(--text-secondary);
+    transition: color 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
 }
 
 .close-modal:hover {
-    background: rgba(255, 255, 255, 0.1);
     color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .modal-body {
@@ -71,15 +77,101 @@
 }
 
 .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
     padding: 1.5rem;
     border-top: 1px solid var(--border);
-    display: flex;
-    gap: 1rem;
-    justify-content: flex-end;
 }
-/* Стили для форм в модальных окнах */
+
+/* Предупреждение о бюджете */
+.budget-warning {
+    padding: 1rem;
+    border-radius: var(--radius);
+    margin-bottom: 1.5rem;
+    display: none;
+}
+
+.budget-warning.error {
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #ef4444;
+}
+
+.budget-warning.info {
+    background: rgba(59, 130, 246, 0.15);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    color: #3b82f6;
+}
+
+.warning-content,
+.info-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.warning-icon,
+.info-icon {
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+.warning-details,
+.info-details {
+    flex: 1;
+}
+
+.warning-details strong,
+.info-details strong {
+    display: block;
+    margin-bottom: 0.25rem;
+}
+
+.exceeded-amount {
+    font-weight: 600;
+    margin-top: 0.25rem;
+}
+
+/* Стили для формы в модальном окне */
 .modal-body .form-group {
     margin-bottom: 1.5rem;
+}
+
+.modal-body .form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.modal-body .form-input,
+.modal-body .form-select,
+.modal-body .form-textarea {
+    width: 100%;
+    padding: 1rem;
+    background: var(--bg-glass);
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text-primary);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+.modal-body .form-input:focus,
+.modal-body .form-select:focus,
+.modal-body .form-textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    background: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.15);
+}
+
+.modal-body .form-textarea {
+    resize: vertical;
+    min-height: 100px;
 }
 
 .modal-body .form-row {
@@ -88,13 +180,13 @@
     gap: 1rem;
 }
 
-@media (max-width: 768px) {
-    .modal-body .form-row {
-        grid-template-columns: 1fr;
-    }
+.modal-body .form-hint {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    margin-top: 0.5rem;
 }
 
-/* Стили для предпросмотра задачи */
+/* Стили для предпросмотра задачи в модальном окне выполнения */
 .task-preview {
     background: var(--bg-glass);
     border-radius: var(--radius);
@@ -117,7 +209,6 @@
 .detail-item {
     display: flex;
     justify-content: space-between;
-    align-items: center;
     padding: 0.5rem 0;
     border-bottom: 1px solid var(--border);
 }
@@ -127,33 +218,35 @@
 }
 
 .detail-item .label {
-    color: var(--text-muted);
+    color: var(--text-secondary);
     font-weight: 500;
 }
 
 .detail-item .value {
     color: var(--text-primary);
-    font-weight: 600;
+    text-align: right;
 }
 
-/* Стили для информации о бюджете */
-.budget-info {
-    background: rgba(59, 130, 246, 0.1);
-    border: 1px solid rgba(59, 130, 246, 0.3);
-    border-radius: var(--radius);
-    padding: 1rem;
-    margin: 1rem 0;
-}
-
-.budget-warning {
-    background: rgba(239, 68, 68, 0.1);
-    border: 1px solid rgba(239, 68, 68, 0.3);
-    border-radius: var(--radius);
-    padding: 1rem;
-    margin: 1rem 0;
-    color: #ef4444;
-}
-
-.budget-warning.hidden {
-    display: none;
+/* Адаптивность модальных окон */
+@media (max-width: 768px) {
+    .modal {
+        padding: 0.5rem;
+    }
+    
+    .modal-content {
+        max-height: 95vh;
+    }
+    
+    .modal-body .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .modal-footer {
+        flex-direction: column;
+    }
+    
+    .modal-footer .btn {
+        width: 100%;
+        justify-content: center;
+    }
 }

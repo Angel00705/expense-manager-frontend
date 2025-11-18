@@ -1,13 +1,5 @@
-// js/utils.js - ИСПРАВЛЕННАЯ ВЕРСИЯ
+// js/utils.js - ПОЛНОСТЬЮ ИСПРАВЛЕННАЯ ВЕРСИЯ
 console.log('🔧 Загрузка utils.js...');
-
-// Инициализация при загрузке
-document.addEventListener('DOMContentLoaded', function() {
-    if (typeof Auth !== 'undefined') {
-        Auth.init();
-        console.log('✅ Auth система готова');
-    }
-});
 
 const Auth = {
   currentUser: null,
@@ -331,6 +323,225 @@ const FormatHelper = {
   }
 };
 
+// Вспомогательные функции для форматов
+function formatCurrency(amount) {
+    if (!amount || amount === 0) return '0';
+    return new Intl.NumberFormat('ru-RU').format(Math.round(amount));
+}
+
+function formatDate(dateString) {
+    if (!dateString) return 'Не указана';
+    try {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('ru-RU');
+    } catch {
+        return 'Неверная дата';
+    }
+}
+
+function getCategoryEmoji(category) {
+    const emojis = {
+        'products': '🛒', 'household': '🏠', 'medicaments': '💊',
+        'stationery': '📎', 'cafe': '☕', 'repairs': '🔧',
+        'azs': '⛽', 'salary': '💰', 'shipping': '📦',
+        'events': '🎉', 'polygraphy': '🖨️', 'insurance': '🛡️',
+        'charity': '❤️', 'equipment': '💻', 'cleaning': '🧹',
+        'checks': '🧾', 'carsharing': '🚗', 'rent': '🏢',
+        'comm': '💡', 'internet': '🌐', 'ipSalary': '💼'
+    };
+    return emojis[category] || '📋';
+}
+
+function getCategoryName(category) {
+    const names = {
+        'products': 'Продукты', 'household': 'Хоз. товары',
+        'medicaments': 'Медикаменты', 'stationery': 'Канцелярия',
+        'cafe': 'Кафе', 'repairs': 'Ремонт', 'azs': 'АЗС',
+        'salary': 'Зарплата', 'shipping': 'Отправка',
+        'events': 'Мероприятия', 'polygraphy': 'Полиграфия',
+        'insurance': 'Страхование', 'charity': 'Благотворительность',
+        'equipment': 'Техника', 'cleaning': 'Клининг',
+        'checks': 'Чеки', 'carsharing': 'Каршеринг',
+        'rent': 'Аренда', 'comm': 'Коммуналка',
+        'internet': 'Интернет', 'ipSalary': 'ЗП ИП'
+    };
+    return names[category] || category;
+}
+
+// Демо-задачи
+function initializeDemoTasks() {
+    const existingTasks = JSON.parse(localStorage.getItem('tasks'));
+    if (!existingTasks || existingTasks.length === 0) {
+        console.log('🔄 Создание демо-задач для тестирования...');
+        
+        const demoTasks = [
+            {
+                id: 'demo_1',
+                title: 'Закупка канцелярии',
+                description: 'Ручки, бумага, блокноты для офиса',
+                region: 'Курган',
+                ip: 'ИП Бондаренко',
+                expenseItem: 'stationery',
+                plannedAmount: 5000,
+                status: 'pending',
+                responsibleManager: 'Ксения Б.',
+                createdAt: new Date().toISOString(),
+                dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+            },
+            {
+                id: 'demo_2', 
+                title: 'Заправка автомобиля',
+                description: 'Заправка на АЗС',
+                region: 'Курган',
+                ip: 'ИП Овсейко',
+                expenseItem: 'azs',
+                plannedAmount: 3000,
+                status: 'completed',
+                factAmount: 2850,
+                responsibleManager: 'Ксения Б.',
+                createdAt: new Date().toISOString(),
+                dateCompleted: new Date().toISOString()
+            }
+        ];
+        
+        localStorage.setItem('tasks', JSON.stringify(demoTasks));
+        console.log('✅ Создано демо-задач:', demoTasks.length);
+    }
+}
+
+// Система уведомлений
+const NotificationSystem = {
+    init() {
+        console.log('🔔 Инициализация системы уведомлений');
+        this.setupDeadlineNotifications();
+    },
+    
+    setupDeadlineNotifications() {
+        // Ежедневная проверка в 9:00
+        this.scheduleDailyCheck();
+        
+        // Первая проверка при загрузке
+        setTimeout(() => this.checkAllDeadlines(), 5000);
+    },
+    
+    scheduleDailyCheck() {
+        const now = new Date();
+        const nextCheck = new Date();
+        nextCheck.setHours(9, 0, 0, 0);
+        
+        if (now > nextCheck) {
+            nextCheck.setDate(nextCheck.getDate() + 1);
+        }
+        
+        const timeUntilCheck = nextCheck.getTime() - now.getTime();
+        
+        setTimeout(() => {
+            this.checkAllDeadlines();
+            // Повторяем каждые 24 часа
+            setInterval(() => this.checkAllDeadlines(), 24 * 60 * 60 * 1000);
+        }, timeUntilCheck);
+    },
+    
+    checkAllDeadlines() {
+        console.log('🔔 Проверка сроков задач...');
+        const plans = JSON.parse(localStorage.getItem('monthlyPlans')) || window.MonthlyPlansData;
+        const today = new Date();
+        
+        Object.keys(plans).forEach(region => {
+            for (let week = 1; week <= 4; week++) {
+                const weekData = plans[region][`week${week}`];
+                if (weekData && weekData.tasks) {
+                    weekData.tasks.forEach(task => {
+                        if (task.status !== 'completed' && !task.notificationSent) {
+                            this.checkTaskDeadline(task, region, week);
+                        }
+                    });
+                }
+            }
+        });
+    },
+    
+    checkTaskDeadline(task, region, week) {
+        const deadline = this.getTaskDeadline(week);
+        const daysUntilDeadline = this.getDaysUntil(deadline);
+        
+        if (daysUntilDeadline <= 3 && daysUntilDeadline >= 0) {
+            this.sendDeadlineNotification(task, region, daysUntilDeadline);
+            task.notificationSent = true;
+        }
+    },
+    
+    getTaskDeadline(week) {
+        const deadlines = {
+            1: '2025-11-07',
+            2: '2025-11-14', 
+            3: '2025-11-21',
+            4: '2025-11-30'
+        };
+        return deadlines[week];
+    },
+    
+    getDaysUntil(dateString) {
+        const deadline = new Date(dateString);
+        const today = new Date();
+        const diffTime = deadline - today;
+        return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    },
+    
+    sendDeadlineNotification(task, region, daysLeft) {
+        let message = `⏰ Задача "${task.description}" в регионе ${region} `;
+        if (daysLeft === 0) {
+            message += 'должна быть выполнена сегодня!';
+        } else {
+            message += `должна быть выполнена через ${daysLeft} дней`;
+        }
+        
+        Notification.warning(message);
+    },
+    
+    // Уведомления для админов о завершении задач
+    setupAdminNotifications() {
+        // Проверяем новые завершенные задачи каждые 2 минуты
+        setInterval(() => this.checkNewCompletions(), 2 * 60 * 1000);
+    },
+    
+    checkNewCompletions() {
+        if (!Auth.isAdmin()) return;
+        
+        const plans = JSON.parse(localStorage.getItem('monthlyPlans')) || window.MonthlyPlansData;
+        const lastCheck = localStorage.getItem('lastCompletionCheck') || new Date().toISOString();
+        
+        let newCompletions = [];
+        
+        Object.keys(plans).forEach(region => {
+            for (let week = 1; week <= 4; week++) {
+                const weekData = plans[region]?.[`week${week}`];
+                if (weekData?.tasks) {
+                    weekData.tasks.forEach(task => {
+                        if (task.status === 'completed' && 
+                            task.dateCompleted && 
+                            task.dateCompleted > lastCheck &&
+                            !task.notificationSent) {
+                            newCompletions.push({ task, region });
+                            task.notificationSent = true;
+                        }
+                    });
+                }
+            }
+        });
+        
+        // Показываем уведомления
+        newCompletions.forEach(({ task, region }) => {
+            Notification.info(`✅ Задача выполнена в ${region}: "${task.description}"`);
+        });
+        
+        // Обновляем время последней проверки
+        if (newCompletions.length > 0) {
+            localStorage.setItem('lastCompletionCheck', new Date().toISOString());
+        }
+    }
+};
+
 // Глобальные функции для модальных окон
 function closeAddTaskModal() {
     const modal = document.getElementById('addTaskModal');
@@ -379,226 +590,34 @@ function saveMonthlyPlan() {
     }
 }
 
-// Вспомогательные функции для форматов
-function formatCurrency(amount) {
-    if (!amount || amount === 0) return '0';
-    return new Intl.NumberFormat('ru-RU').format(Math.round(amount));
-}
-
-function formatDate(dateString) {
-    if (!dateString) return 'Не указана';
-    try {
-        const date = new Date(dateString);
-        return date.toLocaleDateString('ru-RU');
-    } catch {
-        return 'Неверная дата';
-    }
-}
-
-function getCategoryEmoji(category) {
-    const emojis = {
-        'products': '🛒', 'household': '🏠', 'medicaments': '💊',
-        'stationery': '📎', 'cafe': '☕', 'repairs': '🔧',
-        'azs': '⛽', 'salary': '💰', 'shipping': '📦',
-        'events': '🎉', 'polygraphy': '🖨️', 'insurance': '🛡️',
-        'charity': '❤️', 'equipment': '💻', 'cleaning': '🧹',
-        'checks': '🧾', 'carsharing': '🚗', 'rent': '🏢',
-        'comm': '💡', 'internet': '🌐', 'ipSalary': '💼'
-    };
-    return emojis[category] || '📋';
-}
-
-function getCategoryName(category) {
-    const names = {
-        'products': 'Продукты', 'household': 'Хоз. товары',
-        'medicaments': 'Медикаменты', 'stationery': 'Канцелярия',
-        'cafe': 'Кафе', 'repairs': 'Ремонт', 'azs': 'АЗС',
-        'salary': 'Зарплата', 'shipping': 'Отправка',
-        'events': 'Мероприятия', 'polygraphy': 'Полиграфия',
-        'insurance': 'Страхование', 'charity': 'Благотворительность',
-        'equipment': 'Техника', 'cleaning': 'Клининг',
-        'checks': 'Чеки', 'carsharing': 'Каршеринг',
-        'rent': 'Аренда', 'comm': 'Коммуналка',
-        'internet': 'Интернет', 'ipSalary': 'ЗП ИП'
-    };
-    return names[category] || category;
-}
-// ДОБАВЬ В КОНЕЦ utils.js
-function initializeDemoTasks() {
-    const existingTasks = JSON.parse(localStorage.getItem('tasks'));
-    if (!existingTasks || existingTasks.length === 0) {
-        console.log('🔄 Создание демо-задач для тестирования...');
-        
-        const demoTasks = [
-            {
-                id: 'demo_1',
-                title: 'Закупка канцелярии',
-                description: 'Ручки, бумага, блокноты для офиса',
-                region: 'Курган',
-                ip: 'ИП Бондаренко',
-                expenseItem: 'stationery',
-                plannedAmount: 5000,
-                status: 'pending',
-                responsibleManager: 'Ксения Б.',
-                createdAt: new Date().toISOString(),
-                dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
-            },
-            {
-                id: 'demo_2', 
-                title: 'Заправка автомобиля',
-                description: 'Заправка на АЗС',
-                region: 'Курган',
-                ip: 'ИП Овсейко',
-                expenseItem: 'azs',
-                plannedAmount: 3000,
-                status: 'completed',
-                factAmount: 2850,
-                responsibleManager: 'Ксения Б.',
-                createdAt: new Date().toISOString(),
-                dateCompleted: new Date().toISOString()
-            }
-        ];
-        
-        localStorage.setItem('tasks', JSON.stringify(demoTasks));
-        console.log('✅ Создано демо-задач:', demoTasks.length);
-    }
-}
-// ДОБАВИТЬ В utils.js
-const NotificationSystem = {
-    init() {
-        console.log('🔔 Инициализация системы уведомлений');
-        this.setupDeadlineChecker();
-    },
-    
-    setupDeadlineChecker() {
-        // Проверяем дедлайны каждые 30 минут
-        setInterval(() => this.checkDeadlines(), 30 * 60 * 1000);
-        // Первая проверка через 5 секунд после загрузки
-        setTimeout(() => this.checkDeadlines(), 5000);
-    },
-    
-    checkDeadlines() {
-        const plans = JSON.parse(localStorage.getItem('monthlyPlans')) || MonthlyPlansData;
-        const today = new Date();
-        
-        Object.keys(plans).forEach(region => {
-            for (let week = 1; week <= 4; week++) {
-                const weekData = plans[region][`week${week}`];
-                if (weekData && weekData.tasks) {
-                    weekData.tasks.forEach(task => {
-                        if (task.status !== 'completed' && !task.notificationSent) {
-                            const deadline = this.getTaskDeadline(week);
-                            if (deadline && this.isDeadlineClose(deadline, today)) {
-                                this.sendDeadlineNotification(task, region, deadline);
-                                task.notificationSent = true;
-                            }
-                        }
-                    });
-                }
-            }
-        });
-    },
-// ДОБАВИТЬ В utils.js в NotificationSystem
-setupDeadlineNotifications() {
-    // Ежедневная проверка в 9:00
-    this.scheduleDailyCheck();
-    
-    // Первая проверка при загрузке
-    this.checkAllDeadlines();
-},
-
-scheduleDailyCheck() {
-    const now = new Date();
-    const nextCheck = new Date();
-    nextCheck.setHours(9, 0, 0, 0);
-    
-    if (now > nextCheck) {
-        nextCheck.setDate(nextCheck.getDate() + 1);
-    }
-    
-    const timeUntilCheck = nextCheck.getTime() - now.getTime();
-    
-    setTimeout(() => {
-        this.checkAllDeadlines();
-        // Повторяем каждые 24 часа
-        setInterval(() => this.checkAllDeadlines(), 24 * 60 * 60 * 1000);
-    }, timeUntilCheck);
-},
-
-checkAllDeadlines() {
-    console.log('🔔 Проверка сроков задач...');
-    const plans = StorageManager.load('monthlyPlans') || MonthlyPlansData;
-    const today = new Date();
-    
-    Object.keys(plans).forEach(region => {
-        for (let week = 1; week <= 4; week++) {
-            const weekData = plans[region][`week${week}`];
-            if (weekData && weekData.tasks) {
-                weekData.tasks.forEach(task => {
-                    if (task.status !== 'completed' && !task.notificationSent) {
-                        this.checkTaskDeadline(task, region, week);
-                    }
-                });
-            }
-        }
-    });
-},    
-    getTaskDeadline(week) {
-        const deadlines = {
-            1: '2025-11-07',
-            2: '2025-11-14', 
-            3: '2025-11-21',
-            4: '2025-11-30'
-        };
-        return deadlines[week];
-    },
-    
-    isDeadlineClose(deadline, today) {
-        const deadlineDate = new Date(deadline);
-        const timeDiff = deadlineDate.getTime() - today.getTime();
-        const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
-        
-        return daysDiff <= 3 && daysDiff >= 0;
-    },
-    
-    sendDeadlineNotification(task, region, deadline) {
-        const deadlineDate = new Date(deadline);
-        const daysLeft = Math.ceil((deadlineDate.getTime() - new Date().getTime()) / (1000 * 3600 * 24));
-        
-        let message = `⏰ Задача "${task.description}" в регионе ${region} `;
-        if (daysLeft === 0) {
-            message += 'должна быть выполнена сегодня!';
-        } else {
-            message += `должна быть выполнена через ${daysLeft} дней`;
-        }
-        
-        Notification.warning(message);
-    },
-    
-    // Уведомление для админов о завершении задач
-    sendCompletionNotification(task, region, manager) {
-        if (Auth.isAdmin()) {
-            Notification.info(`✅ Задача "${task.description}" в регионе ${region} выполнена управляющим ${manager}`);
-        }
-    }
-};
-
-// Инициализация
+// Инициализация при загрузке
 document.addEventListener('DOMContentLoaded', function() {
-    if (window.NotificationSystem) {
+    // Инициализация Auth
+    if (typeof Auth !== 'undefined') {
+        Auth.init();
+        console.log('✅ Auth система готова');
+    }
+    
+    // Инициализация системы уведомлений
+    if (typeof NotificationSystem !== 'undefined') {
         NotificationSystem.init();
+        console.log('✅ Система уведомлений активирована');
+        
+        // Для админов добавляем дополнительные уведомления
+        if (Auth.isAdmin()) {
+            NotificationSystem.setupAdminNotifications();
+        }
     }
-});
-
-window.NotificationSystem = NotificationSystem;
-// Автоматически создаем демо-задачи при загрузке
-document.addEventListener('DOMContentLoaded', function() {
+    
+    // Инициализация демо-задач
     setTimeout(initializeDemoTasks, 1000);
 });
+
 // Экспорт в глобальную область
 window.Auth = Auth;
 window.Notification = Notification;
 window.TaskManager = TaskManager;
 window.FormatHelper = FormatHelper;
+window.NotificationSystem = NotificationSystem;
 
 console.log('🔧 Utils.js загружен успешно');

@@ -281,29 +281,80 @@ const AllTasks = {
         return statusMap[status] || status || '⏳ Ожидает выполнения';
     },
 
-    // Экспорт задач в CSV
-    exportToCSV() {
-        const tasksToExport = this.allTasks.length > 0 ? this.allTasks : this.allTasks;
-        
-        let csv = 'ID,Название,Регион,ИП,Статус,Плановая сумма,Фактическая сумма,Дата создания,Дата выполнения,Ответственный\n';
-        
-        tasksToExport.forEach(task => {
-            csv += `"${task.id}","${task.title || ''}","${task.region || ''}","${task.ip || ''}","${task.status || ''}",` +
-                   `"${task.plannedAmount || task.amount || 0}","${task.factAmount || ''}","${formatDate(task.createdAt)}",` +
-                   `"${formatDate(task.dateCompleted)}","${task.responsibleManager || task.responsible || ''}"\n`;
-        });
-        
-        // Создаем и скачиваем файл
-        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement('a');
-        const url = URL.createObjectURL(blob);
-        link.setAttribute('href', url);
-        link.setAttribute('download', `задачи_${new Date().toISOString().split('T')[0]}.csv`);
-        link.style.visibility = 'hidden';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        
-        Notification.success('Данные экспортированы в CSV');
-    }
-};
+exportToCSV() {
+    const tasksToExport = this.allTasks.length > 0 ? this.allTasks : this.getAllTasksFromPlans();
+    
+    let csv = 'ID,Название,Регион,ИП,Статус,Плановая сумма,Фактическая сумма,Дата создания,Дата выполнения,Ответственный\n';
+    
+    tasksToExport.forEach(task => {
+        csv += `"${task.id}","${task.title || ''}","${task.region || ''}","${task.ip || ''}","${task.status || ''}",` +
+               `"${task.plannedAmount || task.amount || 0}","${task.factAmount || ''}","${formatDate(task.createdAt)}",` +
+               `"${formatDate(task.dateCompleted)}","${task.responsibleManager || task.responsible || ''}"\n`;
+    });
+    
+    this.downloadFile(csv, `задачи_${new Date().toISOString().split('T')[0]}.csv`, 'text/csv');
+    Notification.success('Данные экспортированы в CSV');
+},
+
+// ДОБАВИМ новый метод для получения задач из планов
+getAllTasksFromPlans() {
+    const plans = JSON.parse(localStorage.getItem('monthlyPlans')) || MonthlyPlansData;
+    const allTasks = [];
+    
+    Object.keys(plans).forEach(region => {
+        for (let week = 1; week <= 4; week++) {
+            const weekData = plans[region]?.[`week${week}`];
+            if (weekData?.tasks) {
+                weekData.tasks.forEach(task => {
+                    allTasks.push({
+                        id: task.id,
+                        title: task.description,
+                        region: region,
+                        ip: task.ip,
+                        status: task.status,
+                        plannedAmount: task.plan,
+                        factAmount: task.fact,
+                        createdAt: task.createdAt || new Date().toISOString(),
+                        dateCompleted: task.dateCompleted,
+                        responsible: task.responsible
+                    });
+                });
+            }
+        }
+    });
+    
+    return allTasks;
+},
+
+// ДОБАВИМ метод для скачивания файлов
+downloadFile(content, filename, mimeType) {
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+},
+
+// ДОБАВИМ экспорт в Excel
+exportToExcel() {
+    const tasksToExport = this.allTasks.length > 0 ? this.allTasks : this.getAllTasksFromPlans();
+    
+    let excelData = 'ID\tНазвание\tРегион\tИП\tСтатус\tПлановая сумма\tФактическая сумма\tДата создания\tДата выполнения\tОтветственный\n';
+    
+    tasksToExport.forEach(task => {
+        excelData += `${task.id}\t${task.title || ''}\t${task.region || ''}\t${task.ip || ''}\t${task.status || ''}\t` +
+                    `${task.plannedAmount || task.amount || 0}\t${task.factAmount || ''}\t${formatDate(task.createdAt)}\t` +
+                    `${formatDate(task.dateCompleted)}\t${task.responsibleManager || task.responsible || ''}\n`;
+    });
+    
+    this.downloadFile(excelData, `задачи_${new Date().toISOString().split('T')[0]}.xls`, 'application/vnd.ms-excel');
+    Notification.success('Данные экспортированы в Excel');
+}
+// ДОБАВЬТЕ в конец файла:
+}; // закрытие объекта AllTasks
+
+window.AllTasks = AllTasks;

@@ -1,11 +1,18 @@
 /* css/pages/tasks/tasks-tables.css */
-/* Стили для таблиц задач */
+/* АДАПТИВНЫЕ ТАБЛИЦЫ */
+.week-tasks {
+    overflow-x: auto;
+    margin: 1rem 0;
+}
 
 .week-table {
+    min-width: 1200px; /* Минимальная ширина для всех колонок */
     width: 100%;
     border-collapse: collapse;
+    background: var(--bg-glass);
+    border-radius: var(--radius);
+    overflow: hidden;
     font-size: 0.9rem;
-    background: var(--bg-card);
 }
 
 .week-table th {
@@ -15,15 +22,14 @@
     text-align: left;
     color: var(--text-secondary);
     border-bottom: 1px solid var(--border);
-    position: sticky;
-    top: 0;
+    white-space: nowrap;
 }
 
 .week-table td {
     padding: 1rem 0.75rem;
     vertical-align: top;
     border-bottom: 1px solid var(--border);
-    transition: background 0.3s ease;
+    white-space: nowrap;
 }
 
 .week-table tr:hover {
@@ -34,11 +40,31 @@
     border-bottom: none;
 }
 
+/* Стили для ячеек с длинным текстом */
+.task-description-cell,
+.task-explanation-cell,
+.manager-comment {
+    white-space: normal;
+    max-width: 200px;
+    min-width: 150px;
+}
+
+.task-main-desc {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.task-explanation {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
 /* Стили для ячеек с суммами */
 .amount-cell {
     text-align: right;
     font-family: 'Courier New', monospace;
-    font-weight: 600;
+    font-weight: 500;
 }
 
 .plan-amount {
@@ -46,55 +72,73 @@
 }
 
 .fact-amount {
-    color: #10b981;
+    color: var(--text-primary);
 }
 
-/* Стили для статусов */
-.status-badge {
-    padding: 0.4rem 0.8rem;
+/* Стили для ячеек с датами */
+.task-deadline,
+.completion-date {
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+/* Стили для ячеек с ИП и картами */
+.ip-info-cell {
+    display: flex;
+    flex-direction: column;
+}
+
+.ip-name {
+    font-weight: 500;
+}
+
+.card-cell {
+    text-align: center;
+}
+
+.card-badge {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 0.3rem 0.6rem;
     border-radius: 20px;
     font-size: 0.8rem;
-    font-weight: 600;
-    text-align: center;
+    font-family: 'Courier New', monospace;
     display: inline-block;
-    min-width: 120px;
 }
 
-.status-planned {
-    background: rgba(59, 130, 246, 0.15);
-    color: #3b82f6;
-    border: 1px solid rgba(59, 130, 246, 0.3);
+/* Стили для полей ввода в таблице */
+.fact-input,
+.date-input,
+.comment-input {
+    width: 100%;
+    padding: 0.5rem;
+    background: var(--bg-glass);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
 }
 
-.status-completed {
-    background: rgba(16, 185, 129, 0.15);
-    color: #10b981;
-    border: 1px solid rgba(16, 185, 129, 0.3);
+.fact-input:focus,
+.date-input:focus,
+.comment-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    background: rgba(255, 255, 255, 0.12);
 }
 
-.status-pending {
-    background: rgba(245, 158, 11, 0.15);
-    color: #f59e0b;
-    border: 1px solid rgba(245, 158, 11, 0.3);
+.comment-input {
+    resize: vertical;
+    min-height: 60px;
+    font-family: inherit;
+    white-space: pre-wrap;
 }
 
-.status-reserve {
-    background: rgba(139, 92, 246, 0.15);
-    color: #8b5cf6;
-    border: 1px solid rgba(139, 92, 246, 0.3);
-}
-
-/* Стили для чекбоксов */
-.task-checkbox {
-    width: 18px;
-    height: 18px;
-    cursor: pointer;
-}
-
-/* Адаптивность таблицы */
-@media (max-width: 1200px) {
+/* Адаптивность для таблиц */
+@media (max-width: 768px) {
     .week-table {
-        font-size: 0.85rem;
+        font-size: 0.8rem;
     }
     
     .week-table th,
@@ -102,9 +146,22 @@
         padding: 0.75rem 0.5rem;
     }
     
-    .status-badge {
+    .task-description-cell,
+    .task-explanation-cell,
+    .manager-comment {
+        max-width: 120px;
         min-width: 100px;
-        font-size: 0.75rem;
+    }
+}
+/* АДАПТИВНЫЕ ТАБЛИЦЫ */
+@media (max-width: 1200px) {
+    .week-table {
+        font-size: 0.8rem;
+    }
+    
+    .week-table th,
+    .week-table td {
+        padding: 0.5rem 0.25rem;
     }
 }
 
@@ -113,7 +170,12 @@
         overflow-x: auto;
     }
     
-    .week-table {
-        min-width: 800px;
+    .task-row {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 1rem;
+        padding: 1rem;
+        background: var(--bg-glass);
+        border-radius: var(--radius);
     }
 }

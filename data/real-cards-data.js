@@ -75,8 +75,6 @@ const REAL_CARDS_DATA = [
     personalStatus: "Перевыпустить"
   },
   {
-// Обновляем данные карт с балансами
-{
     ipName: "ИП Бондаренко Л.И.",
     region: "Курган", 
     corpCard: "*7254",
@@ -84,8 +82,8 @@ const REAL_CARDS_DATA = [
     corpStatus: "в регионе",
     personalStatus: "в регионе",
     balance: 15000
-},
-{
+  },
+  {
     ipName: "ИП Бобков",
     region: "",
     corpCard: "*1381", 
@@ -93,8 +91,7 @@ const REAL_CARDS_DATA = [
     corpStatus: "В ПВЗ Овсейко",
     personalStatus: "в регионе",
     balance: 12000
-},
-  // ... добавить балансы для всех карт
+  },
   {
     ipName: "ИП Дюльгер",
     region: "",
@@ -132,9 +129,7 @@ const REAL_CARDS_DATA = [
     region: "",
     corpCard: "-",
     personalCard: "*6532",
-    personalCard: "*7611",
     corpStatus: "",
-    personalStatus: "",
     personalStatus: ""
   },
   {
@@ -234,10 +229,3 @@ const REAL_CARDS_DATA = [
     personalStatus: ""
   }
 ];
-
-// Делаем данные доступными для других файлов
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = REAL_CARDS_DATA;
-} else {
-  window.REAL_CARDS_DATA = REAL_CARDS_DATA;
-}

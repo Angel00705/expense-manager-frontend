@@ -1,4 +1,4 @@
-// js/data/monthly-plans-data.js - ПОЛНАЯ ВЕРСИЯ
+// js/data/monthly-plans-data.js - ПОЛНОСТЬЮ ИСПРАВЛЕННАЯ ВЕРСИЯ
 const MonthlyPlansData = {
     'Курган': {
         week1: {
@@ -600,19 +600,92 @@ function updateMonthlyTask(region, week, taskId, updates) {
     return false;
 }
 
-// Инициализация данных для всех регионов
+// Функция для инициализации всех регионов
 function initializeAllRegions() {
     const regions = ['Астрахань', 'Бурятия', 'Калмыкия', 'Мордовия', 'Удмуртия'];
+    
     regions.forEach(region => {
         if (!MonthlyPlansData[region]) {
-            MonthlyPlansData[region] = {
-                week1: { budget: 0, reserve: 0, total: 0, tasks: [] },
-                week2: { budget: 0, reserve: 0, total: 0, tasks: [] },
-                week3: { budget: 0, reserve: 0, total: 0, tasks: [] },
-                week4: { budget: 0, reserve: 0, total: 0, tasks: [] }
-            };
+            MonthlyPlansData[region] = createRegionData(region);
+        } else {
+            // Проверяем и дополняем существующие данные
+            fillEmptyWeeks(region);
         }
     });
+    
+    // Сохраняем обновленные данные
+    localStorage.setItem('monthlyPlans', JSON.stringify(MonthlyPlansData));
+    console.log('✅ Данные для всех регионов инициализированы');
+}
+
+// Создание данных для региона
+function createRegionData(region) {
+    const budgets = {
+        'Астрахань': [18000, 15000, 8000, 4000],
+        'Бурятия': [16000, 12000, 7000, 3000],
+        'Калмыкия': [14000, 10000, 5000, 3000],
+        'Мордовия': [15000, 11000, 6000, 3000],
+        'Удмуртия': [22000, 18000, 15000, 10000]
+    };
+    
+    const regionBudget = budgets[region] || [15000, 12000, 8000, 5000];
+    
+    return {
+        week1: { budget: regionBudget[0], reserve: 1500, total: regionBudget[0], tasks: createWeekTasks(region, 1) },
+        week2: { budget: regionBudget[1], reserve: 1500, total: regionBudget[1], tasks: createWeekTasks(region, 2) },
+        week3: { budget: regionBudget[2], reserve: 1500, total: regionBudget[2], tasks: createWeekTasks(region, 3) },
+        week4: { budget: regionBudget[3], reserve: 1500, total: regionBudget[3], tasks: createWeekTasks(region, 4) }
+    };
+}
+
+// Создание задач для недели
+function createWeekTasks(region, week) {
+    const baseTasks = [
+        { category: 'products', description: 'Кофе, чай, сахар, печенье', plan: 1500 },
+        { category: 'household', description: 'Моющие средства, бумажные полотенца', plan: 2000 },
+        { category: 'salary', description: 'Снятие наличных для выплат', plan: 5000 },
+        { category: 'azs', description: 'Заправка автомобиля', plan: 1000 }
+    ];
+
+    return baseTasks.map((task, index) => ({
+        id: `${region.toLowerCase()}_week${week}_${index + 1}`,
+        ...task,
+        explanation: '',
+        ip: getRandomIP(region),
+        card: '',
+        fact: 0,
+        status: 'planned',
+        dateCompleted: '',
+        responsible: getManagerName(region)
+    }));
+}
+
+// Получение случайного ИП для региона
+function getRandomIP(region) {
+    const ips = window.appData?.individualEntrepreneurs?.[region];
+    return ips && ips.length > 0 ? ips[Math.floor(Math.random() * ips.length)] : 'ИП не указан';
+}
+
+// Получение имени управляющего для региона
+function getManagerName(region) {
+    const managers = {
+        'Астрахань': 'Управляющий Астрахань',
+        'Бурятия': 'Управляющий Бурятия',
+        'Калмыкия': 'Управляющий Калмыкия', 
+        'Мордовия': 'Управляющий Мордовия',
+        'Удмуртия': 'Управляющий Удмуртия'
+    };
+    return managers[region] || 'Управляющий';
+}
+
+// Заполнение пустых недель
+function fillEmptyWeeks(region) {
+    for (let week = 1; week <= 4; week++) {
+        const weekKey = `week${week}`;
+        if (MonthlyPlansData[region][weekKey].tasks.length === 0) {
+            MonthlyPlansData[region][weekKey].tasks = createWeekTasks(region, week);
+        }
+    }
 }
 
 // Вызываем инициализацию
